@@ -7,9 +7,6 @@
     ];
 
     $(() => {
-        $("#photo").change(function() {
-            readURL(this);
-        });
 
         $('#role').select2({
             dropdownParent: $('.viewForm')
@@ -21,6 +18,7 @@
 
     showForm = () => {
         onReset();
+        // $('#modal_job_category').modal('show')
         $('.viewForm').modal('show')
     }
 
@@ -33,7 +31,8 @@
             paging: true,
             "bDestroy": true,
             ajax: "{{ route('backoffice.master.job-category.table') }}",
-            columns: [{
+            columns: [
+                {
                     "data": null,
                     "sortable": false,
                     render: function(data, type, row, meta) {

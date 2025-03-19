@@ -1,4 +1,4 @@
-<div class="modal viewForm" role="dialog">
+<div class="modal viewForm" id="modal_job_category" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

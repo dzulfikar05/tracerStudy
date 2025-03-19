@@ -46,18 +46,32 @@
 
 <body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
     style="font-family: 'Poppins'">
-    <section class="welcome-container">
-        <div>
-            <h1 class="fw-bold text-primary">Selamat Datang di <span class="text-dark">Tracer Study</span></h1>
-            <p class="mt-3">Temukan peluang karir terbaik dan tetap terhubung dengan almamater Anda.</p>
-            <div class="mt-4">
-                <a href="{{ route('auth.login') }}" class="btn btn-custom">Login</a>
-                <a href="{{ route('register') }}" class="btn btn-outline-primary ms-3">Register</a>
+    <section class="vh-100">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-7 d-flex justify-content-center align-items-center">
+                    <div class="m-sm-4">
+                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">App</span> Starter</span>
+                        <form action="javascript:onLogin(this)" method="post" id="form_login" name="form_login" autocomplete="off" class="mt-5">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input class="form-control form-control-lg" type="password" name="password" placeholder="Enter your password" />
+                            </div>
+                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Log In</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-sm-5 px-0 d-none d-sm-block">
+                    <img src="{{ asset('assets/logo/smk.png') }}" alt="Login image" class="w-100 vh-100" style="object-fit: cover;">
+                </div>
             </div>
         </div>
     </section>
-
-    <script src="{{ asset('js/app.js') }}"></script>
 
     @include('auth.javascript')
 

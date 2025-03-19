@@ -61,8 +61,6 @@
             <h1 class="fw-bold text-primary">Selamat Datang di <span class="text-dark">Tracer Study</span></h1>
             <p class="mt-3">Temukan peluang karir terbaik dan tetap terhubung dengan almamater Anda.</p>
             <div class="mt-4">
-                {{-- <a href="{{ route('auth.login') }}" class="btn btn-custom">Login</a> --}}
-                {{-- <a href="{{ route('register') }}" class="btn btn-outline-primary ms-3">Register</a> --}}
             </div>
         </div>
     </section>
