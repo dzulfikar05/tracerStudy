@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProfessionCategory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,8 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profession_categories', function (Blueprint $table) {
+        Schema::create('professions', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(ProfessionCategory::class)->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profession_categories');
+        Schema::dropIfExists('professions');
     }
 };
