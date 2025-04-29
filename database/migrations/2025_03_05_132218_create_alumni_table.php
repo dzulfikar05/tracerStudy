@@ -1,0 +1,42 @@
+<?php
+
+use App\Models\Company;
+use App\Models\Profession;
+use App\Models\Superior;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('alumnis', function (Blueprint $table) {
+            $table->id();
+            $table->string('study_program');
+            $table->date('graduation_date');
+            $table->char('nim', 10)->unique();
+            $table->string('full_name');
+            $table->string('phone', 20);
+            $table->string('email', 60);
+            $table->date('start_work_date');
+            $table->date('start_work_now_date');
+            $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Profession::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Superior::class)->constrained()->cascadeOnDelete();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('alumnis');
+    }
+};
