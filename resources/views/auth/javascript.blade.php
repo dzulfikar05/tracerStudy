@@ -19,12 +19,14 @@
                     saMessage({
                         message: res['message'],
                         callback:function(res){
-                            if(res){
-                                location.reload()
-                            }
+                            $('#password').val('')
+                            // if(res){
+                            //     location.reload()
+                            // }
                         }
                     });
                 }else{
+
                     location.reload()
                 }
             }

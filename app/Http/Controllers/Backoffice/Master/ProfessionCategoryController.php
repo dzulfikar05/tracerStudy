@@ -3,26 +3,32 @@
 namespace App\Http\Controllers\Backoffice\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\JobCategory;
+use App\Http\Requests\ProfessionCategoryRequest;
+use App\Models\ProfessionCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
 
 
-class JobCategoryController extends Controller
+class ProfessionCategoryController extends Controller
 {
     public function index()
     {
         return view('layouts.index',[
 			'title' => 'Job Category',
-			'content' => view('backoffice.job_category.index')
+			'content' => view('backoffice.profession_category.index')
 		]);
+    }
+
+    public function fetchAll(){
+        $data = ProfessionCategory::all();
+        return $data;
     }
 
     public function initTable(Request $request)
     {
         if ($request->ajax()) {
-            $data = JobCategory::all();
+            $data = ProfessionCategory::all();
 
             return DataTables::of($data)
                     ->addIndexColumn()
@@ -40,35 +46,27 @@ class JobCategoryController extends Controller
                     ->make(true);
         }
 
-        return view('backoffice.job_category.index');
+        return view('backoffice.profession_category.index');
     }
 
-    public function store(Request $request){
-        $data = $request->input();
-        $operation = JobCategory::insert($data);
-
+    public function store(ProfessionCategoryRequest $request){
+        $operation = ProfessionCategory::insert($request->validated());
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
 
-    public function edit(Request $request){
-        $id = $request->input('id');
-        $operation = JobCategory::find($id);
-
+    public function edit($id){
+        $operation = ProfessionCategory::find($id);
         return $operation;
     }
 
-    public function update(Request $request)
+    public function update($id, ProfessionCategoryRequest $request)
     {
-        $data = $request->input();
-        $operation = JobCategory::where('id', $data['id'])->update($data);
-
+        $operation = ProfessionCategory::where('id', $id)->update($request->validated());
         return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
     }
 
-    public function destroy(Request $request){
-        $id = $request->input('id');
-        $operation = JobCategory::where('id', $id)->delete();
-
+    public function destroy($id){
+        $operation = ProfessionCategory::where('id', $id)->delete();
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
     }
 }
