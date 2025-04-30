@@ -60,7 +60,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
-                                <input class="form-control form-control-lg" type="password" name="password" placeholder="Enter your password" />
+                                <input class="form-control form-control-lg" id="password" type="password" name="password" placeholder="Enter your password" />
                             </div>
                             <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Log In</button>
                         </form>
