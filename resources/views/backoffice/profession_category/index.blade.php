@@ -1,5 +1,5 @@
 <div class="row">
-    @include('backoffice.job_category.form')
+    @include('backoffice.profession_category.form')
     <div class="col-12">
         <div class="card">
             {{-- <div class="card-header">
@@ -11,7 +11,7 @@
                     <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle" data-feather="rotate-ccw"> </i> Refresh</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100" id="table_job_category">
+                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100" id="table_profession_category">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
@@ -28,4 +28,4 @@
     </div>
 </div>
 
-@include('backoffice.job_category.javascript')
+@include('backoffice.profession_category.javascript')

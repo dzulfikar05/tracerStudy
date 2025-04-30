@@ -13,4 +13,9 @@ class Profession extends Model
     protected $guarded = [];
     protected $table = "professions";
 
+    public function profession_category()
+    {
+        return $this->belongsTo(ProfessionCategory::class);
+    }
+
 }

@@ -1,38 +1,61 @@
 <script>
-    var table = 'table_job_category';
-    var form = 'form_job_category';
+    var table = 'table_profession';
+    var form = 'form_profession';
     var fields = [
         'id',
         'name',
+        'profession_category_id',
     ];
+
+    var listCategory = [];
 
     $(() => {
 
-        $('#role').select2({
+        $('#profession_category_id').select2({
             dropdownParent: $('.viewForm')
         });
 
+
         loadBlock();
         initTable();
+        getCategory();
     })
 
     showForm = () => {
         onReset();
-        // $('#modal_job_category').modal('show')
+        // $('#modal_profession').modal('show')
         $('.viewForm').modal('show')
     }
 
+    getCategory = () => {
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{ route('backoffice.master.profession-category.fetch-all') }}",
+            method: 'GET',
+            success: function(res) {
+                listCategory = ``;
+                listCategory += `<option value="">- Pilih Kategori Profesi -</option>`;
+                $.each(res, function(i, v) {
+                    listCategory += `<option value="${v.id}">${v.name}</option>`;
+                })
+                $('#profession_category_id').html(listCategory);
+            }
+        })
+    }
+
     initTable = () => {
-        var table = $('#table_job_category').DataTable({
+        var table = $('#table_profession').DataTable({
             processing: true,
             serverSide: true,
             searchAble: true,
             searching: true,
             paging: true,
             "bDestroy": true,
-            ajax: "{{ route('backoffice.master.job-category.table') }}",
-            columns: [
-                {
+            ajax: "{{ route('backoffice.master.profession.table') }}",
+            columns: [{
                     "data": null,
                     "sortable": false,
                     render: function(data, type, row, meta) {
@@ -44,6 +67,13 @@
                     name: 'name',
                     render: function(data, type, full, meta) {
                         return `<span>${full.name??''}</span>`;
+                    }
+                },
+                {
+                    data: 'profession_category_name',
+                    name: 'profession_category_name',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.profession_category_name??''}</span>`;
                     }
                 },
                 {
@@ -60,17 +90,18 @@
     onSave = () => {
         var formData = new FormData($(`[name="${form}"]`)[0]);
 
-        var id_job_category = $('#id').val();
-        var urlSave = "";
+        let id_profession = $('#id').val();
+        let urlSave = "";
 
-        if (id_job_category == '' || id_job_category == null) {
-            urlSave += "{{ route('backoffice.master.job-category.store') }}";
+        if (id_profession == '' || id_profession == null) {
+            urlSave = `{{ route('backoffice.master.profession.store') }}`;
         } else {
-            urlSave += "{{ route('backoffice.master.job-category.update') }}";
+            urlSave = `{{ route('backoffice.master.profession.update', ['id' => '__ID__']) }}`.replace('__ID__', id_profession);
         }
 
+
         saConfirm({
-            message: 'Are you sure you want to modify the data?',
+            message: 'Are you sure you want to save the data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -89,7 +120,7 @@
                                 success: res['success'],
                                 title: res['title'],
                                 message: res['message'],
-                                callback:function(){
+                                callback: function() {
                                     initTable();
                                 }
                             })
@@ -107,7 +138,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "{{ route('backoffice.master.job-category.edit') }}",
+            url: `{{ route('backoffice.master.profession.edit', ['id' => '__ID__']) }}`.replace('__ID__', id),
             data: {
                 id: id
             },
@@ -131,7 +162,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ route('backoffice.master.job-category.destroy') }}",
+                        url: `{{ route('backoffice.master.profession.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
                         data: {
                             id: id
                         },
@@ -159,5 +190,4 @@
             $('#' + v).val('').change()
         })
     }
-
 </script>

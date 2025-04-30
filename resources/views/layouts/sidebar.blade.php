@@ -22,8 +22,12 @@
                 <ul id="masters"
                     class="sidebar-dropdown list-unstyled collapse {{ set_show('pendidikan') }} {{ set_show('backoffice.master.job-category.index') }}"
                     data-bs-parent="#sidebar">
-                    <li class="sidebar-item {{ set_active('backoffice.master.job-category.index') }}"><a class="sidebar-link"
-                            href="{{ route('backoffice.master.job-category.index') }}">Kategori Profesi</a></li>
+                    <li class="sidebar-item {{ set_active('backoffice.master.profession-category.index') }}"><a class="sidebar-link"
+                            href="{{ route('backoffice.master.profession-category.index') }}">Kategori Profesi</a>
+                    </li>
+                    <li class="sidebar-item {{ set_active('backoffice.master.profession.index') }}"><a class="sidebar-link"
+                            href="{{ route('backoffice.master.profession.index') }}">Profesi</a>
+                    </li>
                 </ul>
             </li>
             {{-- <li class="sidebar-item  {{ set_active('user') }}">

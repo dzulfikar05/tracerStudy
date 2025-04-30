@@ -1,4 +1,4 @@
-<div class="modal viewForm" id="modal_job_category" role="dialog">
+<div class="modal viewForm" id="modal_profession_category" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="javascript:onSave(this)" method="post" id="form_job_category" name="form_job_category"
+                <form action="javascript:onSave(this)" method="post" id="form_profession_category" name="form_profession_category"
                     autocomplete="off">
                     <div class="form-label">
                         <input id="id" name="id" type="hidden">
