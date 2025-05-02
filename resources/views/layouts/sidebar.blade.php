@@ -28,6 +28,9 @@
                     <li class="sidebar-item {{ set_active('backoffice.master.profession.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.profession.index') }}">Profesi</a>
                     </li>
+                    <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a class="sidebar-link"
+                            href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
+                    </li>
                 </ul>
             </li>
             {{-- <li class="sidebar-item  {{ set_active('user') }}">
