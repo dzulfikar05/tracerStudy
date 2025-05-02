@@ -1,0 +1,165 @@
+<script>
+    var table = 'table_user';
+    var form = 'form_user';
+    var fields = [
+        'id',
+        'fullname',
+        'email',
+        'password',
+    ];
+
+    $(() => {
+        loadBlock();
+        initTable();
+    });
+
+    showForm = () => {
+        onReset();
+        $('.viewForm').modal('show');
+    }
+
+    initTable = () => {
+    var table = $('#table_user').DataTable({
+        processing: true,
+        serverSide: true,
+        searching: true,
+        paging: true,
+        bDestroy: true,
+        ajax: "{{ route('backoffice.master.user.table') }}",
+        columns: [
+            {
+                data: null,
+                sortable: false,
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {
+                data: 'fullname',
+                name: 'fullname',
+                render: function (data, type, full, meta) {
+                    return `<span>${full.fullname ?? ''}</span>`;
+                }
+            },
+            {
+                data: 'email',
+                name: 'email',
+                render: function (data, type, full, meta) {
+                    return `<span>${full.email ?? ''}</span>`;
+                }
+            },
+            {
+                data: 'password',
+                name: 'password',
+                render: function (data, type, full, meta) {
+                return `<span>••••••</span>`;
+    }
+            },
+            {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false
+            },
+        ]
+    });
+    unblock();
+}
+
+    onSave = () => {
+        var formData = new FormData($(`[name="${form}"]`)[0]);
+        let id_user = $('#id').val();
+        let urlSave = "";
+
+        if (id_user == '' || id_user == null) {
+            urlSave = `{{ route('backoffice.master.user.store') }}`;
+        } else {
+            urlSave = `{{ route('backoffice.master.user.update', ['id' => '__ID__']) }}`.replace('__ID__', id_user);
+        }
+
+        saConfirm({
+            message: 'Are you sure you want to save the data?',
+            callback: function (res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: urlSave,
+                        method: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            $('.viewForm').modal('hide');
+                            onReset();
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message'],
+                                callback: function () {
+                                    initTable();
+                                }
+                            })
+                        }
+                    })
+                }
+            }
+        });
+    }
+
+    onEdit = (el) => {
+        var id = $(el).data('id');
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `{{ route('backoffice.master.user.edit', ['id' => '__ID__']) }}`.replace('__ID__', id),
+            data: {
+                id: id
+            },
+            method: 'post',
+            success: function (data) {
+                showForm();
+                $.each(fields, function (i, v) {
+                    $('#' + v).val(data[v]).change();
+                });
+            }
+        });
+    }
+
+    onDelete = (el) => {
+        var id = $(el).data('id');
+        saConfirm({
+            message: 'Are you sure you want to delete the data?',
+            callback: function (res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: `{{ route('backoffice.master.user.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
+                        data: {
+                            id: id
+                        },
+                        method: 'post',
+                        success: function (res) {
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message']
+                            });
+                            initTable();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    onReset = () => {
+        $.each(fields, function (i, v) {
+            $('#' + v).val('').change();
+        });
+    }
+</script>

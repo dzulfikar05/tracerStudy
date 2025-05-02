@@ -31,6 +31,10 @@
                     <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
                     </li>
+                    </li>
+                    <li class="sidebar-item {{ set_active('backoffice.master.user.index') }}"><a class="sidebar-link"
+                            href="{{ route('backoffice.master.user.index') }}">User</a>
+                    </li>
                 </ul>
             </li>
             {{-- <li class="sidebar-item  {{ set_active('user') }}">
