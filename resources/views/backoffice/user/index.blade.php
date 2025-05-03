@@ -15,9 +15,8 @@
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
-                                <th>Nama Lengkap</th>
+                                <th>Nama</th>
                                 <th>Email</th>
-                                <th>Password</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>

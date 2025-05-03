@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\userRequest;
 use App\Models\user;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
 
@@ -45,7 +46,15 @@ class UserController extends Controller
     }
 
     public function store(userRequest $request){
-        $operation = user::insert($request->validated());
+        $payload = $request->validated();
+
+        $checkEmail = user::where('email', $payload['email'])->first();
+        if($checkEmail){
+            return $this->sendResponse(false, 'Email Sudah Terdaftar', 'Gagal Menambahkan Data');
+        }
+
+        $payload['password'] = Hash::make($payload['password']);
+        $operation = user::insert($payload);
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
 
@@ -56,7 +65,22 @@ class UserController extends Controller
 
     public function update($id, userRequest $request)
     {
-        $operation = user::where('id', $id)->update($request->validated());
+        $payload = $request->validated();
+
+        $checkEmail = user::where('email', $payload['email'])->where('id', '!=', $id)->first();
+        if($checkEmail){
+            return $this->sendResponse(false, 'Email Sudah Terdaftar', 'Gagal Mengubah Data');
+        }
+
+        if($payload['password'] == null || $payload['password'] == ''){
+            unset($payload['password']);
+        }
+        if(isset($payload['password'])){
+            $payload['password'] = Hash::make($payload['password']);
+        }
+
+
+        $operation = user::where('id', $id)->update($payload);
         return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
     }
 
