@@ -23,3 +23,7 @@ Route::get('/', function () {
 Route::post('main/getPage', function () {
     return "";
 })->name('main/getPage');
+
+Route::get('/landingPage', function () {
+    return view('landingPage.index');
+});
