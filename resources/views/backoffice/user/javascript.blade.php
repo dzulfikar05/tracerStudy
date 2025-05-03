@@ -3,7 +3,7 @@
     var form = 'form_user';
     var fields = [
         'id',
-        'fullname',
+        'name',
         'email',
         'password',
     ];
@@ -35,10 +35,10 @@
                 }
             },
             {
-                data: 'fullname',
-                name: 'fullname',
+                data: 'name',
+                name: 'name',
                 render: function (data, type, full, meta) {
-                    return `<span>${full.fullname ?? ''}</span>`;
+                    return `<span>${full.name ?? ''}</span>`;
                 }
             },
             {
@@ -47,13 +47,6 @@
                 render: function (data, type, full, meta) {
                     return `<span>${full.email ?? ''}</span>`;
                 }
-            },
-            {
-                data: 'password',
-                name: 'password',
-                render: function (data, type, full, meta) {
-                return `<span>••••••</span>`;
-    }
             },
             {
                 data: 'action',
@@ -122,6 +115,9 @@
             success: function (data) {
                 showForm();
                 $.each(fields, function (i, v) {
+                    if(v == 'password') {
+                        $('#' + v).val('').change();
+                    }
                     $('#' + v).val(data[v]).change();
                 });
             }

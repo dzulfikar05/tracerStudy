@@ -8,12 +8,12 @@
             <div class="modal-body">
                 <form action="javascript:onSave(this)" method="post" id="form_user" name="form_user"
                     autocomplete="off">
-                    
+
                     <input id="id" name="id" type="hidden">
 
                     <div class="form-label">
-                        <label class="mb-2 required" for="fullname">Nama Lengkap</label>
-                        <input id="fullname" required name="fullname" class="form-control mb-3" type="text"
+                        <label class="mb-2 required" for="name">Nama</label>
+                        <input id="name" required name="name" class="form-control mb-3" type="text"
                             placeholder="Nama Lengkap">
                     </div>
 
@@ -24,8 +24,8 @@
                     </div>
 
                     <div class="form-label">
-                        <label class="mb-2 required" for="password">Password</label>
-                        <input id="password" required name="password" class="form-control mb-3" type="password"
+                        <label class="mb-2" for="password">Password</label>
+                        <input id="password" name="password" class="form-control mb-3" type="password"
                             placeholder="Password">
                     </div>
 
