@@ -76,6 +76,24 @@
                 }
             })
         </script> --}}
+        @if ($errors->any())
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    Swal.fire({
+                        toast: true,
+                        position: 'bottom-end',
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        html: @json(implode('<br>', $errors->all())),
+                        showConfirmButton: false,
+                        timer: 6000,
+                        timerProgressBar: true,
+                    });
+                });
+            </script>
+        @endif
+
+
     </div>
 
     <!-- App JS -->

@@ -90,6 +90,23 @@
                                     initTable();
                                 }
                             });
+                        },
+                        error: function (xhr) {
+                            if (xhr.status === 422) {
+                                const errors = xhr.responseJSON.errors;
+                                let messages = Object.values(errors).flat().join('<br>');
+
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'bottom-end',
+                                    icon: 'error',
+                                    title: 'Validasi Gagal',
+                                    html: messages,
+                                    showConfirmButton: false,
+                                    timer: 6000,
+                                    timerProgressBar: true
+                                });
+                            }
                         }
                     });
                 }
