@@ -1,80 +1,95 @@
 <script>
-    var table = 'table_company';
-    var form = 'form_company';
+    var table = 'table_questionnaire';
+    var form = 'form_questionnaire';
     var fields = [
         'id',
-        'name',
-        'company_type',
-        'scope',
-        'address',
+        'title',
+        'description',
+        'period_year',
+        'type',
+        'is_active',
     ];
 
-
     $(() => {
-
-        $('#company_type').select2({
+        $('#type').select2({
             dropdownParent: $('.viewForm')
         });
-        $('#scope').select2({
-            dropdownParent: $('.viewForm')
-        });
-
 
         loadBlock();
         initTable();
-    })
+    });
 
     showForm = () => {
         onReset();
-        // $('#modal_company').modal('show')
-        $('.viewForm').modal('show')
+        $('.viewForm').modal('show');
     }
 
-
     initTable = () => {
-        var table = $('#table_company').DataTable({
+        var table = $('#table_questionnaire').DataTable({
             processing: true,
             serverSide: true,
-            searchAble: true,
             searching: true,
             paging: true,
-            "bDestroy": true,
-            ajax: "{{ route('backoffice.master.company.table') }}",
+            bDestroy: true,
+            ajax: "{{ route('backoffice.questionnaire.table') }}",
             columns: [{
-                    "data": null,
-                    "sortable": false,
+                    data: null,
+                    sortable: false,
                     render: function(data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     }
                 },
                 {
-                    data: 'name',
-                    name: 'name',
+                    data: 'title',
+                    name: 'title',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.name??''}</span>`;
+                        return `<span>${full.title ?? ''}</span>`;
                     }
                 },
                 {
-                    data: 'company_type',
-                    name: 'company_type',
+                    data: 'description',
+                    name: 'description',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.company_type??''}</span>`;
+                        return `<span>${full.description ?? ''}</span>`;
                     }
                 },
                 {
-                    data: 'scope',
-                    name: 'scope',
+                    data: 'period_year',
+                    name: 'period_year',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.scope??''}</span>`;
+                        return `<span>${full.period_year ?? ''}</span>`;
                     }
                 },
                 {
-                    data: 'address',
-                    name: 'address',
+                    data: 'type',
+                    name: 'type',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.address??''}</span>`;
+                        let html = ``;
+                        if (full.type == 'alumni') {
+                            html += `<span>Alumni</span>`;
+                        } else {
+                            html += `<span>Atasan Alumni</span>`;
+                        }
+                        return html;
                     }
                 },
+                {
+                    data: 'is_active',
+                    name: 'is_active',
+                    render: function(data, type, full, meta) {
+                        let checked = full.is_active == 1 ? 'checked' : '';
+                        return `
+                            <div class="form-check form-switch">
+                                <input
+                                    class="form-check-input toggle-status"
+                                    type="checkbox"
+                                    data-id="${full.id}"
+                                    ${checked}>
+                            </div>
+                        `;
+                    }
+                },
+
                 {
                     data: 'action',
                     name: 'action',
@@ -83,20 +98,49 @@
                 },
             ]
         });
-        unblock()
+        unblock();
     }
+
+    $(document).on('change', '.toggle-status', function() {
+        let id = $(this).data('id');
+        let status = $(this).is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: "{{ route('backoffice.questionnaire.toggle-status', ['id' => '__ID__']) }}".replace(
+                '__ID__', id),
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                is_active: status
+            },
+            success: function(res) {
+                saMessage({
+                    success: res['success'],
+                    title: res['title'],
+                    message: res['message'],
+                    callback: function() {
+                        initTable();
+                    }
+                })
+            }
+        });
+
+    });
+
 
     onSave = () => {
         var formData = new FormData($(`[name="${form}"]`)[0]);
-        let id_company = $('#id').val();
+        let id_questionnaire = $('#id').val();
         let urlSave = "";
 
-        if (id_company == '' || id_company == null) {
-            urlSave = `{{ route('backoffice.master.company.store') }}`;
+        if (id_questionnaire == '' || id_questionnaire == null) {
+            urlSave = `{{ route('backoffice.questionnaire.store') }}`;
         } else {
-            urlSave = `{{ route('backoffice.master.company.update', ['id' => '__ID__']) }}`.replace('__ID__', id_company);
+            urlSave = `{{ route('backoffice.questionnaire.update', ['id' => '__ID__']) }}`.replace('__ID__',
+                id_questionnaire);
         }
-
 
         saConfirm({
             message: 'Are you sure you want to save the data?',
@@ -123,7 +167,7 @@
                                 }
                             })
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             if (xhr.status === 422) {
                                 const errors = xhr.responseJSON.errors;
                                 let messages = Object.values(errors).flat().join('<br>');
@@ -142,9 +186,8 @@
                         }
                     })
                 }
-
             }
-        })
+        });
     }
 
     onEdit = (el) => {
@@ -153,18 +196,22 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: `{{ route('backoffice.master.company.edit', ['id' => '__ID__']) }}`.replace('__ID__', id),
+            url: `{{ route('backoffice.questionnaire.edit', ['id' => '__ID__']) }}`.replace('__ID__',
+                id),
             data: {
                 id: id
             },
             method: 'post',
             success: function(data) {
-                showForm()
+                showForm();
                 $.each(fields, function(i, v) {
-                    $('#' + v).val(data[v]).change()
-                })
+                    if (v == 'is_active') {
+                        $('#' + v).prop('checked', data[v] == 1 ? true : false);
+                    }
+                    $('#' + v).val(data[v]).change();
+                });
             }
-        })
+        });
     }
 
     onDelete = (el) => {
@@ -177,32 +224,29 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: `{{ route('backoffice.master.company.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
+                        url: `{{ route('backoffice.questionnaire.destroy', ['id' => '__ID__']) }}`
+                            .replace('__ID__', id),
                         data: {
                             id: id
                         },
                         method: 'post',
-
                         success: function(res) {
                             saMessage({
                                 success: res['success'],
                                 title: res['title'],
                                 message: res['message']
-                            })
+                            });
                             initTable();
-
                         }
-                    })
+                    });
                 }
             }
         });
-
     }
-
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            $('#' + v).val('').change()
-        })
+            $('#' + v).val('').change();
+        });
     }
 </script>

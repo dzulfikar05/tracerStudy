@@ -20,7 +20,11 @@
                     <i class="align-middle " data-feather="layers"></i> <span class="align-middle">Master Data</span>
                 </a>
                 <ul id="masters"
-                    class="sidebar-dropdown list-unstyled collapse {{ set_show('pendidikan') }} {{ set_show('backoffice.master.job-category.index') }}"
+                    class="sidebar-dropdown list-unstyled collapse
+                    {{ set_show('backoffice.master.profession.index') }}
+                    {{ set_show('backoffice.master.profession-category.index') }}
+                    {{ set_show('backoffice.master.company.index') }}
+                    {{ set_show('backoffice.master.user.index') }}"
                     data-bs-parent="#sidebar">
                     <li class="sidebar-item {{ set_active('backoffice.master.profession-category.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.profession-category.index') }}">Kategori Profesi</a>
@@ -31,17 +35,16 @@
                     <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
                     </li>
-                    </li>
                     <li class="sidebar-item {{ set_active('backoffice.master.user.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.user.index') }}">User</a>
                     </li>
                 </ul>
             </li>
-            {{-- <li class="sidebar-item  {{ set_active('user') }}">
-                <a class="sidebar-link  " href="user">
-                    <i class="align-middle " data-feather="users"></i> <span class="align-middle">User</span>
+            <li class="sidebar-item  {{ set_active('backoffice.questionnaire.index') }}">
+                <a class="sidebar-link  " href="questionnaire">
+                    <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>
                 </a>
-            </li> --}}
+            </li>
 
         </ul>
 
