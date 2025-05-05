@@ -58,14 +58,28 @@
                     data: 'company_type',
                     name: 'company_type',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.company_type??''}</span>`;
+                        html = ``;
+                        if(full.company_type == 'state') {
+                            html = `Negeri`;
+                        }else if(full.company_type == 'private') {
+                            html = `Swasta`;
+                        }
+                        return `<span>${html??''}</span>`;
                     }
                 },
                 {
                     data: 'scope',
                     name: 'scope',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.scope??''}</span>`;
+                        html = ``;
+                        if(full.scope == 'local') {
+                            html = `Lokal`;
+                        }else if(full.scope == 'national') {
+                            html = `Nasional`;
+                        }else if(full.scope == 'international') {
+                            html = `Internasional`;
+                        }
+                        return `<span>${html??''}</span>`;
                     }
                 },
                 {

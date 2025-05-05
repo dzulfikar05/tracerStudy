@@ -24,6 +24,29 @@
             overflow-x: hidden;
         }
 
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .logo-text small {
+            font-size: 0.7rem;
+            display: block;
+        }
+
+
         /* Header Styles */
         .header {
             background-color: var(--secondary-color);
@@ -360,7 +383,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-4">
-                    <div class="logo-container1">
+                    <div class="logo-container">
                         <img src="{{ asset('img/logos/Logo_Polinema.png') }}" alt="Logo_Polinema">
                         <img src="{{ asset('img/logos/Logo_Jti.png') }}" alt="Logo_Jti">
                         <h1 class="logo-text">
@@ -379,7 +402,7 @@
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item active">
                                     <!-- filepath: c:\laragon\www\tracerStudy\resources\views\survey\index.blade.php -->
-                                    <a class="nav-link" href="{{ route('landingPage') }}">Home</a>
+                                    <a class="nav-link" href="/">Home</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#about">Tentang Tracer Study</a>
@@ -398,7 +421,7 @@
     <!-- Main Content -->
     <main class="content py-5">
         <div class="container">
-            <h1 class="h3 mb-5 text-primary" style="font-weight: 900;">
+            <h1 class="h3 mb-5 " style="font-weight: 900;">
                 Kuesioner Tracer Study Politeknik Negeri Malang.
             </h1>
 

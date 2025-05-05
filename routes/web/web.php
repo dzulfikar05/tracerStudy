@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('landingPage.index');
 });
+Route::get('/survey', function () {
+    return view('survey.index');
+});
 
 // Route::get('login/logout', function () {
     // return view('layouts.index');

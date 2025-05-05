@@ -15,6 +15,8 @@
 
     showForm = () => {
         onReset();
+        $('#password').attr('placeholder', "Password");
+
         $('.viewForm').modal('show');
     }
 
@@ -134,6 +136,7 @@
                 $.each(fields, function (i, v) {
                     if(v == 'password') {
                         $('#' + v).val('').change();
+                        $('#' + v).attr('placeholder', "Kosongkan password jika tidak ingin diubah");
                     }
                     $('#' + v).val(data[v]).change();
                 });

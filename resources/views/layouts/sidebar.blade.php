@@ -41,7 +41,7 @@
                 </ul>
             </li>
             <li class="sidebar-item  {{ set_active('backoffice.questionnaire.index') }}">
-                <a class="sidebar-link  " href="questionnaire">
+                <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
                     <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>
                 </a>
             </li>
