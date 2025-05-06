@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
 
 
+
 class ProfessionController extends Controller
 {
     public function index()
@@ -68,4 +69,35 @@ class ProfessionController extends Controller
 
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
     }
+
+    public function export_excel()
+    {
+        $professions = Profession::with('profession_category')->orderBy('id')->get();
+    
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Nama');
+        $sheet->setCellValue('C1', 'Kategori');
+    
+        $row = 2;
+        foreach ($professions as $profession) {
+            $sheet->setCellValue('A' . $row, $profession->id);
+            $sheet->setCellValue('B' . $row, $profession->name);
+            $sheet->setCellValue('C' . $row, $profession->profession_category->name ?? '-');
+            $row++;
+        }
+    
+        $filename = 'Data_Profesi_' . date('Y-m-d_H-i-s') . '.xlsx';
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+    
+
 }
