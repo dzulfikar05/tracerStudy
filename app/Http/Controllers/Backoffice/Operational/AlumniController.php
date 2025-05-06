@@ -1,0 +1,109 @@
+<?php
+
+namespace App\Http\Controllers\Backoffice\Operational;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AlumniRequest;
+use App\Models\Alumni;
+use App\Models\Company;
+use App\Models\Profession;
+use App\Models\ProfessionCategory;
+use App\Models\Superior;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Yajra\DataTables\DataTables;
+
+
+class AlumniController extends Controller
+{
+    public function index()
+    {
+        return view('layouts.index',[
+			'title' => 'Alumni',
+			'content' => view('backoffice.alumni.index')
+		]);
+    }
+
+    public function fetchAllSuperior(Request $request){
+        $data = Superior::get();
+        return response()->json($data);
+    }
+
+    public function initTable(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Alumni::with(
+                'company',
+                'profession.profession_category',
+                'superior'
+            )->get();
+
+            return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('company_name', function($row){
+                        return $row->company?->name ?? '';
+                    })
+                    ->addColumn('profession_category_name', function($row){
+                        return $row->profession?->profession_category?->name ?? '';
+                    })
+                    ->addColumn('profession_name', function($row){
+                        return $row->profession?->name ?? '';
+                    })
+                    ->addColumn('superior_name', function($row){
+                        return $row->superior?->name ?? '';
+                    })
+                    ->addColumn('action', function($row){
+                        $id = $row->id;
+                           $btn = '<div >
+                                        <a href="#" onclick="onEdit(this)" data-id="'.$id.'" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
+                                        <a href="#" onclick="onDelete(this)" data-id="'.$id.'" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
+                                </div>
+                                ';
+
+                            return $btn;
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+        }
+
+        return view('backoffice.alumni.index');
+    }
+
+    public function store(AlumniRequest $request){
+        $payload = $request->validated();
+        $operation = Alumni::insert($payload);
+        return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
+    }
+
+    public function edit($id){
+        $operation = Alumni::with('profession')->find($id);
+        return $operation;
+    }
+
+    public function update($id, AlumniRequest $request)
+    {
+        $operation = Alumni::where('id', $id)->update($request->validated());
+        return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
+    }
+
+    public function destroy($id){
+        $operation = Alumni::where('id', $id)->delete();
+
+        return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
+    }
+
+    public function fetchOption(Request $request){
+        $company = Company::get();
+        $profession = Profession::get();
+        $profession_category = ProfessionCategory::get();
+        $superior = Superior::get();
+        $prodi = Alumni::getProdi();
+        return response()->json([
+            'company' => $company,
+            'profession' => $profession,
+            'profession_category' => $profession_category,
+            'superior' => $superior,
+            'prodi' => $prodi
+        ]);
+    }
+}
