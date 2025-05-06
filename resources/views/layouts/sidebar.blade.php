@@ -40,6 +40,16 @@
                     </li>
                 </ul>
             </li>
+            <li class="sidebar-item  {{ set_active('backoffice.alumni.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
+                    <i class="align-middle " data-feather="users"></i> <span class="align-middle">Alumni</span>
+                </a>
+            </li>
+            <li class="sidebar-item  {{ set_active('backoffice.superior.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
+                    <i class="align-middle " data-feather="users"></i> <span class="align-middle">Atasan Alumni</span>
+                </a>
+            </li>
             <li class="sidebar-item  {{ set_active('backoffice.questionnaire.index') }}">
                 <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
                     <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>
