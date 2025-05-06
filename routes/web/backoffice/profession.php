@@ -8,6 +8,7 @@ Route::prefix('backoffice/master/profession')->as('backoffice.master.profession.
     ->middleware('auth')
     ->group(function () {
         Route::get('', [ProfessionController::class, 'index'])->name('index');
+        Route::get('fetch-all', [ProfessionController::class, 'fetchAll'])->name('fetch-all');
         Route::get('table', [ProfessionController::class, 'initTable'])->name('table');
         Route::post('store', [ProfessionController::class, 'store'])->name('store');
         Route::post('edit/{id}', [ProfessionController::class, 'edit'])->name('edit');
