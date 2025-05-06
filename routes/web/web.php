@@ -3,6 +3,9 @@
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,7 +23,7 @@ Route::get('/about', [HomeController::class, 'aboutIndex'])->name('about');
 
 
 // Route::get('login/logout', function () {
-    // return view('layouts.index');
+// return view('layouts.index');
 // })->name('login/logout');
 
 Route::get('/landingPage', function () {
