@@ -62,20 +62,6 @@
 
         </div>
 
-        {{-- <script>
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{ route('main/getPage') }}",
-                method: 'post',
-                success: function(data) {
-                    $.each(data, (i, v) => {
-                        $('.' + v['desc']).removeClass('d-none')
-                    })
-                }
-            })
-        </script> --}}
         @if ($errors->any())
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
