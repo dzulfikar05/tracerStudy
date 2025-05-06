@@ -48,7 +48,10 @@ class QuestionnaireController extends Controller
     }
 
     public function store(QuestionnaireRequest $request){
-        $operation = Questionnaire::insert($request->validated());
+        $data = $request->validated();
+        $data['is_active'] = false;
+
+        $operation = Questionnaire::insert($data);
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
 

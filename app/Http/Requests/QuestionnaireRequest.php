@@ -24,7 +24,7 @@ class QuestionnaireRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'is_active' => ['required', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
             'type' => ['required', 'string', 'in:alumni,superior'],
             'period_year' => ['required', 'string'],
         ];

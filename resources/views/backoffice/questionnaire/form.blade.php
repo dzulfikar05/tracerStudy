@@ -31,10 +31,6 @@
                         <label class="mb-2 required" for="description">Deskripsi</label>
                         <textarea id="description" required name="description" class="form-control mb-3" placeholder="Deskripsi"></textarea>
                     </div>
-                    <div class="form-label">
-                        <label class="mb-2 required" for="question">Status Display</label>
-                        <input id="is_active" name="is_active" class="form-check-input" type="checkbox" value="1">
-                    </div>
                     <div class="form-group mt-5 d-flex justify-content-end">
                         <button type="button" onclick="onReset()" class="btn btn-light me-3"><i class="align-middle"
                                 data-feather="rotate-ccw"> </i> Reset</button>
