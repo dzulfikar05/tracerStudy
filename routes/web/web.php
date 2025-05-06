@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,19 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('landingPage.index');
-});
-Route::get('/survey', function () {
-    return view('survey.index');
-});
+Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/list-survey', [HomeController::class, 'listSurveyIndex'])->name('list-survey');
+Route::get('/about', [HomeController::class, 'aboutIndex'])->name('about');
+
 
 // Route::get('login/logout', function () {
     // return view('layouts.index');
 // })->name('login/logout');
-Route::post('main/getPage', function () {
-    return "";
-})->name('main/getPage');
 
 Route::get('/landingPage', function () {
     return view('landingPage.index');
