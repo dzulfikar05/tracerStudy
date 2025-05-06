@@ -4,7 +4,7 @@
         Kuesioner Tracer Study Politeknik Negeri Malang.
     </h1>
 
-    <div class="survey-cards-vertical">
+    <div class="survey-cards-vertical ">
         @if($data)
             @foreach($data as $item)
                 <!-- Kuesioner Lulusan 1 -->
@@ -33,3 +33,4 @@
 
     </div>
 </div>
+<div style="height: 200px"></div>

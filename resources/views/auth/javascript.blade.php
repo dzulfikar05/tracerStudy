@@ -20,9 +20,6 @@
                         message: res['message'],
                         callback:function(res){
                             $('#password').val('')
-                            // if(res){
-                            //     location.reload()
-                            // }
                         }
                     });
                 }else{
