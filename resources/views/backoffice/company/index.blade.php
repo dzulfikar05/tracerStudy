@@ -25,6 +25,7 @@
                                 <th>Tipe Perusahaan</th>
                                 <th>Skala</th>
                                 <th>Alamat</th>
+                                <th>No Tlpn</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
