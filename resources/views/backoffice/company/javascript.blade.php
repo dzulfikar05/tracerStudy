@@ -100,16 +100,6 @@
                 {
                     data: 'action',
                     name: 'action',
-                    render: function(data, type, full, meta) {
-                        return `
-                            <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" onclick="onEdit(this)" data-id="${full.id}"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" onclick="onDelete(this)" data-id="${full.id}"><i class="fa-solid fa-trash"></i></button>
-                        `;
-                    }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
                     orderable: false,
                     searchable: false
                 },
