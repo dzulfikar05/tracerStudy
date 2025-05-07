@@ -102,7 +102,13 @@
                                 message: res['message'],
                                 callback: function() {
                                     if (res['success']) {
-                                        window.location.href = "/";
+                                        sendEmail({
+                                            name: res['data']['name'],
+                                            email: res['data']['email'],
+                                            passcode: res['data']['passcode'],
+                                            redirect_link: res['data']['link'],
+                                            company_name: "Jurusan Teknologi Informasi Politeknik Negeri Malang",
+                                        });
                                     }
                                 }
                             })
@@ -131,40 +137,62 @@
         })
     }
 
-    $('#formAddCompany').on('submit', function(e) {
-    e.preventDefault();
+    (function(){
+      emailjs.init({
+        publicKey: "bSz0C_s_3J3SWGx5N",
+      });
+   })();
 
-    const form = this;
-    const formData = new FormData(form);
+    function sendEmail(params) {
+        const templateParams = params;
 
-    $.ajax({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url: '/company',
-        method: 'post',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(res) {
-            const newOption = new Option(res.name, res.id, true, true);
-            $('.company_id').append(newOption).trigger('change');
-
-            $('#modalAddCompany').modal('hide');
-            form.reset();
-            onFetchOptionForm();
-
-            saMessage({
-                success: res['success'],
-                title: res['title'],
-                message: res['message'],
+        emailjs
+            .send("service_dqt1thn", "template_yhckvkj", templateParams)
+            .then(function(response) {
+                console.log("SUCCESS!", response.status, response.text);
+                window.location.href = "/";
+            })
+            .catch(function(error) {
+                console.error("FAILED...", error);
             });
-        },
+    }
 
+    $('#formAddCompany').on('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '/company',
+            method: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
+                const newOption = new Option(res.name, res.id, true, true);
+                $('.company_id').append(newOption).trigger('change');
+
+                $('#modalAddCompany').modal('hide');
+                form.reset();
+                onFetchOptionForm();
+
+                saMessage({
+                    success: res['success'],
+                    title: res['title'],
+                    message: res['message'],
+                });
+            },
+
+        });
     });
-});
+
 
 </script>
+
 <script>
     $(document).ready(function() {
         $('.btn-next').on('click', function(e) {

@@ -375,4 +375,9 @@
             $('#' + v).val('').change()
         })
     }
+    function modalAction(url) {
+    $('#myModal').load(url, function () {
+        $('#myModal').modal('show');
+    });
+}
 </script>

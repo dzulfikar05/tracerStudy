@@ -12,16 +12,21 @@ use App\Models\Superior;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Carbon\Carbon;
 
 class AlumniController extends Controller
 {
     public function index()
     {
         return view('layouts.index',[
-			'title' => 'Alumni',
-			'content' => view('backoffice.alumni.index')
-		]);
+            'title' => 'Alumni',
+            'content' => view('backoffice.alumni.index')
+        ]);
     }
 
     public function fetchAllSuperior(Request $request){
@@ -105,5 +110,113 @@ class AlumniController extends Controller
             'superior' => $superior,
             'prodi' => $prodi
         ]);
+    }
+
+    public function export_excel()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        // Header kolom
+        $sheet->setCellValue('A1', 'Nama Lengkap');
+        $sheet->setCellValue('B1', 'NIM');
+        $sheet->setCellValue('C1', 'Program Studi');
+        $sheet->setCellValue('D1', 'Tanggal Lulus');
+        $sheet->setCellValue('E1', 'Telepon');
+        $sheet->setCellValue('F1', 'Email');
+        $sheet->setCellValue('G1', 'Tanggal Mulai Kerja');
+        $sheet->setCellValue('H1', 'Tanggal Mulai Pekerjaan Sekarang');
+        $sheet->setCellValue('I1', 'Perusahaan');
+        $sheet->setCellValue('J1', 'Kategori Profesi');
+        $sheet->setCellValue('K1', 'Profesi');
+        $sheet->setCellValue('L1', 'Atasan');
+    
+        // Ambil data alumni
+        $alumni = Alumni::with(['company', 'profession.profession_category', 'superior'])->get();
+        $row = 2;
+        foreach ($alumni as $data) {
+            $sheet->setCellValue('A' . $row, $data->full_name);
+            $sheet->setCellValue('B' . $row, $data->nim);
+            $sheet->setCellValue('C' . $row, $data->study_program);
+            $sheet->setCellValue('D' . $row, $data->graduation_date);
+            $sheet->setCellValue('E' . $row, $data->phone);
+            $sheet->setCellValue('F' . $row, $data->email);
+            $sheet->setCellValue('G' . $row, $data->start_work_date);
+            $sheet->setCellValue('H' . $row, $data->start_work_now_date);
+            $sheet->setCellValue('I' . $row, $data->company?->name ?? '');
+            $sheet->setCellValue('J' . $row, $data->profession?->profession_category?->name ?? '');
+            $sheet->setCellValue('K' . $row, $data->profession?->name ?? '');
+            $sheet->setCellValue('L' . $row, $data->superior?->name ?? '');
+            $row++;
+        }
+    
+        // Siapkan file untuk diunduh
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
+    
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    public function import()
+    {
+        return view('backoffice.alumni.import');
+    }
+    
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_alumni' => ['required', 'mimes:xlsx', 'max:2048']
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+    
+            $file = $request->file('file_alumni');
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+    
+            $insert = [];
+            foreach ($data as $i => $row) {
+                if ($i == 1) continue;
+            
+                $date = Date::excelToDateTimeObject($row['D']);
+                $graduation_date = $date ? $date->format('Y-m-d') : null;
+
+                $insert[] = [
+                    'study_program' => $row['A'] ,
+                    'nim' => $row['B'] ,
+                    'full_name' => $row['C'] ,
+                    'graduation_date' => $graduation_date ,
+                ];
+            }
+
+            if (count($insert)) {
+                Alumni::insert($insert);
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data alumni berhasil diimport'
+                ]);
+            }
+    
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data untuk diimport'
+            ]);
+        }
     }
 }

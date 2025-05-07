@@ -26,6 +26,7 @@ class CompanyRequest extends FormRequest
             'company_type' => ['required', 'string'],
             'scope' => ['required', 'string'],
             'address' => ['required', 'string'],
+            'phone' => ['required', 'string'],
         ];
     }
 }
