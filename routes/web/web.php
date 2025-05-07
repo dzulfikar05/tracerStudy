@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backoffice\Master\CompanyController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,14 +16,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
-Route::get('/list-survey', [HomeController::class, 'listSurveyIndex'])->name('list-survey');
+Route::get('/list-questionnaire', [HomeController::class, 'listQuestionnaireIndex'])->name('list-questionnaire');
 Route::get('/about', [HomeController::class, 'aboutIndex'])->name('about');
 
+Route::get('/questionnaire/{id}', [HomeController::class, 'showQuestionnaireById'])->name('questionnaire.show');
 
-// Route::get('login/logout', function () {
-    // return view('layouts.index');
-// })->name('login/logout');
+Route::get('/fetch-option', [HomeController::class, 'fetchOption'])->name('fetch-option');
+Route::post('/validate-alumni', [HomeController::class, 'validateAlumni'])->name('validate-alumni');
+Route::get('/questionnaire/{id}/content', [HomeController::class, 'contentQuestionnaire'])->name('questionnaire.content');
+Route::post('/questionnaire/store-alumni', [HomeController::class, 'storeAlumni'])->name('questionnaire.store-alumni');
 
-Route::get('/landingPage', function () {
-    return view('landingPage.index');
-});
+Route::post('/company', [CompanyController::class, 'store']);
+
+

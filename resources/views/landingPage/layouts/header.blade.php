@@ -25,7 +25,7 @@
                                 <a class="nav-link" href="/about">Tentang Tracer Study</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/list-survey">Isi Survey</a>
+                                <a class="nav-link" href="/list-questionnaire">Isi Survey</a>
                             </li>
                         </ul>
                     </div>
