@@ -80,7 +80,7 @@ class CompanyController extends Controller
 
     public function export_excel()
     {
-        $companies = Company::select('name', 'company_type', 'scope', 'address')->orderBy('id')->get();
+        $companies = Company::select('name', 'company_type', 'scope', 'address', 'phone')->orderBy('id')->get();
     
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
