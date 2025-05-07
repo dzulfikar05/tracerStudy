@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backoffice\Master\CompanyController;
+use App\Http\Controllers\Backoffice\Operational\AlumniController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +26,13 @@ Route::get('/about', [HomeController::class, 'aboutIndex'])->name('about');
 Route::get('/questionnaire/{id}', [HomeController::class, 'showQuestionnaireById'])->name('questionnaire.show');
 
 Route::get('/fetch-option', [HomeController::class, 'fetchOption'])->name('fetch-option');
+Route::get('/fetch-alumni', [HomeController::class, 'fetchAlumni'])->name('fetch-alumni');
+
 Route::post('/validate-alumni', [HomeController::class, 'validateAlumni'])->name('validate-alumni');
+Route::post('/validate-superior', [HomeController::class, 'validateSuperior'])->name('validate-superior');
 Route::get('/questionnaire/{id}/content', [HomeController::class, 'contentQuestionnaire'])->name('questionnaire.content');
 Route::post('/questionnaire/store-alumni', [HomeController::class, 'storeAlumni'])->name('questionnaire.store-alumni');
+Route::post('/questionnaire/store-superior', [HomeController::class, 'storeSuperior'])->name('questionnaire.store-superior');
 
 Route::post('/company', [CompanyController::class, 'store']);
 

@@ -2,6 +2,7 @@
     var company_data = [];
     var profession_data = [];
     var profession_category_data = [];
+    var alumni = [];
 
     $(() => {
         $('.company_id').select2({
@@ -12,11 +13,16 @@
         $('.profession_id').select2({
             dropdownParent: $('.survey-cards')
         });
+        $('.alumni_id').select2({
+            dropdownParent: $('.survey-cards')
+        });
         $('.profession_category_id').select2({
             dropdownParent: $('.survey-cards')
         });
 
         onFetchOptionForm();
+
+        getOptionAlumni();
 
     })
 
@@ -38,6 +44,30 @@
                 setOptionCompany();
             }
         })
+    }
+
+
+    getOptionAlumni = () => {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `{{ route('fetch-alumni') }}`,
+            method: 'get',
+            success: (response) => {
+                alumni = response.alumni;
+                setOptionAlumni()
+            }
+        })
+    }
+
+    setOptionAlumni = () => {
+        $('.alumni_id').empty();
+        var html = `<option value="">-- Pilih Alumni --</option>`;
+        $.each(alumni, function(i, v) {
+            html += `<option value="${v.id}">${v.nim} - ${v.full_name}</option>`;
+        });
+        $('.alumni_id').append(html);
     }
 
     setOptionProfessionCategory = () => {
@@ -80,7 +110,55 @@
         }, 1000);
     }
 
-    onSave = () => {
+    onSaveSuperior = () => {
+        var formData = new FormData($(`[name="form_superior"]`)[0]);
+        saConfirm({
+            message: 'Are you sure you want to save the data?',
+            callback: function(res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: "{{ route('questionnaire.store-superior') }}",
+                        method: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(res) {
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message'],
+                                callback: function() {
+                                    window.location.href = "{{ route('index') }}";
+                                }
+                            })
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422) {
+                                const errors = xhr.responseJSON.errors;
+                                let messages = Object.values(errors).flat().join('<br>');
+
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'bottom-end',
+                                    icon: 'error',
+                                    title: 'Validasi Gagal',
+                                    html: messages,
+                                    showConfirmButton: false,
+                                    timer: 6000,
+                                    timerProgressBar: true
+                                });
+                            }
+                        }
+                    })
+                }
+
+            }
+        })
+    }
+    onSaveAlumni = () => {
         var formData = new FormData($(`[name="form_alumni"]`)[0]);
         saConfirm({
             message: 'Are you sure you want to save the data?',

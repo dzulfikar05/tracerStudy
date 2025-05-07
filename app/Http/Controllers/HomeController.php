@@ -63,7 +63,15 @@ class HomeController extends Controller
             'prodi' => $prodi,
             'company' => $company,
             'profession' => $profession,
-            'profession_category' => $profession_category
+            'profession_category' => $profession_category,
+        ]);
+    }
+
+    public function fetchAlumni(Request $request)
+    {
+        $alumni = Alumni::get();
+        return response()->json([
+            'alumni' => $alumni
         ]);
     }
 
@@ -80,7 +88,7 @@ class HomeController extends Controller
                 $status = false;
                 session(['code_validation' => false]);
             } else {
-                $code = str_replace('-', '', $alumni->nim . $alumni->graduation_date . $alumni->id);
+                $code = str_replace('-', '', $alumni->nim . $alumni->graduation_date .'.'.$alumni->id);
                 session(['code_validation' => $code]);
             }
         }
@@ -89,6 +97,32 @@ class HomeController extends Controller
             'success' => $status,
             'title' => $status == true ? 'Success' : 'Failed',
             'message' => $status == true ? 'Data Alumni Berhasil Di Validasi' : 'Data Alumni Tidak Ditemukan',
+        ];
+    }
+
+    public function validateSuperior(Request $request)
+    {
+        $params = $request->all();
+        $status = true;
+        $code = "";
+        $superior = Superior::where('email', $params['email'])->first();
+
+        if (!isset($superior)) {
+            $status = false;
+        } else {
+            if ($superior->passcode != $params['passcode']) {
+                $status = false;
+                session(['code_validation' => false]);
+            } else {
+                $code = str_replace('-', '', date('Ymd') . $superior->passcode .'.'. $superior->id);
+                session(['code_validation' => $code]);
+            }
+        }
+
+        return [
+            'success' => $status,
+            'title' => $status == true ? 'Success' : 'Failed',
+            'message' => $status == true ? 'Data Berhasil Di Validasi' : 'Data Gagal Di Validasi',
         ];
     }
 
@@ -101,7 +135,8 @@ class HomeController extends Controller
         }
 
         $questionnaire = Questionnaire::with('questions')->find($id);
-        $idUser = substr($code, -1);
+
+        $idUser = explode('.', $code)[1];
 
         $data = [
             'questionnaire' => $questionnaire,
@@ -117,6 +152,7 @@ class HomeController extends Controller
         } else {
             $data['superior'] = Superior::find($idUser);
         }
+
 
         return view('landingPage.layouts.index', [
             'content' => view('landingPage.content-questionnaire', [
@@ -134,7 +170,7 @@ class HomeController extends Controller
         }
 
         try {
-            DB::commit();
+            DB::beginTransaction();
 
 
             $params = $request->all();
@@ -182,6 +218,7 @@ class HomeController extends Controller
 
 
             DB::commit();
+            session(['code_validation' => false]);
 
             return [
                 'success' => true,
@@ -189,6 +226,52 @@ class HomeController extends Controller
                 'message' => 'Data Kuisioner Berhasil di Simpan ',
                 'data' => $emailParams
             ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'title' => 'Failed',
+                'message' => 'Data Kuisioner Gagal di Simpan',
+            ];
+        }
+    }
+
+    public function storeSuperior(Request $request)
+    {
+        $code = session('code_validation');
+        if (is_null($code)) {
+            return redirect()->route('index');
+        }
+        $idUser = explode('.', $code)[1];
+
+        try {
+            DB::beginTransaction();
+
+            $params = $request->all();
+            $paramsAnswer = [];
+
+            foreach ($params['answers'] as $key => $value) {
+                $paramsAnswer[] = [
+                    'filler_type' => "superior",
+                    'filler_id' => $idUser,
+                    'alumni_id' => $params['alumni_id'],
+                    'questionnaire_id' => $params['questionnaire_id'],
+                    'question_id' => $key,
+                    'answer' => $value,
+                ];
+            }
+
+            $answer = Answer::insert($paramsAnswer);
+            DB::commit();
+
+            session(['code_validation' => false]);
+
+            return [
+                'success' => true,
+                'title' => 'Success',
+                'message' => 'Data Kuisioner Berhasil di Simpan ',
+            ];
+
         } catch (\Exception $e) {
             DB::rollBack();
             return [
