@@ -81,10 +81,10 @@ class CompanyController extends Controller
     public function export_excel()
     {
         $companies = Company::select('name', 'company_type', 'scope', 'address', 'phone')->orderBy('id')->get();
-    
+
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         // Header
         $sheet->setCellValue('A1', 'Nama');
         $sheet->setCellValue('B1', 'Tipe Perusahaan');
@@ -92,7 +92,7 @@ class CompanyController extends Controller
         $sheet->setCellValue('D1', 'Alamat');
         $sheet->setCellValue('E1', 'No. Telepon');
 
-    
+
         $row = 2;
         foreach ($companies as $company) {
             $sheet->setCellValue('A' . $row, $company->name);
@@ -102,10 +102,10 @@ class CompanyController extends Controller
             $sheet->setCellValue('E' . $row, $company->phone);
             $row++;
         }
-    
+
         $filename = 'Data_Perusahaan_' . date('Y-m-d_H-i-s') . '.xlsx';
         $writer = new Xlsx($spreadsheet);
-    
+
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
         }, $filename, [

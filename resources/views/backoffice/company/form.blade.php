@@ -39,9 +39,9 @@
                         <textarea class="form-control  mb-3 col-12" name="address" id="address"></textarea>
                     </div>
                     <div class="form-label">
-                        <label class="mb-2 required col-12" for="phone">No Tlpn</label>
+                        <label class="mb-2 required col-12" for="phone">Telepon</label>
                         <input id="phone" name="phone" class="form-control mb-3" type="text"
-                            placeholder="No Tlpn">
+                            placeholder="Telepon, ex: 0341...">
                     </div>
 
                     <div class="form-group mt-5 d-flex justify-content-end">

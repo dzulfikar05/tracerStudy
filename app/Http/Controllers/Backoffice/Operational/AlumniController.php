@@ -23,13 +23,14 @@ class AlumniController extends Controller
 {
     public function index()
     {
-        return view('layouts.index',[
+        return view('layouts.index', [
             'title' => 'Alumni',
             'content' => view('backoffice.alumni.index')
         ]);
     }
 
-    public function fetchAllSuperior(Request $request){
+    public function fetchAllSuperior(Request $request)
+    {
         $data = Superior::get();
         return response()->json($data);
     }
@@ -44,43 +45,45 @@ class AlumniController extends Controller
             )->get();
 
             return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('company_name', function($row){
-                        return $row->company?->name ?? '';
-                    })
-                    ->addColumn('profession_category_name', function($row){
-                        return $row->profession?->profession_category?->name ?? '';
-                    })
-                    ->addColumn('profession_name', function($row){
-                        return $row->profession?->name ?? '';
-                    })
-                    ->addColumn('superior_name', function($row){
-                        return $row->superior?->name ?? '';
-                    })
-                    ->addColumn('action', function($row){
-                        $id = $row->id;
-                           $btn = '<div >
-                                        <a href="#" onclick="onEdit(this)" data-id="'.$id.'" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
-                                        <a href="#" onclick="onDelete(this)" data-id="'.$id.'" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
+                ->addIndexColumn()
+                ->addColumn('company_name', function ($row) {
+                    return $row->company?->name ?? '';
+                })
+                ->addColumn('profession_category_name', function ($row) {
+                    return $row->profession?->profession_category?->name ?? '';
+                })
+                ->addColumn('profession_name', function ($row) {
+                    return $row->profession?->name ?? '';
+                })
+                ->addColumn('superior_name', function ($row) {
+                    return $row->superior?->name ?? '';
+                })
+                ->addColumn('action', function ($row) {
+                    $id = $row->id;
+                    $btn = '<div >
+                                        <a href="#" onclick="onEdit(this)" data-id="' . $id . '" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
+                                        <a href="#" onclick="onDelete(this)" data-id="' . $id . '" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
                                 </div>
                                 ';
 
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
         return view('backoffice.alumni.index');
     }
 
-    public function store(AlumniRequest $request){
+    public function store(AlumniRequest $request)
+    {
         $payload = $request->validated();
         $operation = Alumni::insert($payload);
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $operation = Alumni::with('profession')->find($id);
         return $operation;
     }
@@ -91,13 +94,15 @@ class AlumniController extends Controller
         return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $operation = Alumni::where('id', $id)->delete();
 
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
     }
 
-    public function fetchOption(Request $request){
+    public function fetchOption(Request $request)
+    {
         $company = Company::get();
         $profession = Profession::get();
         $profession_category = ProfessionCategory::get();
@@ -116,7 +121,7 @@ class AlumniController extends Controller
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         // Header kolom
         $sheet->setCellValue('A1', 'Nama Lengkap');
         $sheet->setCellValue('B1', 'NIM');
@@ -130,7 +135,7 @@ class AlumniController extends Controller
         $sheet->setCellValue('J1', 'Kategori Profesi');
         $sheet->setCellValue('K1', 'Profesi');
         $sheet->setCellValue('L1', 'Atasan');
-    
+
         // Ambil data alumni
         $alumni = Alumni::with(['company', 'profession.profession_category', 'superior'])->get();
         $row = 2;
@@ -149,11 +154,11 @@ class AlumniController extends Controller
             $sheet->setCellValue('L' . $row, $data->superior?->name ?? '');
             $row++;
         }
-    
+
         // Siapkan file untuk diunduh
         $writer = new Xlsx($spreadsheet);
         $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
-    
+
         return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
         }, $filename, [
@@ -165,16 +170,16 @@ class AlumniController extends Controller
     {
         return view('backoffice.alumni.import');
     }
-    
+
     public function import_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'file_alumni' => ['required', 'mimes:xlsx', 'max:2048']
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -182,26 +187,32 @@ class AlumniController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
-    
+
             $file = $request->file('file_alumni');
             $reader = IOFactory::createReader('Xlsx');
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($file->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray(null, false, true, true);
-    
+
             $insert = [];
+
             foreach ($data as $i => $row) {
-                if ($i == 1) continue;
-            
+                if ($i == 1) continue; // Lewati header
+
+                $nim = $row['B'];
+                if (!$nim || Alumni::where('nim', $nim)->exists()) {
+                    continue; // Skip jika NIM kosong atau sudah ada di database
+                }
+
                 $date = Date::excelToDateTimeObject($row['D']);
                 $graduation_date = $date ? $date->format('Y-m-d') : null;
 
                 $insert[] = [
-                    'study_program' => $row['A'] ,
-                    'nim' => $row['B'] ,
-                    'full_name' => $row['C'] ,
-                    'graduation_date' => $graduation_date ,
+                    'study_program' => $row['A'],
+                    'nim' => $nim,
+                    'full_name' => $row['C'],
+                    'graduation_date' => $graduation_date,
                 ];
             }
 
@@ -212,10 +223,10 @@ class AlumniController extends Controller
                     'message' => 'Data alumni berhasil diimport'
                 ]);
             }
-    
+
             return response()->json([
                 'status' => false,
-                'message' => 'Tidak ada data untuk diimport'
+                'message' => 'Tidak ada data untuk diimport (mungkin semua NIM sudah ada)'
             ]);
         }
     }

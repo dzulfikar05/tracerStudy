@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('company_type', ['state', 'private']);
             $table->enum('scope', ['local', 'national', 'international']);
             $table->text('address');
-            $table->string('phone')->nullable();
+            $table->string('phone',20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
