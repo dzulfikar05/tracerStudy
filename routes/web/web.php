@@ -4,6 +4,9 @@ use App\Http\Controllers\Backoffice\Master\CompanyController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,5 +30,4 @@ Route::get('/questionnaire/{id}/content', [HomeController::class, 'contentQuesti
 Route::post('/questionnaire/store-alumni', [HomeController::class, 'storeAlumni'])->name('questionnaire.store-alumni');
 
 Route::post('/company', [CompanyController::class, 'store']);
-
 
