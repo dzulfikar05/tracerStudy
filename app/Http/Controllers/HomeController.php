@@ -163,9 +163,23 @@ class HomeController extends Controller
                 $superior = Superior::create($paramsSuperior);
             }
 
+            $passcode = rand(100000, 999999);
+            $superior->update(['passcode' => $passcode]);
+
+
             $paramsAlumni['superior_id'] = $superior->id;
+
             $alumni = Alumni::find($params['alumni_id'])->update($paramsAlumni);
             $answer = Answer::insert($paramsAnswer);
+
+            $emailParams = [
+                'passcode' => $superior->passcode,
+                'nim' => $params['alumni_id'],
+                'name' => $superior->full_name,
+                'link' => route('list-questionnaire'),
+                'email' => $superior->email
+            ];
+
 
             DB::commit();
 
@@ -173,6 +187,7 @@ class HomeController extends Controller
                 'success' => true,
                 'title' => 'Success',
                 'message' => 'Data Kuisioner Berhasil di Simpan ',
+                'data' => $emailParams
             ];
         } catch (\Exception $e) {
             DB::rollBack();
