@@ -80,7 +80,7 @@ class CompanyController extends Controller
 
     public function export_excel()
     {
-        $companies = Company::select('name', 'company_type', 'scope', 'address')->orderBy('id')->get();
+        $companies = Company::select('name', 'company_type', 'scope', 'address', 'phone')->orderBy('id')->get();
     
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -90,6 +90,8 @@ class CompanyController extends Controller
         $sheet->setCellValue('B1', 'Tipe Perusahaan');
         $sheet->setCellValue('C1', 'Skala');
         $sheet->setCellValue('D1', 'Alamat');
+        $sheet->setCellValue('E1', 'No. Telepon');
+
     
         $row = 2;
         foreach ($companies as $company) {
@@ -97,6 +99,7 @@ class CompanyController extends Controller
             $sheet->setCellValue('B' . $row, $company->type);
             $sheet->setCellValue('C' . $row, $company->scale);
             $sheet->setCellValue('D' . $row, $company->address);
+            $sheet->setCellValue('E' . $row, $company->phone);
             $row++;
         }
     
