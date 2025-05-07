@@ -37,6 +37,27 @@
                     </div>
                 </form>
             @else
+                <form action="javascript:validateSuperior(this)" method="post" id="form_superior" name="form_superior"
+                    autocomplete="off">
+                    <div class="row">
+                        <div class="form-label col-md-6">
+                            <label class="mb-2 required" for="email">Email</label>
+                            <input id="email" name="email" class="form-control mb-3" type="text"
+                                required placeholder="Email">
+                        </div>
+                        <div class="form-label col-md-6">
+                            <label class="mb-2 required" for="passcode">Token</label>
+                            <input id="passcode" name="passcode" class="form-control mb-3" type="text" maxlength="6"
+                                required>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-center mt-5">
+                            <button type="submit" class="btn btn-primary p-3 px-4 fw-bold rounded-pill">Cek Validasi
+                                Data</button>
+                        </div>
+
+                    </div>
+                </form>
             @endif
         @else
             <div class="card mb-4">
@@ -48,5 +69,5 @@
 
     </div>
 </div>
-<div style="height: 200px"></div>
+<div style="height: 250px"></div>
 @include('landingPage.script.script-validate')

@@ -57,4 +57,30 @@
             }
         })
     }
+
+    validateSuperior = () => {
+        var formData = new FormData($(`[name="form_superior"]`)[0]);
+        loadBlock();
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `{{ route('validate-superior') }}`,
+            method: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                unblock();
+                saMessage({
+                    success: res['success'],
+                    title: res['title'],
+                    message: res['message'],
+                    callback: function() {
+                        window.location.href = "{{ route('questionnaire.content', $questionnaire->id) }}";
+                    }
+                })
+            }
+        })
+    }
 </script>

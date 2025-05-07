@@ -68,11 +68,7 @@
 
     <!-- Footer -->
     @include('landingPage.layouts.footer')
-    <div class="copyright">
-        <div class="container">
-            &copy; 2025 Tracer Study Politeknik Negeri Malang. All Rights Reserved.
-        </div>
-    </div>
+
 
     <!-- jQuery and Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

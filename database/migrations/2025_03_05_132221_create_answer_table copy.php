@@ -20,6 +20,7 @@ return new class extends Migration
             $table->id();
             $table->enum('filler_type', ['alumni', 'superior']);
             $table->bigInteger('filler_id');
+            $table->bigInteger('alumni_id')->nullable(); //case if type superior
             $table->foreignIdFor(Questionnaire::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Question::class)->constrained()->cascadeOnDelete();
             $table->text('answer');

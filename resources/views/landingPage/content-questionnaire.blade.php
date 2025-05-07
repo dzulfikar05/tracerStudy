@@ -7,7 +7,8 @@
     <div class="survey-cards">
         @if ($isTrue)
             @if ($data['type'] == 'alumni')
-                <form action="javascript:onSave(this)" method="post" id="form_alumni" name="form_alumni" autocomplete="off">
+                <form action="javascript:onSaveAlumni(this)" method="post" id="form_alumni" name="form_alumni"
+                    autocomplete="off">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#data-diri"
@@ -101,7 +102,8 @@
                                             <option value="">- Pilih Perusahaan -</option>
                                         </select>
                                         <div class="input-group-append">
-                                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#modalAddCompany">
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-toggle="modal" data-target="#modalAddCompany">
                                                 + Tambah
                                             </button>
                                         </div>
@@ -231,7 +233,60 @@
                     </div>
                 </div>
             @else
-                {{-- atasan --}}
+                <form action="javascript:onSaveSuperior(this)" method="post" id="form_superior"
+                    name="form_superior" autocomplete="off">
+                    <input name="questionnaire_id" type="hidden" value="{{ $data['questionnaire']['id'] }}">
+                    <div class="form-label col-md-12 mb-3">
+                        <label class="mb-2 required col-12" for="alumni">Alumni</label>
+                        <select name="alumni_id" class="form-control mb-3 alumni_id" required>
+                            <option value="">- Pilih Alumni -</option>
+                        </select>
+                    </div>
+                    @if ($data['questions']->count() > 0)
+                        @foreach ($data['questions'] as $question)
+                            <div class="card mb-3 question-card" id="question_{{ $question->id }}"
+                                data-id="{{ $question->id }}">
+                                <div class="card-body">
+                                    <div class="form-label">
+                                        <label class="mb-2 required d-block">
+                                            {{ $question->question }}
+                                        </label>
+
+                                        @if ($question->type == 'choice' && $question->options)
+                                            <div class="row">
+                                                @foreach (json_decode($question->options, true) as $index => $option)
+                                                    <div class="col-2 text-center mt-2">
+                                                        <div
+                                                            style="display: flex; flex-direction: column; align-items: center;">
+                                                            <label
+                                                                for="question_{{ $question->id }}_option_{{ $index }}"
+                                                                style="font-size: small; text-align: center;">
+                                                                {{ $option }}
+                                                            </label>
+                                                            <input type="radio" name="answers[{{ $question->id }}]"
+                                                                id="question_{{ $question->id }}_option_{{ $index }}"
+                                                                value="{{ $option }}"
+                                                                style="margin-bottom: 5px;">
+
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @elseif ($question->type == 'essay')
+                                            <textarea name="answers[{{ $question->id }}]" class="form-control" rows="3"
+                                                placeholder="Tuliskan jawaban Anda di sini..."></textarea>
+                                        @endif
+
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary">Simpan Data</button>
+                        </div>
+                        <div style="height: 100px"></div>
+                    @endif
+                </form>
             @endif
         @else
             <div class="card mb-4">
