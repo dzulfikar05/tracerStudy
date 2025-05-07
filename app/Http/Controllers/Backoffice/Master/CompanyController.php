@@ -47,8 +47,14 @@ class CompanyController extends Controller
         return view('backoffice.company.index');
     }
 
-    public function store(CompanyRequest $request)
-    {
+
+    public function fetchAll(){
+        $operation = Company::get();
+        return $operation;
+    }
+
+    public function store(CompanyRequest $request){
+
         $operation = Company::insert($request->validated());
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }

@@ -48,8 +48,14 @@ class ProfessionController extends Controller
         return view('backoffice.profession.index');
     }
 
-    public function store(ProfessionRequest $request)
-    {
+
+    public function fetchAll(){
+        $operation = Profession::get();
+        return $operation;
+    }
+
+    public function store(ProfessionRequest $request){
+
         $operation = Profession::insert($request->validated());
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
@@ -101,4 +107,5 @@ class ProfessionController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
+
 }
