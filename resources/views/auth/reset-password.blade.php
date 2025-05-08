@@ -42,6 +42,9 @@
             color: white;
         }
     </style>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 </head>
 
 <body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
@@ -52,18 +55,20 @@
                 <div class="col-sm-7 d-flex justify-content-center align-items-center">
                     <div class="m-sm-4">
                         <span class="fs-1 fw-bolder text-primary"><span class="text-dark">App</span> Starter</span>
-                        <form action="javascript:onLogin(this)" method="post" id="form_login" name="form_login" autocomplete="off" class="mt-5">
+                        <form action="javascript:onReset(this)" method="post" id="form_reset" name="form_reset" autocomplete="off" class="mt-5">
                             @csrf
+                            <input type="hidden" name="email" id="email" value="{{ $email }}">
+                            <input type="hidden" name="token" id="token" value="{{ $token }}">
                             <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
+                                <label class="form-label">New Password</label>
+                                <input class="form-control form-control-lg" type="password" name="password" id="password" placeholder="Enter new password" required />
                             </div>
+
                             <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input class="form-control form-control-lg" id="password" type="password" name="password" placeholder="Enter your password" />
+                                <label class="form-label">Confirm Password</label>
+                                <input class="form-control form-control-lg" type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required />
                             </div>
-                            <a href="{{ route('auth.forgot-password') }}" style="float: right">Lupa Password ?</a>
-                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Log In</button>
+                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Reset Password</button>
                         </form>
                     </div>
                 </div>
