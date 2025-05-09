@@ -6,6 +6,7 @@
         'full_name',
         'nim',
         'study_program',
+        'study_start_year',
         'graduation_date',
         'phone',
         'email',
@@ -88,6 +89,13 @@
                     name: 'study_program',
                     render: function(data, type, full, meta) {
                         return `<span>${full.study_program ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'study_start_year',
+                    name: 'study_start_year',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.study_start_year ?? ''}</span>`;
                     }
                 },
                 {

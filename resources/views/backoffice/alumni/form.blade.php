@@ -27,6 +27,11 @@
                         </div>
 
                         <div class="form-label col-md-6">
+                            <label class="mb-2 required" for="study_start_year">Tahun Mulai Studi</label>
+                            <input id="study_start_year" name="study_start_year" class="form-control mb-3" type="number" min="1900" max="{{ date('Y') }}" required placeholder="Tahun Mulai Studi">
+                        </div>
+
+                        <div class="form-label col-md-6">
                             <label class="mb-2 required" for="graduation_date">Tanggal Lulus</label>
                             <input id="graduation_date" name="graduation_date" class="form-control mb-3" type="date" required>
                         </div>

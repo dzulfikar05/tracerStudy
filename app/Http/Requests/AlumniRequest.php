@@ -30,6 +30,7 @@ class AlumniRequest extends FormRequest
             'email'                => ['nullable', 'email'],
             'start_work_date'      => ['nullable', 'date'],
             'start_work_now_date'  => ['nullable', 'date'],
+            'study_start_year'     => ['required', 'digits:4'],
             'company_id'           => ['nullable', 'integer', 'exists:companies,id'],
             'profession_id'        => ['nullable', 'integer', 'exists:professions,id'],
             'superior_id'          => ['nullable', 'integer', 'exists:superiors,id'],

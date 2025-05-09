@@ -126,15 +126,16 @@ class AlumniController extends Controller
         $sheet->setCellValue('A1', 'Nama Lengkap');
         $sheet->setCellValue('B1', 'NIM');
         $sheet->setCellValue('C1', 'Program Studi');
-        $sheet->setCellValue('D1', 'Tanggal Lulus');
-        $sheet->setCellValue('E1', 'Telepon');
-        $sheet->setCellValue('F1', 'Email');
-        $sheet->setCellValue('G1', 'Tanggal Mulai Kerja');
-        $sheet->setCellValue('H1', 'Tanggal Mulai Pekerjaan Sekarang');
-        $sheet->setCellValue('I1', 'Perusahaan');
-        $sheet->setCellValue('J1', 'Kategori Profesi');
-        $sheet->setCellValue('K1', 'Profesi');
-        $sheet->setCellValue('L1', 'Atasan');
+        $sheet->setCellValue('D1', 'Tahun Mulai Studi');
+        $sheet->setCellValue('E1', 'Tanggal Lulus');
+        $sheet->setCellValue('F1', 'Telepon');
+        $sheet->setCellValue('G1', 'Email');
+        $sheet->setCellValue('H1', 'Tanggal Mulai Kerja');
+        $sheet->setCellValue('I1', 'Tanggal Mulai Pekerjaan Sekarang');
+        $sheet->setCellValue('J1', 'Perusahaan');
+        $sheet->setCellValue('K1', 'Kategori Profesi');
+        $sheet->setCellValue('L1', 'Profesi');
+        $sheet->setCellValue('M1', 'Atasan');
 
         // Ambil data alumni
         $alumni = Alumni::with(['company', 'profession.profession_category', 'superior'])->get();
@@ -143,15 +144,16 @@ class AlumniController extends Controller
             $sheet->setCellValue('A' . $row, $data->full_name);
             $sheet->setCellValue('B' . $row, $data->nim);
             $sheet->setCellValue('C' . $row, $data->study_program);
-            $sheet->setCellValue('D' . $row, $data->graduation_date);
-            $sheet->setCellValue('E' . $row, $data->phone);
-            $sheet->setCellValue('F' . $row, $data->email);
-            $sheet->setCellValue('G' . $row, $data->start_work_date);
-            $sheet->setCellValue('H' . $row, $data->start_work_now_date);
-            $sheet->setCellValue('I' . $row, $data->company?->name ?? '');
-            $sheet->setCellValue('J' . $row, $data->profession?->profession_category?->name ?? '');
-            $sheet->setCellValue('K' . $row, $data->profession?->name ?? '');
-            $sheet->setCellValue('L' . $row, $data->superior?->name ?? '');
+            $sheet->setCellValue('D' . $row, $data->study_start_year);
+            $sheet->setCellValue('E' . $row, $data->graduation_date);
+            $sheet->setCellValue('F' . $row, $data->phone);
+            $sheet->setCellValue('G' . $row, $data->email);
+            $sheet->setCellValue('H' . $row, $data->start_work_date);
+            $sheet->setCellValue('I' . $row, $data->start_work_now_date);
+            $sheet->setCellValue('J' . $row, $data->company?->name ?? '');
+            $sheet->setCellValue('K' . $row, $data->profession?->profession_category?->name ?? '');
+            $sheet->setCellValue('L' . $row, $data->profession?->name ?? '');
+            $sheet->setCellValue('M' . $row, $data->superior?->name ?? '');
             $row++;
         }
 
@@ -207,6 +209,7 @@ class AlumniController extends Controller
 
                 $date = Date::excelToDateTimeObject($row['D']);
                 $graduation_date = $date ? $date->format('Y-m-d') : null;
+
 
                 $insert[] = [
                     'study_program' => $row['A'],
