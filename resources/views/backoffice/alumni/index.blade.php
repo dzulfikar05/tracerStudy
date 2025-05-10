@@ -22,6 +22,7 @@
                                 <th>Nama Lengkap</th>
                                 <th>NIM</th>
                                 <th>Program Studi</th>
+                                <th>Tahun Angkatan </th>
                                 <th>Tanggal Lulus</th>
                                 <th>Telepon</th>
                                 <th>Email</th>
