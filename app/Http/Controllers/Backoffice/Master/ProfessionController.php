@@ -60,7 +60,7 @@ class ProfessionController extends Controller
         $keyName = strtolower(trim($params['name']));
         $exists = Profession::whereRaw('LOWER(TRIM(name)) = ?', [$keyName])->exists();
         if($exists){
-            return $this->sendResponse(false, 'Perusahaan Sudah Terdaftar', 'Gagal Menambahkan Data');
+            return $this->sendResponse(false, 'Perusahaan Sudah Terdaftar', 'Perusahaan Sudah Terdaftar');
         }
 
         $operation = Profession::insert($request->validated());
