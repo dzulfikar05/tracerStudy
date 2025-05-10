@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backoffice\Master\CompanyController;
-use App\Http\Controllers\Backoffice\Operational\AlumniController;
+use App\Http\Controllers\Backoffice\Master\ProfessionController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,4 +35,5 @@ Route::post('/questionnaire/store-alumni', [HomeController::class, 'storeAlumni'
 Route::post('/questionnaire/store-superior', [HomeController::class, 'storeSuperior'])->name('questionnaire.store-superior');
 
 Route::post('/company', [CompanyController::class, 'store']);
+Route::post('/profession', [ProfessionController::class, 'store']);
 
