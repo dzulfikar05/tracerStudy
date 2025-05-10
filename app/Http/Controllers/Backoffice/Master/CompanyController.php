@@ -55,6 +55,13 @@ class CompanyController extends Controller
 
     public function store(CompanyRequest $request){
 
+        $params = $request->validated();
+        $keyName = strtolower(trim($params['name']));
+        $exists = Company::whereRaw('LOWER(TRIM(name)) = ?', [$keyName])->exists();
+        if($exists){
+            return $this->sendResponse(false, 'Perusahaan Sudah Terdaftar', 'Gagal Menambahkan Data');
+        }
+
         $operation = Company::insert($request->validated());
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }

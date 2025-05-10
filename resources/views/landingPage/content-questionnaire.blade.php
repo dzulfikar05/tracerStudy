@@ -96,7 +96,7 @@
                                 </div> --}}
 
                                 <div class="form-group col-md-6">
-                                    <label for="profession_id" class="required">Perusahaan</label>
+                                    <label for="profession_id" class="required">Profesi</label>
                                     <div class="input-group">
                                         <select name="alumni[profession_id]" class="form-control profession_id" required>
                                             <option value="">- Pilih Profesi -</option>
@@ -238,6 +238,8 @@
                                         <option value="national">Nasional</option>
                                         <option value="international">Internasional</option>
                                     </select>
+                                    <input type="text" name="phone" class="form-control mb-2"
+                                        placeholder="Nomor Telepon, ex: 0341..." required  maxlength="14"/>
                                     <textarea name="address" class="form-control mb-2" placeholder="Alamat" required></textarea>
                                 </div>
                                 <div class="modal-footer">
