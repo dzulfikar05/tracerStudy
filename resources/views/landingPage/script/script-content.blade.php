@@ -72,11 +72,14 @@
 
     setOptionProfessionCategory = () => {
         $('.profession_category_id').empty();
-        var html = `<option value="">-- Pilih Kategori Pekerjaan --</option>`;
+        $('.profession_category_id_new').empty();
+
+        var html = `<option  selected disabled>-- Pilih Kategori Pekerjaan --</option>`;
         $.each(profession_category_data, function(i, v) {
             html += `<option value="${v.id}">${v.name}</option>`;
         });
         $('.profession_category_id').append(html);
+        $('.profession_category_id_new').append(html);
 
         $('.profession_category_id').val('{{ $data['alumni']['profession']['profession_category_id'] ?? '' }}')
             .change();
@@ -255,6 +258,39 @@
                 $('.company_id').append(newOption).trigger('change');
 
                 $('#modalAddCompany').modal('hide');
+                form.reset();
+                onFetchOptionForm();
+
+                saMessage({
+                    success: res['success'],
+                    title: res['title'],
+                    message: res['message'],
+                });
+            },
+
+        });
+    });
+
+    $('#formAddProfession').on('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '/profession',
+            method: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
+                const newOption = new Option(res.name, res.id, true, true);
+                $('.profession_id').append(newOption).trigger('change');
+
+                $('#modalAddProfession').modal('hide');
                 form.reset();
                 onFetchOptionForm();
 

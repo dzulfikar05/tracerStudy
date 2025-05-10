@@ -87,12 +87,27 @@
                                         <option value="">- Pilih Kategori Profesi -</option>
                                     </select>
                                 </div>
-                                <div class="form-label col-md-6">
+                                {{-- <div class="form-label col-md-6">
                                     <label class="mb-2 col-12 required" for="profession_id">Profesi</label>
                                     <select name="alumni[profession_id]" class="form-control mb-3 profession_id"
                                         style="width: 100%" required>
                                         <option value="">- Pilih Profesi -</option>
                                     </select>
+                                </div> --}}
+
+                                <div class="form-group col-md-6">
+                                    <label for="profession_id" class="required">Perusahaan</label>
+                                    <div class="input-group">
+                                        <select name="alumni[profession_id]" class="form-control profession_id" required>
+                                            <option value="">- Pilih Profesi -</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary btn-sm"
+                                                data-toggle="modal" data-target="#modalAddProfession">
+                                                + Tambah
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="form-group col-md-6">
@@ -224,6 +239,27 @@
                                         <option value="international">Internasional</option>
                                     </select>
                                     <textarea name="address" class="form-control mb-2" placeholder="Alamat" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal fade" id="modalAddProfession" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form id="formAddProfession">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Tambah Profesi</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <select name="profession_category_id" class="form-control mb-2 profession_category_id_new" required style="width: 100%">
+                                        <option value="">Pilih Kategori Profesi</option>
+                                    </select>
+
+                                    <input type="text" name="name" class="form-control mt-2" placeholder="Nama Perusahaan" required />
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Simpan</button>
