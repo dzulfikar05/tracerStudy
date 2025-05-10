@@ -199,8 +199,11 @@ class HomeController extends Controller
                 $superior = Superior::create($paramsSuperior);
             }
 
-            $passcode = rand(100000, 999999);
-            $superior->update(['passcode' => $passcode]);
+            $passcode = $superior->passcode;
+            if($passcode == null) {
+                $passcode = rand(100000, 999999);
+                $superior->update(['passcode' => $passcode]);
+            }
 
 
             $paramsAlumni['superior_id'] = $superior->id;
@@ -262,6 +265,15 @@ class HomeController extends Controller
             }
 
             $answer = Answer::insert($paramsAnswer);
+
+
+            $getCountAlumniSuperior = Alumni::where('superior_id', $idUser)->count();
+            $getCountSuperiorAnswer = Answer::where('filler_type', 'superior')->where('filler_id', $idUser)->count();
+
+            if ($getCountAlumniSuperior == $getCountSuperiorAnswer) {
+                Superior::where('id', $idUser)->update(['passcode' => null]);
+            }
+
             DB::commit();
 
             session(['code_validation' => false]);
