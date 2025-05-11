@@ -99,45 +99,44 @@
     };
 
     onDeleteAnswer = (el) => {
-    var fillerType = $(el).data('filler-type');
-    var fillerId = $(el).data('filler-id');
-    var questionnaireId = $(el).data('questionnaire-id');
+        var fillerType = $(el).data('filler-type');
+        var fillerId = $(el).data('filler-id');
+        var questionnaireId = $(el).data('questionnaire-id');
 
-    saConfirm({
-        message: 'Are you sure you want to delete this answer?',
-        callback: function(res) {
-            if (res) {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: `{{ route('backoffice.questionnaire.answer.delete') }}`,
-                    data: {
-                        filler_type: fillerType,
-                        filler_id: fillerId,
-                        questionnaire_id: questionnaireId
-                    },
-                    method: 'post',
-                    success: function(res) {
-                        saMessage({
-                            success: res['success'],
-                            title: res['title'],
-                            message: res['message']
-                        });
-                        // You can reload or refresh your table after the deletion
-                        $('#example').DataTable().ajax.reload();
-                    },
-                    error: function() {
-                        saMessage({
-                            success: false,
-                            title: 'Error',
-                            message: 'An error occurred while deleting the answer.'
-                        });
-                    }
-                });
+        saConfirm({
+            message: 'Are you sure you want to delete this answer?',
+            callback: function(res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: `{{ route('backoffice.questionnaire.answer.delete') }}`,
+                        data: {
+                            filler_type: fillerType,
+                            filler_id: fillerId,
+                            questionnaire_id: questionnaireId
+                        },
+                        method: 'post',
+                        success: function(res) {
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message']
+                            });
+                            // You can reload or refresh your table after the deletion
+                            $('#example').DataTable().ajax.reload();
+                        },
+                        error: function() {
+                            saMessage({
+                                success: false,
+                                title: 'Error',
+                                message: 'An error occurred while deleting the answer.'
+                            });
+                        }
+                    });
+                }
             }
-        }
-    });
-}
-
+        });
+    }
 </script>
