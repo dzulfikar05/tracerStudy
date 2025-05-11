@@ -42,9 +42,27 @@ class AlumniController extends Controller
                 'company',
                 'profession.profession_category',
                 'superior'
-            )->get();
+            );
 
-            return DataTables::of($data)
+
+            if ($request->filled('nim')) {
+                $data->where('nim', 'like', '%' . $request->nim . '%');
+            }
+
+            if ($request->filled('study_program')) {
+                $data->where('study_program', $request->study_program);
+            }
+
+            if ($request->filled('study_start_year')) {
+                $data->where('study_start_year', $request->study_start_year);
+            }
+
+            if ($request->filled('company_id')) {
+                $data->where('company_id', $request->company_id);
+            }
+
+
+            return DataTables::of($data->get())
                 ->addIndexColumn()
                 ->addColumn('company_name', function ($row) {
                     return $row->company?->name ?? '';
