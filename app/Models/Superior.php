@@ -13,4 +13,14 @@ class Superior extends Model
     protected $guarded = [];
     protected $table = "superiors";
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function alumni()
+    {
+        return $this->hasMany(Alumni::class);
+    }
+
 }

@@ -45,6 +45,7 @@
                     <i class="align-middle " data-feather="users"></i> <span class="align-middle">Alumni</span>
                 </a>
             </li>
+            <!--atasan alumni-->
             <li class="sidebar-item  {{ set_active('backoffice.superior.index') }}">
                 <a class="sidebar-link  " href="{{ route('backoffice.superior.index') }}">
                     <i class="align-middle " data-feather="users"></i> <span class="align-middle">Atasan Alumni</span>
