@@ -20,8 +20,10 @@
                         <select id="company_type" required name="company_type" class="form-control mb-3 col-12"
                             style="width: 100%">
                             <option value="">Pilih Kategori Perusahaan</option>
-                            <option value="state">Negri</option>
-                            <option value="private">Swasta</option>
+                            <option value="higher_education">Pendidikan Tinggi</option>
+                            <option value="government_agency">Instansi Pemerintah</option>
+                            <option value="state-owned_enterprise">BUMN</option>
+                            <option value="private_company">Perusahaan Swasta</option>
                         </select>
                     </div>
                     <div class="form-label">

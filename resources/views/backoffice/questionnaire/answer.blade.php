@@ -2,9 +2,9 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="table-responsive ">
+                <div class="table-responsive" style="overflow-x: auto;">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
-                        id="table_answer">
+                            id="table_answer">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
