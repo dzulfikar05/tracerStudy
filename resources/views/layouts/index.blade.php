@@ -37,6 +37,30 @@
 
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
+    {{-- <style>
+        .table-responsive {
+            overflow-x: scroll !important;
+            overflow-y: visible !important;
+            position: relative !important;
+        }
+
+
+        table {
+            table-layout: auto !important;
+            white-space: nowrap !important;
+        }
+
+        th,
+        td {
+            word-wrap: break-word !important;
+            overflow: hidden !important;
+            max-width: 200px !important;
+        }
+
+        .dropdown-menu {
+            z-index: 1050 !important;
+        }
+    </style> --}}
 
 </head>
 
@@ -64,7 +88,7 @@
 
         @if ($errors->any())
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
+                document.addEventListener('DOMContentLoaded', function() {
                     Swal.fire({
                         toast: true,
                         position: 'bottom-end',

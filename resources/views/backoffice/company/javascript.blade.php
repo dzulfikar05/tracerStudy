@@ -59,12 +59,17 @@
                     data: 'company_type',
                     name: 'company_type',
                     render: function(data, type, full, meta) {
-                        html = ``;
-                        if(full.company_type == 'state') {
-                            html = `Negeri`;
-                        }else if(full.company_type == 'private') {
-                            html = `Swasta`;
+                        let html = '';
+                        if (full.company_type === 'higher_education') {
+                            html = 'Perguruan Tinggi';
+                        } else if (full.company_type === 'government_agency') {
+                            html = 'Instansi Pemerintah';
+                        } else if (full.company_type === 'state-owned_enterprise') {
+                            html = 'BUMN';
+                        } else if (full.company_type === 'private_company') {
+                            html = 'Swasta';
                         }
+
                         return `<span>${html??''}</span>`;
                     }
                 },
@@ -73,11 +78,11 @@
                     name: 'scope',
                     render: function(data, type, full, meta) {
                         html = ``;
-                        if(full.scope == 'local') {
+                        if (full.scope == 'local') {
                             html = `Lokal`;
-                        }else if(full.scope == 'national') {
+                        } else if (full.scope == 'national') {
                             html = `Nasional`;
-                        }else if(full.scope == 'international') {
+                        } else if (full.scope == 'international') {
                             html = `Internasional`;
                         }
                         return `<span>${html??''}</span>`;
@@ -116,7 +121,8 @@
         if (id_company == '' || id_company == null) {
             urlSave = `{{ route('backoffice.master.company.store') }}`;
         } else {
-            urlSave = `{{ route('backoffice.master.company.update', ['id' => '__ID__']) }}`.replace('__ID__', id_company);
+            urlSave = `{{ route('backoffice.master.company.update', ['id' => '__ID__']) }}`.replace('__ID__',
+                id_company);
         }
 
 
@@ -145,7 +151,7 @@
                                 }
                             })
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             if (xhr.status === 422) {
                                 const errors = xhr.responseJSON.errors;
                                 let messages = Object.values(errors).flat().join('<br>');
@@ -199,7 +205,8 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: `{{ route('backoffice.master.company.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
+                        url: `{{ route('backoffice.master.company.destroy', ['id' => '__ID__']) }}`
+                            .replace('__ID__', id),
                         data: {
                             id: id
                         },

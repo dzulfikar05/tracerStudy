@@ -98,7 +98,8 @@
                                 <div class="form-group col-md-6">
                                     <label for="profession_id" class="required">Profesi</label>
                                     <div class="input-group">
-                                        <select name="alumni[profession_id]" class="form-control profession_id" required>
+                                        <select name="alumni[profession_id]" class="form-control profession_id"
+                                            required>
                                             <option value="">- Pilih Profesi -</option>
                                         </select>
                                         <div class="input-group-append">
@@ -229,9 +230,12 @@
                                         placeholder="Nama Perusahaan" required />
                                     <select name="company_type" class="form-control mb-2" required>
                                         <option value="">Pilih Tipe</option>
-                                        <option value="state">Negeri</option>
-                                        <option value="private">Swasta</option>
+                                        <option value="higher_education">Perguruan Tinggi</option>
+                                        <option value="government_agency">Instansi Pemerintah</option>
+                                        <option value="state-owned_enterprise">BUMN</option>
+                                        <option value="private_company">Swasta</option>
                                     </select>
+
                                     <select name="scope" class="form-control mb-2" required>
                                         <option value="">Pilih Skala</option>
                                         <option value="local">Lokal</option>
@@ -239,7 +243,7 @@
                                         <option value="international">Internasional</option>
                                     </select>
                                     <input type="text" name="phone" class="form-control mb-2"
-                                        placeholder="Nomor Telepon, ex: 0341..." required  maxlength="14"/>
+                                        placeholder="Nomor Telepon, ex: 0341..." required maxlength="14" />
                                     <textarea name="address" class="form-control mb-2" placeholder="Alamat" required></textarea>
                                 </div>
                                 <div class="modal-footer">
@@ -257,11 +261,14 @@
                                     <h5 class="modal-title">Tambah Profesi</h5>
                                 </div>
                                 <div class="modal-body">
-                                    <select name="profession_category_id" class="form-control mb-2 profession_category_id_new" required style="width: 100%">
+                                    <select name="profession_category_id"
+                                        class="form-control mb-2 profession_category_id_new" required
+                                        style="width: 100%">
                                         <option value="">Pilih Kategori Profesi</option>
                                     </select>
 
-                                    <input type="text" name="name" class="form-control mt-2" placeholder="Nama Perusahaan" required />
+                                    <input type="text" name="name" class="form-control mt-2"
+                                        placeholder="Nama Perusahaan" required />
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Simpan</button>
