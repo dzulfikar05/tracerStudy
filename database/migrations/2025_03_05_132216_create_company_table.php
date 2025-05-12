@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('company_type', ['state', 'private']);
+            $table->enum('company_type', ['higher_education', 'government_agency', 'state-owned_enterprise', 'private_company']);
             $table->enum('scope', ['local', 'national', 'international']);
             $table->text('address');
+            $table->string('phone',20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

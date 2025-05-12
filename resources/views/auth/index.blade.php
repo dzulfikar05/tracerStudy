@@ -62,6 +62,7 @@
                                 <label class="form-label">Password</label>
                                 <input class="form-control form-control-lg" id="password" type="password" name="password" placeholder="Enter your password" />
                             </div>
+                            <a href="{{ route('auth.forgot-password') }}" style="float: right">Lupa Password ?</a>
                             <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Log In</button>
                         </form>
                     </div>

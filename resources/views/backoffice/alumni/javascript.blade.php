@@ -6,6 +6,7 @@
         'full_name',
         'nim',
         'study_program',
+        'study_start_year',
         'graduation_date',
         'phone',
         'email',
@@ -39,6 +40,12 @@
         $('#study_program').select2({
             dropdownParent: $('.viewForm')
         });
+        $('#filter_company_id').select2({
+            dropdownParent: $('.filterModal')
+        });
+        $('#filter_study_program').select2({
+            dropdownParent: $('.filterModal')
+        });
 
 
         loadBlock();
@@ -61,7 +68,15 @@
             searching: true,
             paging: true,
             "bDestroy": true,
-            ajax: "{{ route('backoffice.alumni.table') }}",
+            ajax: {
+                url: "{{ route('backoffice.alumni.table') }}",
+                data: function(d) {
+                    d.nim = $('#filter_nim').val();
+                    d.study_program = $('#filter_study_program').val();
+                    d.study_start_year = $('#filter_study_start_year').val();
+                    d.company_id = $('#filter_company_id').val();
+                }
+            },
             columns: [{
                     data: null,
                     sortable: false,
@@ -88,6 +103,13 @@
                     name: 'study_program',
                     render: function(data, type, full, meta) {
                         return `<span>${full.study_program ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'study_start_year',
+                    name: 'study_start_year',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.study_start_year ?? ''}</span>`;
                     }
                 },
                 {
@@ -248,11 +270,13 @@
     }
 
     setOptionProdi = () => {
+        $('#filter_study_program').empty();
         $('#study_program').empty();
         var html = `<option value="">-- Pilih Prodi --</option>`;
         $.each(prodi_data, function(i, v) {
             html += `<option value="${v}">${v}</option>`;
         });
+        $('#filter_study_program').append(html);
         $('#study_program').append(html);
     }
 
@@ -279,11 +303,13 @@
 
     setOptionCompany = () => {
         $('#company_id').empty();
+        $('#filter_company_id').empty();
         var html = `<option value="">-- Pilih Perusahaan --</option>`;
         $.each(company_data, function(i, v) {
             html += `<option value="${v.id}">${v.name}</option>`;
         });
         $('#company_id').append(html);
+        $('#filter_company_id').append(html);
     }
 
     $('#company_id').on('change', function() {
@@ -321,7 +347,8 @@
                     $.each(fields, function(i, v) {
                         $('#' + v).val(data[v]).change()
                     })
-                    $('#profession_category_id').val(data.profession.profession_category_id).change();
+                    $('#profession_category_id').val(data.profession.profession_category_id)
+                        .change();
                     setTimeout(() => {
                         $('#profession_id').val(data.profession_id).change();
                     }, 500);
@@ -374,5 +401,24 @@
         $.each(fields, function(i, v) {
             $('#' + v).val('').change()
         })
+    }
+
+    function modalAction(url) {
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
+        });
+    }
+
+    function applyFilter() {
+        $('#filterModal').modal('hide');
+        initTable();
+    }
+
+    function resetFilter() {
+        $('#filter_nim').val('');
+        $('#filter_study_program').val('').change();
+        $('#filter_study_start_year').val('');
+        $('#filter_company_id').val('').change();
+        initTable();
     }
 </script>

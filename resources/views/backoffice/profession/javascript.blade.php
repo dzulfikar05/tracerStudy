@@ -28,7 +28,6 @@
     }
 
     getCategory = () => {
-
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -207,4 +206,10 @@
             $('#' + v).val('').change()
         })
     }
+    
+    function modalAction(url = '') {
+    $('#myModal').load(url, function () {
+        $('#myModal').modal('show');
+    });
+}
 </script>

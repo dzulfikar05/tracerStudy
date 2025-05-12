@@ -5,7 +5,7 @@
         </a>
 
         <ul class="sidebar-nav">
-            <li class="menu-dashboard d-none sidebar-item  {{ set_active('dashboard') }}">
+            <li class="menu-dashboard sidebar-item  {{ set_active('dashboard') }}">
                 <a class="sidebar-link  " href="/">
                     <i class="align-middle " data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                 </a>
@@ -51,12 +51,14 @@
                     <i class="align-middle " data-feather="users"></i> <span class="align-middle">Atasan Alumni</span>
                 </a>
             </li>
-            <li class="sidebar-item  {{ set_active('backoffice.questionnaire.index') }}">
+            <li class="sidebar-item
+                {{ set_active('backoffice.questionnaire.index') }}
+                {{ set_active('backoffice.questionnaire.show') }}
+             ">
                 <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
                     <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>
                 </a>
             </li>
-
         </ul>
 
         {{-- <div class="sidebar-cta">

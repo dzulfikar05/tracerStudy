@@ -14,4 +14,5 @@ Route::prefix('backoffice/master/company')->as('backoffice.master.company.')
         Route::post('edit/{id}', [CompanyController::class, 'edit'])->name('edit');
         Route::post('update/{id}', [CompanyController::class, 'update'])->name('update');
         Route::post('destroy/{id}', [CompanyController::class, 'destroy'])->name('destroy');
+        Route::get('/export', [CompanyController::class, 'export_excel'])->name('export');
     });

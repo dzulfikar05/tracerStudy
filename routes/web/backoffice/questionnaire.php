@@ -22,5 +22,8 @@ Route::prefix('backoffice/questionnaire')->as('backoffice.questionnaire.')
         Route::post('{id}/question/{question}', [QuestionController::class, 'update'])->name('question.update');
         Route::delete('{id}/question/{question}', [QuestionController::class, 'destroy'])->name('question.destroy');
 
+        Route::get('show-answer/{id}', [QuestionnaireController::class, 'showAnswer'])->name('show-answer');
+        Route::get('answer-table/{id}', [QuestionnaireController::class, 'answerTable'])->name('answer-table');
+        Route::post('answer/delete', [QuestionnaireController::class, 'deleteAnswer'])->name('answer.delete');
 
     });

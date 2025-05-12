@@ -7,11 +7,17 @@
             </div> --}}
             <div class="card-body">
                 <div class="form-group d-flex justify-content-end mb-3">
-                    <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle" data-feather="plus"> </i> Tambah</button>
-                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle" data-feather="rotate-ccw"> </i> Refresh</button>
+                    <button type="button"
+                        onclick="window.location.href='{{ route('backoffice.master.company.export') }}'"
+                        class="btn btn-primary me-3"><i class="align-middle" data-feather="file-text"></i> Export</button>
+                    <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle"
+                            data-feather="plus"> </i> Tambah</button>
+                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
+                            data-feather="rotate-ccw"> </i> Refresh</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100" id="table_company">
+                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
+                        id="table_company">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
@@ -19,6 +25,7 @@
                                 <th>Tipe Perusahaan</th>
                                 <th>Skala</th>
                                 <th>Alamat</th>
+                                <th>Telepon</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>

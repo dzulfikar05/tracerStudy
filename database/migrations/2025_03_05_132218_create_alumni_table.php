@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('email', 60)->nullable();
             $table->date('start_work_date')->nullable();
             $table->date('start_work_now_date')->nullable();
+            $table->string('study_start_year', 4)->nullable()->comment('tahun awal kuliah/angkatan');
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete()->nullable();
             $table->foreignIdFor(Profession::class)->constrained()->cascadeOnDelete()->nullable();
             $table->foreignIdFor(Superior::class)->constrained()->cascadeOnDelete()->nullable();

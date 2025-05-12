@@ -47,3 +47,8 @@
         </div>
     </div>
 </footer>
+<div class="copyright">
+    <div class="container">
+        &copy; 2025 Tracer Study Politeknik Negeri Malang. All Rights Reserved.
+    </div>
+</div>

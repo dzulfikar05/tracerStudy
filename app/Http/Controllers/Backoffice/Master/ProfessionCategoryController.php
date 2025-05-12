@@ -7,9 +7,7 @@ use App\Http\Requests\ProfessionCategoryRequest;
 use App\Models\ProfessionCategory;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 
 class ProfessionCategoryController extends Controller

@@ -15,10 +15,10 @@ class ProfessionController extends Controller
 {
     public function index()
     {
-        return view('layouts.index',[
-			'title' => 'Profession',
-			'content' => view('backoffice.profession.index')
-		]);
+        return view('layouts.index', [
+            'title' => 'Profession',
+            'content' => view('backoffice.profession.index')
+        ]);
     }
 
     public function initTable(Request $request)
@@ -27,26 +27,27 @@ class ProfessionController extends Controller
             $data = Profession::with('profession_category')->get();
 
             return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('profession_category_name', function($row){
-                        return $row->profession_category->name;
-                    })
-                    ->addColumn('action', function($row){
-                        $id = $row->id;
-                           $btn = '<div >
-                                        <a href="#" onclick="onEdit(this)" data-id="'.$id.'" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
-                                        <a href="#" onclick="onDelete(this)" data-id="'.$id.'" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
+                ->addIndexColumn()
+                ->addColumn('profession_category_name', function ($row) {
+                    return $row->profession_category->name;
+                })
+                ->addColumn('action', function ($row) {
+                    $id = $row->id;
+                    $btn = '<div >
+                                        <a href="#" onclick="onEdit(this)" data-id="' . $id . '" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
+                                        <a href="#" onclick="onDelete(this)" data-id="' . $id . '" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
                                 </div>
                                 ';
 
-                            return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
         return view('backoffice.profession.index');
     }
+
 
     public function fetchAll(){
         $operation = Profession::get();
@@ -54,11 +55,20 @@ class ProfessionController extends Controller
     }
 
     public function store(ProfessionRequest $request){
+
+        $params = $request->validated();
+        $keyName = strtolower(trim($params['name']));
+        $exists = Profession::whereRaw('LOWER(TRIM(name)) = ?', [$keyName])->exists();
+        if($exists){
+            return $this->sendResponse(false, 'Perusahaan Sudah Terdaftar', 'Perusahaan Sudah Terdaftar');
+        }
+
         $operation = Profession::insert($request->validated());
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $operation = Profession::find($id);
         return $operation;
     }
@@ -69,7 +79,8 @@ class ProfessionController extends Controller
         return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $operation = Profession::where('id', $id)->delete();
 
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
@@ -103,6 +114,5 @@ class ProfessionController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
-
 
 }
