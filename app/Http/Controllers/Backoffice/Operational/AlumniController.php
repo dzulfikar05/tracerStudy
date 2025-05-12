@@ -90,7 +90,7 @@ class AlumniController extends Controller
                 ->make(true);
         }
 
-        return view('backoffice.alumni.index');
+        return view('backoffice.alumni.index'); 
     }
 
     public function store(AlumniRequest $request)

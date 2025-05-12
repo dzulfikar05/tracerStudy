@@ -1,0 +1,229 @@
+<script>
+    var table = 'table_superiors';
+    var form = 'form_superiors';
+    var fields = [
+        'id',
+        'full_name',
+        'position',
+        'phone',
+        'email',
+        'company_id'
+    ];
+
+    var company_data = [];
+
+    $(() => {
+        $('#company_id').select2({
+            dropdownParent: $('.viewForm')
+        });
+
+        loadBlock();
+        initTable();
+        onFetchOptionForm();
+    })
+
+    showForm = () => {
+        onReset();
+        $('.viewForm').modal('show');
+    }
+
+    initTable = () => {
+        var table = $('#table_superiors').DataTable({
+            processing: true,
+            serverSide: true,
+            searchAble: true,
+            searching: true,
+            paging: true,
+            "bDestroy": true,
+            ajax: "{{ route('backoffice.superior.table') }}",
+            columns: [
+                {
+                    data: null,
+                    sortable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: 'full_name',
+                    name: 'full_name',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.full_name ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'position',
+                    name: 'position',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.position ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'phone',
+                    name: 'phone',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.phone ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'email',
+                    name: 'email',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.email ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'company_name',
+                    name: 'company_name',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.company_name ?? ''}</span>`;
+                    }
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                }
+            ]
+        });
+        unblock();
+    }
+
+    onSave = () => {
+        var formData = new FormData($(`[name="${form}"]`)[0]);
+        let id_superior = $('#id').val();
+        let urlSave = "";
+
+        if (!id_superior) {
+            urlSave = `{{ route('backoffice.superior.store') }}`;
+        } else {
+            urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__', id_superior);
+        }
+
+        saConfirm({
+            message: 'Apakah Anda yakin ingin menyimpan data?',
+            callback: function(res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: urlSave,
+                        method: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(res) {
+                            $('.viewForm').modal('hide');
+                            onReset();
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message'],
+                                callback: function() {
+                                    initTable();
+                                }
+                            });
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422) {
+                                const errors = xhr.responseJSON.errors;
+                                let messages = Object.values(errors).flat().join('<br>');
+
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'bottom-end',
+                                    icon: 'error',
+                                    title: 'Validasi Gagal',
+                                    html: messages,
+                                    showConfirmButton: false,
+                                    timer: 6000,
+                                    timerProgressBar: true
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    onFetchOptionForm = () => {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `{{ route('backoffice.superior.fetch-option') }}`,
+            method: 'get',
+            success: function(data) {
+                company_data = data.companies;
+                setOptionCompany();
+            }
+        });
+    }
+
+    setOptionCompany = () => {
+        $('#company_id').empty();
+        var html = `<option value="">-- Pilih Perusahaan --</option>`;
+        $.each(company_data, function(i, v) {
+            html += `<option value="${v.id}">${v.name}</option>`;
+        });
+        $('#company_id').append(html);
+    }
+
+    onEdit = (el) => {
+        var id = $(el).data('id');
+        // Remove the .then() since setOptionCompany doesn't return a promise
+        setOptionCompany(); // This line changed
+        
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '{{ route('backoffice.superior.edit', ['id' => '__ID__']) }}'.replace('__ID__', id),
+            data: { id: id },
+            method: 'post',
+            success: function(data) {
+                showForm();
+                $.each(fields, function(i, v) {
+                    $('#' + v).val(data[v]).change();
+                });
+                $('#company_id').val(data.company_id).change();
+            }
+        });
+    }
+
+    onDelete = (el) => {
+        var id = $(el).data('id');
+        saConfirm({
+            message: 'Apakah Anda yakin ingin menghapus data?',
+            callback: function(res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: `{{ route('backoffice.superior.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
+                        data: { id: id },
+                        method: 'post',
+                        success: function(res) {
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message']
+                            });
+                            initTable();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    onReset = () => {
+        $.each(fields, function(i, v) {
+            $('#' + v).val('').change();
+        });
+    }
+</script>
