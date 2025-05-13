@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 
-    <title>App Starter</title>
+    <title>Reset Password</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/light.css') }}" rel="stylesheet">
@@ -54,7 +54,7 @@
             <div class="row">
                 <div class="col-sm-7 d-flex justify-content-center align-items-center">
                     <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">App</span> Starter</span>
+                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Reset</span> Password</span>
                         <form action="javascript:onReset(this)" method="post" id="form_reset" name="form_reset" autocomplete="off" class="mt-5">
                             @csrf
                             <input type="hidden" name="email" id="email" value="{{ $email }}">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('assets/logo/smk.png') }}" alt="Login image" class="w-100 vh-100" style="object-fit: cover;">
+                    <img src="{{ asset('img/logos/smk.png') }}" alt="Login image" class="w-100 vh-100" style="object-fit: cover;">
                 </div>
             </div>
         </div>
