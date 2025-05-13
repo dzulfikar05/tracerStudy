@@ -67,6 +67,11 @@
                                 </div>
 
                                 <div class="form-label col-md-6">
+                                    <label class="mb-2 required" for="study_start_year">Tahun Angkatan</label>
+                                    <input name="alumni[study_start_year]" class="form-control mb-3"
+                                        value="{{ $data['alumni']['study_start_year'] }}" type="text" required maxlength="4">
+                                </div>
+                                <div class="form-label col-md-6">
                                     <label class="mb-2 required" for="start_work_date">Tanggal Mulai Kerja</label>
                                     <input name="alumni[start_work_date]" class="form-control mb-3"
                                         value="{{ $data['alumni']['start_work_date'] }}" type="date" required>

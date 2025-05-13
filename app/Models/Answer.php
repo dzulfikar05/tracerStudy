@@ -24,7 +24,7 @@ class Answer extends Model
     }
     public function alumni()
     {
-        return $this->belongsTo(Alumni::class);
+        return $this->belongsTo(Alumni::class, 'alumni_id');
     }
 
     public function questionnaire()

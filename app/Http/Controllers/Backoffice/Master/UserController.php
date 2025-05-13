@@ -110,7 +110,6 @@ class UserController extends Controller
         $sheet->setCellValue('A1', 'ID');
         $sheet->setCellValue('B1', 'Nama');
         $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Email Diverifikasi');
         $sheet->setCellValue('E1', 'Tanggal Dibuat');
 
         // Isi data mulai dari baris ke-2
@@ -119,7 +118,6 @@ class UserController extends Controller
             $sheet->setCellValue('A' . $row, $user->id);
             $sheet->setCellValue('B' . $row, $user->name);
             $sheet->setCellValue('C' . $row, $user->email);
-            $sheet->setCellValue('D' . $row, $user->email_verified_at ?? 'Belum Diverifikasi');
             $sheet->setCellValue('E' . $row, $user->created_at);
             $row++;
         }
