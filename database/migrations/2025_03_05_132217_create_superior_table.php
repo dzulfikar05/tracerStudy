@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone', 20);
             $table->string('email', 60);
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
-            $table->string('passcode', 6);
+            $table->string('passcode', 6)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

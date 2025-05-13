@@ -41,7 +41,19 @@
             }, {
                 data: 'study_program',
                 title: 'Program Studi'
-            });
+            }, {
+                data: 'superior_name',
+                title: 'Atasan '
+            },
+            {
+                data: 'superior_position',
+                title: 'Posisi Atasan'
+            },
+            {
+                data: 'superior_email',
+                title: 'Email Atasan'
+            },
+        );
         } else if (type === 'superior') {
             columns.push({
                 data: 'position',

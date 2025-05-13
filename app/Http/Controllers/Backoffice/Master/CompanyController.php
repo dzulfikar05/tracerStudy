@@ -48,17 +48,19 @@ class CompanyController extends Controller
     }
 
 
-    public function fetchAll(){
+    public function fetchAll()
+    {
         $operation = Company::get();
         return $operation;
     }
 
-    public function store(CompanyRequest $request){
+    public function store(CompanyRequest $request)
+    {
 
         $params = $request->validated();
         $keyName = strtolower(trim($params['name']));
         $exists = Company::whereRaw('LOWER(TRIM(name)) = ?', [$keyName])->exists();
-        if($exists){
+        if ($exists) {
             return $this->sendResponse(false, 'Perusahaan Sudah Terdaftar', 'Gagal Menambahkan Data');
         }
 
@@ -102,9 +104,29 @@ class CompanyController extends Controller
 
         $row = 2;
         foreach ($companies as $company) {
+            $companyType = "";
+            if ($company->company_type == 'private_company') {
+                $companyType = "Perusahaan Swasta";
+            } elseif ($company->company_type == 'state-owned_enterprise') {
+                $companyType = "BUMN";
+            } elseif ($company->company_type == 'higher_education') {
+                $companyType = "Perguruan Tinggi";
+            } elseif ($company->company_type == 'government_agency') {
+                $companyType = "Instansi Pemerintah";
+            }
+
+            $scopeLabel = "";
+            if ($company->scope == 'local') {
+                $scopeLabel = "Lokal";
+            } elseif ($company->scope == 'national') {
+                $scopeLabel = "Nasional";
+            } elseif ($company->scope == 'international') {
+                $scopeLabel = "Internasional";
+            }
+
             $sheet->setCellValue('A' . $row, $company->name);
-            $sheet->setCellValue('B' . $row, $company->type);
-            $sheet->setCellValue('C' . $row, $company->scale);
+            $sheet->setCellValue('B' . $row, $companyType);
+            $sheet->setCellValue('C' . $row, $scopeLabel);
             $sheet->setCellValue('D' . $row, $company->address);
             $sheet->setCellValue('E' . $row, $company->phone);
             $row++;

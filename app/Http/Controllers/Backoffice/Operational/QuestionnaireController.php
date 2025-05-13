@@ -133,7 +133,7 @@ class QuestionnaireController extends Controller
             $questions = $questionnaire->questions;
 
             // Ambil semua data respondents yang diperlukan dalam satu query
-            $respondents = Answer::with(['filler_superior', 'filler_alumni', 'alumni'])
+            $respondents = Answer::with(['filler_superior', 'filler_alumni.superior', 'alumni.superior'])
                 ->where('questionnaire_id', $id)
                 ->select('id', 'filler_type', 'filler_id', 'alumni_id', 'questionnaire_id')
                 ->distinct()
@@ -166,6 +166,11 @@ class QuestionnaireController extends Controller
                 ];
 
                 if ($responden->filler_type == 'alumni') {
+                    $superior = $responden->filler_alumni?->superior;
+                    $row['superior_name'] = $superior?->full_name ?? '-';
+                    $row['superior_position'] = $superior?->position ?? '-';
+                    $row['superior_email'] = $superior?->email ?? '-';
+
                     $filler = $responden->filler_alumni;
                     $row['filler_name'] = $filler->full_name ?? '-';
                     $row['nim'] = $filler->nim ?? '-';

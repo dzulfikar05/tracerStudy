@@ -1,5 +1,5 @@
 <div class="row">
-    @include('backoffice.profession.form')
+    @include('backoffice.profession_category.form')
     <div class="col-12">
         <div class="card">
             {{-- <div class="card-header">
@@ -17,12 +17,11 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
-                        id="table_profession">
+                        id="table_profession_category">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
                                 <th>Nama</th>
-                                <th>Kategori Profesi</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
@@ -35,4 +34,4 @@
     </div>
 </div>
 
-@include('backoffice.profession.javascript')
+@include('backoffice.profession_category.javascript')
