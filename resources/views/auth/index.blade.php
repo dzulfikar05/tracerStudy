@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 
-    <title>App Starter</title>
+    <title>Login Admin</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/light.css') }}" rel="stylesheet">
@@ -51,7 +51,7 @@
             <div class="row">
                 <div class="col-sm-7 d-flex justify-content-center align-items-center">
                     <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">App</span> Starter</span>
+                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Login</span> Admin</span>
                         <form action="javascript:onLogin(this)" method="post" id="form_login" name="form_login" autocomplete="off" class="mt-5">
                             @csrf
                             <div class="mb-3">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('assets/logo/smk.png') }}" alt="Login image" class="w-100 vh-100" style="object-fit: cover;">
+                    <img src="{{ asset('img/logos/Logo_Polinema.png') }}" alt="Login image" class="w-75 vh-75" style="object-fit: cover;">
                 </div>
             </div>
         </div>
