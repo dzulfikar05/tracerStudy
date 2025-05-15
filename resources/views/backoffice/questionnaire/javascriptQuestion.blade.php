@@ -1,30 +1,26 @@
 <script>
-    // Setup CSRF token for all AJAX requests
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
 
-    let questionIndex = 0;
-
-    // Update nomor pada setiap card
     function updateCardNumbers() {
         $('#question_container .question-card').each(function(i) {
             $(this).find('.question-title').text('Pertanyaan #' + (i + 1));
         });
     }
 
-    // Render semua pertanyaan dari server
     function renderExisting() {
         let questions = @json($data->questions);
-        questions.forEach(q => appendCard(q.id, q.question, q.type, q.options));
+        questions.forEach(q => appendCard(q.id, q.question, q.type, q.options, q.is_assessment));
         updateCardNumbers();
     }
 
-    // Tambah satu card pertanyaan
-    function appendCard(id, question = '', type = 'essay', options = []) {
+    function appendCard(id, question = '', type = 'essay', options = [], is_assessment = false) {
         let uniqueId = id ?? 'new_' + Date.now();
+        let isChoice = type === 'choice';
+
         let card = $(`
             <div class="card mb-3 question-card" id="question_${uniqueId}" data-id="${uniqueId}">
                 <div class="card-body">
@@ -53,12 +49,17 @@
                         </select>
                     </div>
 
-                    <div class="form-group mt-2 option-section ${type === 'choice' ? '' : 'd-none'}">
+                    <div class="form-group mt-2 option-section ${isChoice ? '' : 'd-none'}">
                         <label>Opsi Jawaban</label>
                         <div class="row option-list" data-field="options"></div>
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption(this)">
                             + Tambah Opsi
                         </button>
+                    </div>
+
+                    <div class="form-check mt-3 assessment-section ${isChoice ? '' : 'd-none'}">
+                        <input class="form-check-input" type="checkbox" data-field="is_assessment" ${is_assessment ? 'checked' : ''}>
+                        <label class="form-check-label">Digunakan untuk penilaian (assessment)</label>
                     </div>
                 </div>
             </div>
@@ -67,35 +68,41 @@
         $('#question_container').append(card);
         feather.replace();
 
-        // Jika tipe choice, render input opsi
-        if (type === 'choice') {
-            renderOptions(card, options);
+        if (isChoice) {
+            let defaultOptions = ['Sangat Baik', 'Baik', 'Cukup', 'Kurang'];
+            renderOptions(card, options && options.length ? options : defaultOptions);
         }
     }
 
-    // Tampilkan atau sembunyikan section opsi
     function toggleOptionSection(select) {
-        let section = $(select).closest('.card-body').find('.option-section');
-        if (select.value === 'choice') section.removeClass('d-none');
-        else section.addClass('d-none');
+        let cardBody = $(select).closest('.card-body');
+        let optionSection = cardBody.find('.option-section');
+        let assessmentSection = cardBody.find('.assessment-section');
+
+        if (select.value === 'choice') {
+            optionSection.removeClass('d-none');
+            assessmentSection.removeClass('d-none');
+
+            let list = cardBody.find('.option-list');
+            if (list.children().length === 0) {
+                let defaultOptions = ['Sangat Baik', 'Baik', 'Cukup', 'Kurang'];
+                renderOptions(cardBody.closest('.question-card'), defaultOptions);
+            }
+        } else {
+            optionSection.addClass('d-none');
+            assessmentSection.addClass('d-none');
+        }
     }
 
-    // Render list input untuk opsi dalam grid col-2
     function renderOptions(card, options) {
         let list = card.find('.option-list').empty();
 
-        // Jika options berupa string, coba parse
         if (typeof options === 'string') {
             try {
                 options = JSON.parse(options);
             } catch (e) {
                 options = [];
             }
-        }
-
-        // Pastikan array
-        if (!Array.isArray(options) || options.length === 0) {
-            options = [''];
         }
 
         options.forEach(val => {
@@ -114,7 +121,6 @@
         feather.replace();
     }
 
-    // Tambah satu input opsi baru di col-2
     function addOption(btn) {
         let list = $(btn).closest('.card-body').find('.option-list');
         list.append(`
@@ -130,25 +136,22 @@
         feather.replace();
     }
 
-    // Hapus satu input opsi
     function removeOption(btn) {
         $(btn).closest('.option-item').remove();
     }
 
-    // Handler tombol "Tambah Pertanyaan"
     function onAddQuestion() {
         appendCard(null);
         updateCardNumbers();
     }
 
-    // Simpan atau update pertanyaan
     function onSaveQuestion(uniqueId) {
         let card    = $(`#question_${uniqueId}`);
         let isNew   = uniqueId.startsWith('new_');
         let payload = {
             question: card.find('[data-field="question"]').val().trim(),
-            type:     card.find('[data-field="type"]').val(),
-            options:  []
+            type: card.find('[data-field="type"]').val(),
+            options: [],
         };
 
         if (payload.type === 'choice') {
@@ -159,10 +162,12 @@
             if (payload.options.length === 0) {
                 return saMessage({
                     success: false,
-                    title:   'Opsi Kosong',
+                    title: 'Opsi Kosong',
                     message: 'Minimal satu opsi jawaban diperlukan.'
                 });
             }
+
+            payload.is_assessment = card.find('[data-field="is_assessment"]').is(':checked') ? 1 : 0;
         }
 
         const storeUrl        = `{{ route('backoffice.questionnaire.question.store', $data->id) }}`;
@@ -172,20 +177,20 @@
             : updateTemplate.replace('QUESTION_ID', uniqueId);
 
         saConfirm({
-            message:  'Yakin akan menyimpan pertanyaan ini?',
+            message: 'Yakin akan menyimpan pertanyaan ini?',
             callback: function(ok) {
                 if (!ok) return;
                 $.ajax({
-                    url:    url,
-                    type:   'POST',
-                    data:   payload,
+                    url: url,
+                    type: 'POST',
+                    data: payload,
                     success: function(res) {
                         if (isNew) {
                             card.attr('id', 'question_' + res.id).data('id', res.id);
                         }
                         saMessage({
                             success: true,
-                            title:   'Berhasil',
+                            title: 'Berhasil',
                             message: 'Pertanyaan disimpan.'
                         });
                         updateCardNumbers();
@@ -194,19 +199,19 @@
                         if (xhr.status === 422) {
                             let msgs = Object.values(xhr.responseJSON.errors).flat().join('<br>');
                             Swal.fire({
-                                toast:            true,
-                                position:         'bottom-end',
-                                icon:             'error',
-                                title:            'Validasi Gagal',
-                                html:             msgs,
-                                showConfirmButton:false,
-                                timer:            6000,
+                                toast: true,
+                                position: 'bottom-end',
+                                icon: 'error',
+                                title: 'Validasi Gagal',
+                                html: msgs,
+                                showConfirmButton: false,
+                                timer: 6000,
                                 timerProgressBar: true
                             });
                         } else {
                             saMessage({
                                 success: false,
-                                title:   'Gagal',
+                                title: 'Gagal',
                                 message: 'Terjadi kesalahan saat menyimpan.'
                             });
                         }
@@ -216,13 +221,12 @@
         });
     }
 
-    // Hapus pertanyaan
     function onDeleteQuestion(uniqueId) {
         let card  = $(`#question_${uniqueId}`);
         let isNew = uniqueId.startsWith('new_');
 
         saConfirm({
-            message:  'Yakin akan menghapus pertanyaan ini?',
+            message: 'Yakin akan menghapus pertanyaan ini?',
             callback: function(ok) {
                 if (!ok) return;
                 if (isNew) {
@@ -232,21 +236,21 @@
                     const destroyTemplate = `{{ route('backoffice.questionnaire.question.destroy', ['id' => $data->id, 'question' => 'QUESTION_ID']) }}`;
                     let url = destroyTemplate.replace('QUESTION_ID', uniqueId);
                     $.ajax({
-                        url:    url,
-                        type:   'DELETE',
+                        url: url,
+                        type: 'DELETE',
                         success: function() {
                             card.remove();
                             updateCardNumbers();
                             saMessage({
                                 success: true,
-                                title:   'Berhasil',
+                                title: 'Berhasil',
                                 message: 'Pertanyaan dihapus.'
                             });
                         },
                         error: function() {
                             saMessage({
                                 success: false,
-                                title:   'Gagal',
+                                title: 'Gagal',
                                 message: 'Tidak dapat menghapus pertanyaan.'
                             });
                         }
@@ -256,7 +260,6 @@
         });
     }
 
-    // Jalankan renderExisting saat DOM siap
     $(function() {
         renderExisting();
     });

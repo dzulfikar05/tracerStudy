@@ -15,6 +15,7 @@ class QuestionController extends Controller
             'question' => 'required|string',
             'type'     => 'required|in:essay,choice',
             'options'  => 'nullable|array',
+            'is_assessment'  => 'nullable|boolean',
         ]);
 
         $data['questionnaire_id'] = $id;
@@ -31,6 +32,7 @@ class QuestionController extends Controller
             'question' => 'required|string',
             'type'     => 'required|in:essay,choice',
             'options'  => 'nullable|array',
+            'is_assessment'  => 'nullable|boolean',
         ]);
 
         $data['options'] = $data['type'] === 'choice' ? json_encode($data['options']) : null;

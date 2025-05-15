@@ -141,6 +141,13 @@
                     }
                 },
                 {
+                    data: 'waiting_time',
+                    name: 'waiting_time',
+                    render: function(data, type, full, meta) {
+                        return `<span>${full.waiting_time ?? '-'} Bulan</span>`;
+                    }
+                },
+                {
                     data: 'start_work_now_date',
                     name: 'start_work_now_date',
                     render: function(data, type, full, meta) {

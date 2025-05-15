@@ -38,8 +38,9 @@
                                 <th>Tanggal Lulus</th>
                                 <th>Telepon</th>
                                 <th>Email</th>
-                                <th>Tanggal Mulai Kerja</th>
-                                <th>Tanggal Mulai Sekarang</th>
+                                <th>Tanggal Pertama Kerja</th>
+                                <th>Lama Tunggu Kerja</th>
+                                <th>Tanggal Kerja Instansi</th>
                                 <th>Perusahaan</th>
                                 <th>Kategori Profesi</th>
                                 <th>Profesi</th>
