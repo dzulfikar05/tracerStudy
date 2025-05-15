@@ -90,12 +90,19 @@ class AlumniController extends Controller
                 ->make(true);
         }
 
-        return view('backoffice.alumni.index'); 
+        return view('backoffice.alumni.index');
     }
 
     public function store(AlumniRequest $request)
     {
         $payload = $request->validated();
+        if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
+            $graduation_date = Carbon::parse($payload['graduation_date']);
+            $start_work_date = Carbon::parse($payload['start_work_date']);
+            $diffMonth = $graduation_date->diffInMonths($start_work_date);
+            $payload['waiting_time'] = $diffMonth;
+        }
+
         $operation = Alumni::insert($payload);
         return $this->sendResponse($operation, 'Berhasil Menambahkan Data', 'Gagal Menambahkan Data');
     }
@@ -108,7 +115,16 @@ class AlumniController extends Controller
 
     public function update($id, AlumniRequest $request)
     {
-        $operation = Alumni::where('id', $id)->update($request->validated());
+        $payload = $request->validated();
+
+        if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
+            $graduation_date = Carbon::parse($payload['graduation_date']);
+            $start_work_date = Carbon::parse($payload['start_work_date']);
+            $diffMonth = $graduation_date->diffInMonths($start_work_date);
+            $payload['waiting_time'] = $diffMonth;
+        }
+
+        $operation = Alumni::where('id', $id)->update($payload);
         return $this->sendResponse($operation, 'Berhasil Mengubah Data', 'Gagal Mengubah Data');
     }
 

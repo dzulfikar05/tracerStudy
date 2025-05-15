@@ -37,31 +37,16 @@
 
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
-    {{-- <style>
+    <style>
         .table-responsive {
-            overflow-x: scroll !important;
-            overflow-y: visible !important;
-            position: relative !important;
+            overflow-x: auto;
+            width: 100%;
         }
 
-
-        table {
-            table-layout: auto !important;
-            white-space: nowrap !important;
+        table.dataTable {
+            white-space: nowrap;
         }
-
-        th,
-        td {
-            word-wrap: break-word !important;
-            overflow: hidden !important;
-            max-width: 200px !important;
-        }
-
-        .dropdown-menu {
-            z-index: 1050 !important;
-        }
-    </style> --}}
-
+    </style>
 </head>
 
 <body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"

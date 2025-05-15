@@ -11,6 +11,7 @@ use App\Models\ProfessionCategory;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Superior;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -207,6 +208,13 @@ class HomeController extends Controller
 
 
             $paramsAlumni['superior_id'] = $superior->id;
+
+            if(!is_null($paramsAlumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
+                $graduation_date = Carbon::parse($paramsAlumni['graduation_date']);
+                $start_work_date = Carbon::parse($paramsAlumni['start_work_date']);
+                $diffMonth = $graduation_date->diffInMonths($start_work_date);
+                $paramsAlumni['waiting_time'] = $diffMonth;
+            }
 
             $alumni = Alumni::find($params['alumni_id'])->update($paramsAlumni);
             $answer = Answer::insert($paramsAnswer);

@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('img/logos/Logo_Polinema.png') }}" alt="Login image" class="w-75 vh-75" style="object-fit: cover;">
+                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Login image" style=" height: 100%; object-fit: cover;">
                 </div>
             </div>
         </div>

@@ -39,5 +39,4 @@ class Alumni extends Model
     {
         return $this->belongsTo(Profession::class);
     }
-
 }

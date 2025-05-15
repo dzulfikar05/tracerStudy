@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('type', ['essay', 'choice']);
             $table->text('question');
             $table->json('options')->nullable();
+            $table->boolean('is_assessment')->nullable()->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

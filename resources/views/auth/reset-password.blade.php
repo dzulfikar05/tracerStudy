@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('img/logos/smk.png') }}" alt="Login image" class="w-100 vh-100" style="object-fit: cover;">
+                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Login image" style=" height: 100%; object-fit: cover;">
                 </div>
             </div>
         </div>
