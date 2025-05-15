@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="footer-logo">
-                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Logo_Polinema">
+                    <img src="{{ asset('img/logos/Logo_Polinema.png') }}" alt="Logo_Polinema">
                     <img src="{{ asset('img/logos/Logo_Jti.png') }}" alt="Logo_Jti">
                     <h1 class="footer-logo-text">
                         TRACER STUDY
