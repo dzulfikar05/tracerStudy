@@ -2,7 +2,6 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                {{-- Gunakan overflow-x dan pastikan table tidak wrap --}}
                 <div style="overflow-x: auto; width: 100%;">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
                            id="table_answer" style="white-space: nowrap;">
