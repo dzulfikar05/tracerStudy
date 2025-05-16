@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignIdFor(Questionnaire::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Question::class)->constrained()->cascadeOnDelete();
             $table->text('answer');
+            $table->boolean('is_assessment')->nullable()->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

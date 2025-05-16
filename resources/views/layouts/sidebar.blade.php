@@ -54,6 +54,8 @@
             <li class="sidebar-item
                 {{ set_active('backoffice.questionnaire.index') }}
                 {{ set_active('backoffice.questionnaire.show') }}
+                {{ set_active('backoffice.questionnaire.show-assessment') }}
+                {{ set_active('backoffice.questionnaire.show-answer') }}
              ">
                 <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
                     <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>

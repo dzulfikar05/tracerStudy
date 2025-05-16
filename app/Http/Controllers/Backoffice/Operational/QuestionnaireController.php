@@ -32,9 +32,11 @@ class QuestionnaireController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
+                    $hasAssessment = Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->count() > 0;
+
                     $id = $row->id;
                     $btn = '
-                        <div class="dropdown">
+                        <div class="dropstart">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Aksi
                             </button>
@@ -54,7 +56,16 @@ class QuestionnaireController extends Controller
                                         <i class="fa fa-eye me-2 text-primary"></i>Lihat Jawaban
                                     </a>
                                 </li>
+                        ';
+                    if ($hasAssessment) {
+                        $btn .= '<li>
+                                        <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-assessment', $id) . '">
+                                            <i class="fa fa-eye me-2 text-primary"></i>Tabel Penilaian
+                                        </a>
+                                    </li>';
+                    }
 
+                    $btn .= '
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="onDelete(this)" data-id="' . $id . '">
                                         <i class="fa fa-trash me-2"></i>Hapus
@@ -266,5 +277,59 @@ class QuestionnaireController extends Controller
             return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
         }
         return $this->sendResponse(0, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
+    }
+
+    public function showAssessment($id)
+    {
+        $data = Questionnaire::with(['questions' => function ($q) {
+            $q->where('is_assessment', true);
+        }])->findOrFail($id);
+
+        $getHeaders = Question::where('questionnaire_id', $id)
+            ->where('is_assessment', true)
+            ->pluck('options')
+            ->map(fn($item) => json_decode($item, true))
+            ->flatten()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $answers = Answer::where('questionnaire_id', $id)
+            ->where('is_assessment', true)
+            ->with('question')
+            ->get();
+
+        $listAnswer = [];
+        $footerTotal = [];
+
+        foreach ($getHeaders as $header) {
+            $footerTotal[$header] = 0;
+        }
+
+        foreach ($data->questions as $question) {
+            $questionAnswers = $answers->where('question_id', $question->id);
+            $totalPerQuestion = $questionAnswers->count();
+
+            foreach ($getHeaders as $header) {
+                $listAnswer[$question->question][$header] = 0;
+            }
+
+            foreach ($getHeaders as $header) {
+                $countPerHeader = $questionAnswers->filter(fn($a) => $a->answer === $header)->count();
+                $percentage = $totalPerQuestion > 0 ? round(($countPerHeader / $totalPerQuestion) * 100, 2) : 0;
+                $listAnswer[$question->question][$header] = $percentage;
+            }
+        }
+
+        $totalQuestions = count($data->questions);
+        foreach ($getHeaders as $header) {
+            $sumHeader = collect($listAnswer)->pluck($header)->sum();
+            $footerTotal[$header] = $totalQuestions > 0 ? round($sumHeader / $totalQuestions, 2) : 0;
+        }
+
+        return view('layouts.index', [
+            'title' => 'Tabel Penilaian ' . $data->title,
+            'content' => view('backoffice.questionnaire.assessment', compact('data', 'listAnswer', 'footerTotal', 'getHeaders'))
+        ]);
     }
 }

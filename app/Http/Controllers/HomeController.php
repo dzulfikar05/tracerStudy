@@ -173,7 +173,6 @@ class HomeController extends Controller
         try {
             DB::beginTransaction();
 
-
             $params = $request->all();
             $paramsAlumni = $params['alumni'];
             $paramsSuperior = $params['superior'];
@@ -209,11 +208,12 @@ class HomeController extends Controller
 
             $paramsAlumni['superior_id'] = $superior->id;
 
-            if(!is_null($paramsAlumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
-                $payload['waiting_time'] = $this->getWaitingTime($paramsAlumni['graduation_date'], $paramsAlumni['start_work_date']);
+            $alumni = Alumni::find($params['alumni_id']);
+            if(!is_null($alumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
+                $paramsAlumni['waiting_time'] = $this->getWaitingTime($alumni['graduation_date'], $paramsAlumni['start_work_date']);
             }
 
-            $alumni = Alumni::find($params['alumni_id'])->update($paramsAlumni);
+            $alumni = Alumni::where('id', $params['alumni_id'])->update($paramsAlumni);
             $answer = Answer::insert($paramsAnswer);
 
             $emailParams = [
@@ -240,6 +240,7 @@ class HomeController extends Controller
                 'success' => false,
                 'title' => 'Failed',
                 'message' => 'Data Kuisioner Gagal di Simpan',
+                'error' => $e,
             ];
         }
     }
@@ -266,6 +267,7 @@ class HomeController extends Controller
                     'questionnaire_id' => $params['questionnaire_id'],
                     'question_id' => $key,
                     'answer' => $value,
+                    'is_assessment' => Question::find($key)->is_assessment
                 ];
             }
 
