@@ -107,6 +107,14 @@ class QuestionnaireController extends Controller
         return $this->sendResponse($operation, 'Berhasil Mengubah Status', 'Gagal Mengubah Status');
     }
 
+    public function toggleDashboard($id)
+    {
+        $operationUpdate = Questionnaire::where('id', $id)->update(['is_dashboard' => !Questionnaire::where('id', $id)->first()->is_dashboard]);
+        $operation = Questionnaire::where('id', '!=', $id)->update(['is_dashboard' => false]);
+
+        return $this->sendResponse($operationUpdate, 'Berhasil Mengubah Status', 'Gagal Mengubah Status');
+    }
+
     public function show($id)
     {
         $data = Questionnaire::with('questions')->find($id);

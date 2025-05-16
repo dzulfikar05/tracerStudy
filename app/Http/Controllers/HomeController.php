@@ -210,10 +210,7 @@ class HomeController extends Controller
             $paramsAlumni['superior_id'] = $superior->id;
 
             if(!is_null($paramsAlumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
-                $graduation_date = Carbon::parse($paramsAlumni['graduation_date']);
-                $start_work_date = Carbon::parse($paramsAlumni['start_work_date']);
-                $diffMonth = $graduation_date->diffInMonths($start_work_date);
-                $paramsAlumni['waiting_time'] = $diffMonth;
+                $payload['waiting_time'] = $this->getWaitingTime($paramsAlumni['graduation_date'], $paramsAlumni['start_work_date']);
             }
 
             $alumni = Alumni::find($params['alumni_id'])->update($paramsAlumni);

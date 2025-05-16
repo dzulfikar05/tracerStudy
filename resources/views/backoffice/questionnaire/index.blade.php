@@ -20,6 +20,7 @@
                                 <th>Tahun Periode</th>
                                 <th>Berlaku Untuk</th>
                                 <th>Status Display</th>
+                                <th>Set Dashboard<br><span style="font-size: 11px; font-weight: normal !important;">(pilih salah satu)</span></th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
