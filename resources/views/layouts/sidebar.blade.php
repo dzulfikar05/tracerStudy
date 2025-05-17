@@ -5,8 +5,8 @@
         </a>
 
         <ul class="sidebar-nav">
-            <li class="menu-dashboard sidebar-item  {{ set_active('dashboard') }}">
-                <a class="sidebar-link  " href="/">
+            <li class="menu-dashboard sidebar-item  {{ set_active('backoffice.dashboard.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.dashboard.index') }}">
                     <i class="align-middle " data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                 </a>
             </li>
