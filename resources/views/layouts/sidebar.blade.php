@@ -5,8 +5,8 @@
         </a>
 
         <ul class="sidebar-nav">
-            <li class="menu-dashboard sidebar-item  {{ set_active('dashboard') }}">
-                <a class="sidebar-link  " href="/">
+            <li class="menu-dashboard sidebar-item  {{ set_active('backoffice.dashboard.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.dashboard.index') }}">
                     <i class="align-middle " data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                 </a>
             </li>
@@ -54,6 +54,8 @@
             <li class="sidebar-item
                 {{ set_active('backoffice.questionnaire.index') }}
                 {{ set_active('backoffice.questionnaire.show') }}
+                {{ set_active('backoffice.questionnaire.show-assessment') }}
+                {{ set_active('backoffice.questionnaire.show-answer') }}
              ">
                 <a class="sidebar-link  " href="{{ route('backoffice.questionnaire.index') }}">
                     <i class="align-middle " data-feather="align-left"></i> <span class="align-middle">Kuisioner</span>

@@ -32,9 +32,11 @@ class QuestionnaireController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
+                    $hasAssessment = Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->count() > 0;
+
                     $id = $row->id;
                     $btn = '
-                        <div class="dropdown">
+                        <div class="dropstart">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Aksi
                             </button>
@@ -54,7 +56,16 @@ class QuestionnaireController extends Controller
                                         <i class="fa fa-eye me-2 text-primary"></i>Lihat Jawaban
                                     </a>
                                 </li>
+                        ';
+                    if ($hasAssessment) {
+                        $btn .= '<li>
+                                        <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-assessment', $id) . '">
+                                            <i class="fa fa-eye me-2 text-primary"></i>Tabel Penilaian
+                                        </a>
+                                    </li>';
+                    }
 
+                    $btn .= '
                                 <li>
                                     <a class="dropdown-item text-danger" href="#" onclick="onDelete(this)" data-id="' . $id . '">
                                         <i class="fa fa-trash me-2"></i>Hapus
@@ -107,6 +118,14 @@ class QuestionnaireController extends Controller
         return $this->sendResponse($operation, 'Berhasil Mengubah Status', 'Gagal Mengubah Status');
     }
 
+    public function toggleDashboard($id)
+    {
+        $operationUpdate = Questionnaire::where('id', $id)->update(['is_dashboard' => !Questionnaire::where('id', $id)->first()->is_dashboard]);
+        $operation = Questionnaire::where('id', '!=', $id)->update(['is_dashboard' => false]);
+
+        return $this->sendResponse($operationUpdate, 'Berhasil Mengubah Status', 'Gagal Mengubah Status');
+    }
+
     public function show($id)
     {
         $data = Questionnaire::with('questions')->find($id);
@@ -133,7 +152,13 @@ class QuestionnaireController extends Controller
             $questions = $questionnaire->questions;
 
             // Ambil semua data respondents yang diperlukan dalam satu query
-            $respondents = Answer::with(['filler_superior', 'filler_alumni.superior', 'alumni.superior'])
+            $respondents = Answer::with([
+                    'filler_superior',
+                    'filler_alumni.superior',
+                    'filler_alumni.company',
+                    'filler_alumni.profession.profession_category',
+                    'alumni.superior'
+                ])
                 ->where('questionnaire_id', $id)
                 ->select('id', 'filler_type', 'filler_id', 'alumni_id', 'questionnaire_id')
                 ->distinct()
@@ -166,37 +191,49 @@ class QuestionnaireController extends Controller
                 ];
 
                 if ($responden->filler_type == 'alumni') {
+
+                    $filler = $responden->filler_alumni;
+                    $row['study_program'] = $filler->study_program ?? '-';
+                    $row['nim'] = $filler->nim ?? '-';
+                    $row['full_name'] = $filler->full_name ?? '-';
+                    $row['phone'] = $filler->phone ?? '-';
+                    $row['email'] = $filler->email ?? '-';
+                    $row['study_start_year'] =  $filler->study_start_year ?? '-';
+                    $row['graduation_date'] = $filler->graduation_date ?? '-';
+                    $row['graduation_year'] =  date('Y', strtotime($filler->graduation_date)) ?? '-';
+                    $row['start_work_date'] = $filler->start_work_date ?? '-';
+                    $row['waiting_time'] = $filler->waiting_time ?? '-';
+                    $row['start_work_now_date'] = $filler->start_work_now_date ?? '-';
+
+                    $row['company_type'] = $filler->company?->company_type ?? '-';
+                    $row['company_name'] = $filler->company?->name ?? '-';
+                    $row['company_scope'] = $filler->company?->scope ?? '-';
+                    $row['company_address'] = $filler->company?->address ?? '-';
+
+                    $row['profession_category'] = $filler->profession?->profession_category?->name ?? '-';
+                    $row['profession'] = $filler->profession?->name ?? '-';
+
                     $superior = $responden->filler_alumni?->superior;
                     $row['superior_name'] = $superior?->full_name ?? '-';
                     $row['superior_position'] = $superior?->position ?? '-';
+                    $row['superior_phone'] = $superior?->phone ?? '-';
                     $row['superior_email'] = $superior?->email ?? '-';
 
-                    $filler = $responden->filler_alumni;
-                    $row['filler_name'] = $filler->full_name ?? '-';
-                    $row['nim'] = $filler->nim ?? '-';
-                    $row['email'] = $filler->email ?? '-';
-                    $row['study_program'] = $filler->study_program ?? '-';
-                    $row['company_name'] = $filler->company?->name ?? '-';
-                    $row['company_address'] = $filler->company?->address ?? '-';
-                    $row['company_type'] = $filler->company?->company_type ?? '-';
                 } elseif ($responden->filler_type == 'superior') {
                     $filler = $responden->filler_superior;
-                    $row['filler_name'] = $filler->full_name ?? '-';
-                    $row['position'] = $filler->position ?? '-';
+                    $row['full_name'] = $filler->full_name ?? '-';
                     $row['company_name'] = $filler->company?->name ?? '-';
-                    $row['company_address'] = $filler->company?->address ?? '-';
-                    $row['company_type'] = $filler->company?->company_type ?? '-';
-                } else {
-                    $row['filler_name'] = '-';
-                }
+                    $row['position'] = $filler->position ?? '-';
+                    $row['email'] = $filler->email ?? '-';
 
-                if ($responden->alumni_id) {
                     $alumni = $responden->alumni;
                     $row['alumni_name'] = $alumni->full_name ?? '-';
-                    $row['alumni_nim'] = $alumni->nim ?? '-';
                     $row['alumni_study_program'] = $alumni->study_program ?? '-';
+                    $row['study_start_year'] = $alumni->study_start_year ?? '-';
+                    $row['graduation_year'] = date('Y', strtotime($alumni->graduation_date)) ?? '-';
+
                 } else {
-                    $row['alumni_name'] = '-';
+                    $row['filler_name'] = '-';
                 }
 
                 // Mengambil jawaban untuk setiap pertanyaan
@@ -258,5 +295,59 @@ class QuestionnaireController extends Controller
             return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
         }
         return $this->sendResponse(0, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
+    }
+
+    public function showAssessment($id)
+    {
+        $data = Questionnaire::with(['questions' => function ($q) {
+            $q->where('is_assessment', true);
+        }])->findOrFail($id);
+
+        $getHeaders = Question::where('questionnaire_id', $id)
+            ->where('is_assessment', true)
+            ->pluck('options')
+            ->map(fn($item) => json_decode($item, true))
+            ->flatten()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $answers = Answer::where('questionnaire_id', $id)
+            ->where('is_assessment', true)
+            ->with('question')
+            ->get();
+
+        $listAnswer = [];
+        $footerTotal = [];
+
+        foreach ($getHeaders as $header) {
+            $footerTotal[$header] = 0;
+        }
+
+        foreach ($data->questions as $question) {
+            $questionAnswers = $answers->where('question_id', $question->id);
+            $totalPerQuestion = $questionAnswers->count();
+
+            foreach ($getHeaders as $header) {
+                $listAnswer[$question->question][$header] = 0;
+            }
+
+            foreach ($getHeaders as $header) {
+                $countPerHeader = $questionAnswers->filter(fn($a) => $a->answer === $header)->count();
+                $percentage = $totalPerQuestion > 0 ? round(($countPerHeader / $totalPerQuestion) * 100, 2) : 0;
+                $listAnswer[$question->question][$header] = $percentage;
+            }
+        }
+
+        $totalQuestions = count($data->questions);
+        foreach ($getHeaders as $header) {
+            $sumHeader = collect($listAnswer)->pluck($header)->sum();
+            $footerTotal[$header] = $totalQuestions > 0 ? round($sumHeader / $totalQuestions, 2) : 0;
+        }
+
+        return view('layouts.index', [
+            'title' => 'Tabel Penilaian ' . $data->title,
+            'content' => view('backoffice.questionnaire.assessment', compact('data', 'listAnswer', 'footerTotal', 'getHeaders'))
+        ]);
     }
 }

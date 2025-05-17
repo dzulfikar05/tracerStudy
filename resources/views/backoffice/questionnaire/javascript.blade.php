@@ -89,6 +89,22 @@
                         `;
                     }
                 },
+                {
+                    data: 'is_dashboard',
+                    name: 'is_dashboard',
+                    render: function(data, type, full, meta) {
+                        let checked = full.is_dashboard == 1 ? 'checked' : '';
+                        return `
+                            <div class="form-check form-switch">
+                                <input
+                                    class="form-check-input toggle-dashboard"
+                                    type="checkbox"
+                                    data-id="${full.id}"
+                                    ${checked}>
+                            </div>
+                        `;
+                    }
+                },
 
                 {
                     data: 'action',
@@ -114,6 +130,34 @@
             },
             data: {
                 is_active: status
+            },
+            success: function(res) {
+                saMessage({
+                    success: res['success'],
+                    title: res['title'],
+                    message: res['message'],
+                    callback: function() {
+                        initTable();
+                    }
+                })
+            }
+        });
+
+    });
+
+    $(document).on('change', '.toggle-dashboard', function() {
+        let id = $(this).data('id');
+        let dashboard = $(this).is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: "{{ route('backoffice.questionnaire.toggle-dashboard', ['id' => '__ID__']) }}".replace(
+                '__ID__', id),
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                is_dashboard: dashboard
             },
             success: function(res) {
                 saMessage({

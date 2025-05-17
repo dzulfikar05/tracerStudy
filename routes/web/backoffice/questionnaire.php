@@ -16,6 +16,7 @@ Route::prefix('backoffice/questionnaire')->as('backoffice.questionnaire.')
         Route::post('destroy/{id}', [QuestionnaireController::class, 'destroy'])->name('destroy');
 
         Route::post('/{id}/toggle-status', [QuestionnaireController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{id}/toggle-dashboard', [QuestionnaireController::class, 'toggleDashboard'])->name('toggle-dashboard');
 
         Route::get('show/{id}', [QuestionnaireController::class, 'show'])->name('show');
         Route::post('{id}/question', [QuestionController::class, 'store'])->name('question.store');
@@ -25,5 +26,6 @@ Route::prefix('backoffice/questionnaire')->as('backoffice.questionnaire.')
         Route::get('show-answer/{id}', [QuestionnaireController::class, 'showAnswer'])->name('show-answer');
         Route::get('answer-table/{id}', [QuestionnaireController::class, 'answerTable'])->name('answer-table');
         Route::post('answer/delete', [QuestionnaireController::class, 'deleteAnswer'])->name('answer.delete');
+        Route::get('show-assessment/{id}', [QuestionnaireController::class, 'showAssessment'])->name('show-assessment');
 
     });

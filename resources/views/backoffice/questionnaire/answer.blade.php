@@ -2,32 +2,52 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                {{-- Gunakan overflow-x dan pastikan table tidak wrap --}}
                 <div style="overflow-x: auto; width: 100%;">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
                            id="table_answer" style="white-space: nowrap;">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
-                                <th>Pengisi</th>
 
                                 @if ($data['type'] === 'alumni')
-                                    <th>NIM</th>
-                                    <th>Email</th>
                                     <th>Program Studi</th>
-                                    <th>Atasan</th>
-                                    <th>Posisi Atasan</th>
+                                    <th>NIM</th>
+                                    <th>Nama</th>
+                                    <th>No. HP</th>
+                                    <th>Email</th>
+                                    <th>Angkatan</th>
+                                    <th>Tanggal Lulus</th>
+                                    <th>Tahun Lulus</th>
+                                    <th>Tanggal Pertama Kerja</th>
+                                    <th>Masa Tunggu</th>
+                                    <th>Tanggal Kerja Instansi</th>
+
+                                    <th>Jenis Instansi</th>
+                                    <th>Nama Instansi</th>
+                                    <th>Skala</th>
+                                    <th>Lokasi</th>
+
+                                    <th>Kategori Profesi</th>
+                                    <th>Profesi</th>
+
+                                    <th>Nama Atasan Langsung</th>
+                                    <th>Jabatan Atasan Langsung</th>
+                                    <th>No. HP Atasan Langsung</th>
                                     <th>Email Atasan</th>
+
                                 @elseif ($data['type'] === 'superior')
+                                    <th>Nama</th>
+                                    <th>Instansi</th>
                                     <th>Jabatan</th>
+                                    <th>Email</th>
+
                                     <th>Nama Alumni</th>
-                                    <th>NIM Alumni</th>
-                                    <th>Prodi Alumni</th>
+                                    <th>Program Studi</th>
+                                    <th>Angkatan</th>
+                                    <th>Tahun Lulus</th>
                                 @endif
 
-                                <th>Nama Perusahaan</th>
-                                <th>Alamat Perusahaan</th>
-                                <th>Tipe Perusahaan</th>
+
 
                                 @foreach ($data['questions'] as $question)
                                     <th>{{ $question->question }}</th>

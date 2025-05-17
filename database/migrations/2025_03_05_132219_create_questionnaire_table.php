@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('is_active');
+            $table->boolean('is_dashboard')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

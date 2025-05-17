@@ -97,10 +97,7 @@ class AlumniController extends Controller
     {
         $payload = $request->validated();
         if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
-            $graduation_date = Carbon::parse($payload['graduation_date']);
-            $start_work_date = Carbon::parse($payload['start_work_date']);
-            $diffMonth = $graduation_date->diffInMonths($start_work_date);
-            $payload['waiting_time'] = $diffMonth;
+            $payload['waiting_time'] = $this->getWaitingTime($payload['graduation_date'], $payload['start_work_date']);
         }
 
         $operation = Alumni::insert($payload);
@@ -118,10 +115,7 @@ class AlumniController extends Controller
         $payload = $request->validated();
 
         if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
-            $graduation_date = Carbon::parse($payload['graduation_date']);
-            $start_work_date = Carbon::parse($payload['start_work_date']);
-            $diffMonth = $graduation_date->diffInMonths($start_work_date);
-            $payload['waiting_time'] = $diffMonth;
+            $payload['waiting_time'] = $this->getWaitingTime($payload['graduation_date'], $payload['start_work_date']);
         }
 
         $operation = Alumni::where('id', $id)->update($payload);
