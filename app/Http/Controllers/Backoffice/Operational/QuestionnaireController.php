@@ -152,7 +152,13 @@ class QuestionnaireController extends Controller
             $questions = $questionnaire->questions;
 
             // Ambil semua data respondents yang diperlukan dalam satu query
-            $respondents = Answer::with(['filler_superior', 'filler_alumni.superior', 'alumni.superior'])
+            $respondents = Answer::with([
+                    'filler_superior',
+                    'filler_alumni.superior',
+                    'filler_alumni.company',
+                    'filler_alumni.profession.profession_category',
+                    'alumni.superior'
+                ])
                 ->where('questionnaire_id', $id)
                 ->select('id', 'filler_type', 'filler_id', 'alumni_id', 'questionnaire_id')
                 ->distinct()
@@ -185,37 +191,49 @@ class QuestionnaireController extends Controller
                 ];
 
                 if ($responden->filler_type == 'alumni') {
+
+                    $filler = $responden->filler_alumni;
+                    $row['study_program'] = $filler->study_program ?? '-';
+                    $row['nim'] = $filler->nim ?? '-';
+                    $row['full_name'] = $filler->full_name ?? '-';
+                    $row['phone'] = $filler->phone ?? '-';
+                    $row['email'] = $filler->email ?? '-';
+                    $row['study_start_year'] =  $filler->study_start_year ?? '-';
+                    $row['graduation_date'] = $filler->graduation_date ?? '-';
+                    $row['graduation_year'] =  date('Y', strtotime($filler->graduation_date)) ?? '-';
+                    $row['start_work_date'] = $filler->start_work_date ?? '-';
+                    $row['waiting_time'] = $filler->waiting_time ?? '-';
+                    $row['start_work_now_date'] = $filler->start_work_now_date ?? '-';
+
+                    $row['company_type'] = $filler->company?->company_type ?? '-';
+                    $row['company_name'] = $filler->company?->name ?? '-';
+                    $row['company_scope'] = $filler->company?->scope ?? '-';
+                    $row['company_address'] = $filler->company?->address ?? '-';
+
+                    $row['profession_category'] = $filler->profession?->profession_category?->name ?? '-';
+                    $row['profession'] = $filler->profession?->name ?? '-';
+
                     $superior = $responden->filler_alumni?->superior;
                     $row['superior_name'] = $superior?->full_name ?? '-';
                     $row['superior_position'] = $superior?->position ?? '-';
+                    $row['superior_phone'] = $superior?->phone ?? '-';
                     $row['superior_email'] = $superior?->email ?? '-';
 
-                    $filler = $responden->filler_alumni;
-                    $row['filler_name'] = $filler->full_name ?? '-';
-                    $row['nim'] = $filler->nim ?? '-';
-                    $row['email'] = $filler->email ?? '-';
-                    $row['study_program'] = $filler->study_program ?? '-';
-                    $row['company_name'] = $filler->company?->name ?? '-';
-                    $row['company_address'] = $filler->company?->address ?? '-';
-                    $row['company_type'] = $filler->company?->company_type ?? '-';
                 } elseif ($responden->filler_type == 'superior') {
                     $filler = $responden->filler_superior;
-                    $row['filler_name'] = $filler->full_name ?? '-';
-                    $row['position'] = $filler->position ?? '-';
+                    $row['full_name'] = $filler->full_name ?? '-';
                     $row['company_name'] = $filler->company?->name ?? '-';
-                    $row['company_address'] = $filler->company?->address ?? '-';
-                    $row['company_type'] = $filler->company?->company_type ?? '-';
-                } else {
-                    $row['filler_name'] = '-';
-                }
+                    $row['position'] = $filler->position ?? '-';
+                    $row['email'] = $filler->email ?? '-';
 
-                if ($responden->alumni_id) {
                     $alumni = $responden->alumni;
                     $row['alumni_name'] = $alumni->full_name ?? '-';
-                    $row['alumni_nim'] = $alumni->nim ?? '-';
                     $row['alumni_study_program'] = $alumni->study_program ?? '-';
+                    $row['study_start_year'] = $alumni->study_start_year ?? '-';
+                    $row['graduation_year'] = date('Y', strtotime($alumni->graduation_date)) ?? '-';
+
                 } else {
-                    $row['alumni_name'] = '-';
+                    $row['filler_name'] = '-';
                 }
 
                 // Mengambil jawaban untuk setiap pertanyaan

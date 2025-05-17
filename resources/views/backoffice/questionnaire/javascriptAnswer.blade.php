@@ -22,65 +22,142 @@
                 orderable: false,
                 render: (data, type, row, meta) =>
                     meta.row + meta.settings._iDisplayStart + 1
-            },
-            {
-                data: 'pengisi',
-                title: 'Nama Pengisi',
-                orderable: true,
-                searchable: true
             }
         ];
 
         if (type === 'alumni') {
             columns.push({
-                data: 'nim',
-                title: 'NIM'
-            }, {
-                data: 'email',
-                title: 'Email'
-            }, {
                 data: 'study_program',
                 title: 'Program Studi'
             }, {
+                data: 'nim',
+                title: 'NIM'
+            }, {
+                data: 'full_name',
+                title: 'Nama'
+            }, {
+                data: 'phone',
+                title: 'No. HP'
+            }, {
+                data: 'email',
+                title: 'Email '
+            },
+            {
+                data: 'study_start_year',
+                title: 'Angkatan'
+            },
+            {
+                data: 'graduation_date',
+                title: 'Tanggal Lulus'
+            },
+            {
+                data: 'graduation_year',
+                title: 'Tahun Lulus'
+            },
+            {
+                data: 'start_work_date',
+                title: 'Tanggal Pertama Kerja'
+            },
+            {
+                data: 'waiting_time',
+                title: 'Masa Tunggu',
+                render: (data) => {
+                    return `<span>${data ?? '-'} Bulan</span>`
+                }
+            },
+            {
+                data: 'start_work_now_date',
+                title: 'Tanggal Kerja Instansi'
+            },
+            {
+                data: 'company_type',
+                title: 'Jenis Instansi',
+                render: (data) => {
+                    if (data === 'higher_education') {
+                        return `<span>Perguruan Tinggi</span>`;
+                    } else if (data === 'government_agency') {
+                        return `<span>Instansi Pemerintah</span>`;
+                    } else if (data === 'state-owned_enterprise') {
+                        return `<span>BUMN</span>`;
+                    } else if (data === 'private_company') {
+                        return `<span>Swasta</span>`;
+                    }
+                }
+            },
+            {
+                data: 'company_name',
+                title: 'Nama Instansi'
+            },
+            {
+                data: 'company_scope',
+                title: 'Skala',
+                render: (data) => {
+                    if (data === 'local') {
+                        return `<span>Lokal</span>`;
+                    }else if (data === 'national') {
+                        return `<span>Nasional</span>`;
+                    }else if (data === 'international') {
+                        return `<span>Internasional</span>`;
+                    }
+
+                }
+            },
+            {
+                data: 'company_address',
+                title: 'Lokasi'
+            },
+            {
+                data: 'profession_category',
+                title: 'Kategori Profesi'
+            },
+            {
+                data: 'profession',
+                title: 'Profesi'
+            },
+            {
                 data: 'superior_name',
-                title: 'Atasan '
+                title: 'Nama Atasan Langsung'
             },
             {
                 data: 'superior_position',
-                title: 'Posisi Atasan'
+                title: 'Jabatan Atasan Langsung'
+            },
+            {
+                data: 'superior_phone',
+                title: 'No. HP Atasan Langsung'
             },
             {
                 data: 'superior_email',
                 title: 'Email Atasan'
-            },
+            }
         );
         } else if (type === 'superior') {
             columns.push({
+                data: 'full_name',
+                title: 'Nama'
+            }, {
+                data: 'company_name',
+                title: 'Instansi'
+            }, {
                 data: 'position',
                 title: 'Jabatan'
+            }, {
+                data: 'email',
+                title: 'Email'
             }, {
                 data: 'alumni_name',
                 title: 'Nama Alumni'
             }, {
-                data: 'alumni_nim',
-                title: 'NIM Alumni'
-            }, {
                 data: 'alumni_study_program',
-                title: 'Prodi Alumni'
+                title: 'Program Studi'
+            }, {
+                data: 'study_start_year',
+                title: 'Angkatan'
+            }, {
+                data: 'graduation_year',
+                title: 'Tahun Lulus'
             });
         }
-
-        // Kolom perusahaan (selalu ditampilkan)
-        columns.push({
-            data: 'company_name',
-            title: 'Nama Perusahaan'
-        }, {
-            data: 'company_address',
-            title: 'Alamat Perusahaan'
-        }, {
-            data: 'company_type',
-            title: 'Tipe Perusahaan'
-        });
 
         return columns;
     };
