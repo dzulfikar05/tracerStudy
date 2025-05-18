@@ -15,10 +15,7 @@
                     <button onclick="modalAction('{{ route('backoffice.alumni.alumni.import') }}')"
                         class="btn btn-success me-2">
                         <i class="fa fa-upload"></i> Import Excel</button>
-
-                    <button type="button" onclick="window.location.href='{{ route('backoffice.alumni.export') }}'"
-                        class="btn btn-primary me-2"><i class="align-middle" data-feather="download"></i> Export
-                        Excel</button>
+                        <button type="button" id="btnExportExcel" class="btn btn-primary me-2"><i class="align-middle" data-feather="download"></i> Export Excel</button>
                     <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle"
                             data-feather="plus"> </i> Tambah</button>
                     <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
