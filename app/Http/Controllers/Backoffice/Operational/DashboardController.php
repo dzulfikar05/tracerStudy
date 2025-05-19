@@ -32,22 +32,44 @@ class DashboardController extends Controller
 
     public function getChartProfession(Request $request)
     {
-        $total = Alumni::count();
+        $request->validate([
+            'year_start' => 'nullable|integer',
+            'year_end' => 'nullable|integer',
+            'study_program' => 'nullable|string|max:255',
+        ]);
 
-        $topProfessions = Alumni::select('profession_id', DB::raw('count(*) as total'))
+        $currentYear = now()->year;
+        $startYear = $request->year_start ?? $currentYear - 3;
+        $endYear = $request->year_end ?? $currentYear;
+
+        $alumnis = Alumni::query();
+
+        if ($request->filled('year_start')) {
+            $alumnis->whereYear('graduation_date', '>=', $startYear);
+        }
+        if ($request->filled('year_end')) {
+            $alumnis->whereYear('graduation_date', '<=', $request->year_end);
+        }
+        if ($request->filled('study_program')) {
+            $alumnis->where('study_program', $endYear);
+        }
+
+        $total = (clone $alumnis)->count();
+
+        $topProfessions = (clone $alumnis)
+            ->select('profession_id', DB::raw('count(*) as total'))
             ->groupBy('profession_id')
             ->orderByDesc('total')
-            ->take(10)
             ->with('profession')
+            ->take(10)
             ->get();
 
         $topProfessionCount = $topProfessions->sum('total');
-
         $otherCount = $total - $topProfessionCount;
 
         $chartData = $topProfessions->map(function ($item) use ($total) {
             return [
-                'label' => $item->profession->name ?? 'Tidak diketahui',
+                'label' => optional($item->profession)->name ?? 'Tidak diketahui',
                 'value' => round(($item->total / $total) * 100, 2)
             ];
         })->toArray();
@@ -59,13 +81,33 @@ class DashboardController extends Controller
             ];
         }
 
-        return response()->json([
-            'data' => $chartData
-        ]);
+        return response()->json(['data' => $chartData]);
     }
 
     public function getChartCompanyType(Request $request)
     {
+        $request->validate([
+            'year_start' => 'nullable|integer',
+            'year_end' => 'nullable|integer',
+            'study_program' => 'nullable|string|max:255',
+        ]);
+
+        $currentYear = now()->year;
+        $startYear = $request->year_start ?? $currentYear - 3;
+        $endYear = $request->year_end ?? $currentYear;
+
+        $alumnis = Alumni::query();
+
+        if ($request->filled('year_start')) {
+            $alumnis->whereYear('graduation_date', '>=', $startYear);
+        }
+        if ($request->filled('year_end')) {
+            $alumnis->whereYear('graduation_date', '<=', $endYear);
+        }
+        if ($request->filled('study_program')) {
+            $alumnis->where('study_program', $request->study_program);
+        }
+
         $companyTypeLabels = [
             'higher_education' => 'Perguruan Tinggi',
             'government_agency' => 'Instansi Pemerintah',
@@ -73,11 +115,9 @@ class DashboardController extends Controller
             'private_company' => 'Perusahaan Swasta',
         ];
 
-        $rawData = Alumni::select(
-            'companies.company_type',
-            DB::raw('count(alumnis.id) as total')
-        )
+        $rawData = $alumnis
             ->join('companies', 'alumnis.company_id', '=', 'companies.id')
+            ->select('companies.company_type', DB::raw('count(alumnis.id) as total'))
             ->groupBy('companies.company_type')
             ->pluck('total', 'companies.company_type');
 
@@ -93,8 +133,104 @@ class DashboardController extends Controller
             ];
         })->values();
 
-        return response()->json([
-            'data' => $data
+        return response()->json(['data' => $data]);
+    }
+
+    public function getTableProfession(Request $request)
+    {
+        $request->validate([
+            'year_start' => 'nullable|integer',
+            'year_end' => 'nullable|integer',
+            'study_program' => 'nullable|string|max:255',
         ]);
+
+        $currentYear = now()->year;
+        $startYear = $request->year_start ?? $currentYear - 3;
+        $endYear = $request->year_end ?? $currentYear;
+
+        $years = collect(range($startYear, $endYear));
+        $result = [];
+
+        foreach ($years as $year) {
+            $alumnis = Alumni::whereYear('graduation_date', $year);
+
+            if ($request->filled('study_program')) {
+                $alumnis->where('study_program', $request->study_program);
+            }
+
+            $count_alumni = (clone $alumnis)->count();
+            $count_alumni_filled = (clone $alumnis)->whereNotNull('profession_id')->count();
+
+            $infokom = (clone $alumnis)
+                ->whereHas('profession.profession_category', function ($q) {
+                    $q->where('name', 'Infokom');
+                })->count();
+
+            $non_infokom = (clone $alumnis)
+                ->whereHas('profession.profession_category', function ($q) {
+                    $q->where('name', 'Non Infokom');
+                })->count();
+
+            $multi = (clone $alumnis)
+                ->whereHas('company', function ($q) {
+                    $q->where('scope', 'international');
+                })->count();
+
+            $national = (clone $alumnis)
+                ->whereHas('company', function ($q) {
+                    $q->where('scope', 'national');
+                })->count();
+
+            $wirausaha = (clone $alumnis)
+                ->whereHas('company', function ($q) {
+                    $q->where('scope', 'local');
+                })->count();
+
+            $result[] = [
+                'year' => $year,
+                'count_alumni' => $count_alumni,
+                'count_alumni_filled' => $count_alumni_filled,
+                'infokom' => $infokom,
+                'non_infokom' => $non_infokom,
+                'multi' => $multi,
+                'national' => $national,
+                'wirausaha' => $wirausaha,
+            ];
+        }
+
+        return response()->json(['data' => $result]);
+    }
+
+    public function getTableWaitingTime(Request $request)
+    {
+        $request->validate([
+            'year_start' => 'nullable|integer',
+            'year_end' => 'nullable|integer',
+            'study_program' => 'nullable|string|max:255',
+        ]);
+
+        $currentYear = now()->year;
+        $startYear = $request->year_start ?? $currentYear - 3;
+        $endYear = $request->year_end ?? $currentYear;
+
+        $years = collect(range($startYear, $endYear));
+        $result = [];
+
+        foreach ($years as $year) {
+            $alumnis = Alumni::whereYear('graduation_date', $year);
+
+            if ($request->filled('study_program')) {
+                $alumnis->where('study_program', $request->study_program);
+            }
+
+            $result[] = [
+                'year' => $year,
+                'count_alumni' => (clone $alumnis)->count(),
+                'count_alumni_filled' => (clone $alumnis)->whereNotNull('profession_id')->count(),
+                'avg_waiting_time' => round((clone $alumnis)->avg('waiting_time') ?? 0, 2),
+            ];
+        }
+
+        return response()->json(['data' => $result]);
     }
 }
