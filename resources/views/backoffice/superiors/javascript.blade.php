@@ -16,6 +16,12 @@
         $('#company_id').select2({
             dropdownParent: $('.viewForm')
         });
+        $('#filter_position').select2({
+            dropdownParent: $('.filterModal')
+        });
+        $('#filter_company_id').select2({
+            dropdownParent: $('.filterModal')
+        });
 
         loadBlock();
         initTable();
@@ -35,7 +41,15 @@
             searching: true,
             paging: true,
             "bDestroy": true,
-            ajax: "{{ route('backoffice.superior.table') }}",
+            //ajax: "{{ route('backoffice.superior.table') }}",
+            ajax: {
+                url: "{{ route('backoffice.superior.table') }}",
+                data: function(d) {
+                    d.position = $('#filter_position').val();
+                    d.company = $('#filter_company_id').val();
+                    console.log('Filter values:', d.position, d.company);
+                }
+            },
             columns: [
                 {
                     data: null,
@@ -159,6 +173,7 @@
             success: function(data) {
                 company_data = data.companies;
                 setOptionCompany();
+                setOptionPosition(data.positions);
             }
         });
     }
@@ -169,8 +184,18 @@
         $.each(company_data, function(i, v) {
             html += `<option value="${v.id}">${v.name}</option>`;
         });
-        $('#company_id').append(html);
+        $('#filter_company_id').append(html);
     }
+
+    setOptionPosition = (positions) => {
+        $('#filter_position').empty();
+        var html = `<option value="">-- Pilih Jabatan --</option>`;
+        $.each(positions, function(i, v) {
+            html += `<option value="${v}">${v}</option>`;
+        });
+        $('#filter_position').append(html);
+    }
+
 
     onEdit = (el) => {
         var id = $(el).data('id');
@@ -226,4 +251,37 @@
             $('#' + v).val('').change();
         });
     }
+
+    function modalAction(url) {
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
+        });
+    }
+
+    function applyFilter() {
+        $('#filterModal').modal('hide');
+        initTable();
+    }
+
+    function resetFilter() {
+        $('#filter_position').val(null).trigger('change');
+        $('#filter_company_id').val(null).trigger('change');
+        initTable();
+        
+    }
+    $('#btnExportExcel').on('click', function(e) {
+    e.preventDefault();
+
+    let params = {
+        position: $('#filter_position').val(),
+        //company_id: $('#filter_company_id').val()
+        company: $('#filter_company_id').val()
+    };
+
+    // Buat query string dari filter
+    let query = $.param(params);
+
+    // Redirect ke URL export dengan filter
+    window.location.href = "{{ route('backoffice.superior.export-excel') }}?" + query;
+    });
 </script>
