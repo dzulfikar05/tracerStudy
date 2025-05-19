@@ -33,10 +33,23 @@ class ProfessionController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $id = $row->id;
-                    $btn = '<div >
-                                        <a href="#" onclick="onEdit(this)" data-id="' . $id . '" title="Edit Data" class="btn btn-warning btn-sm"><i class="align-middle fa fa-pencil fw-light text-dark"> </i></a>
-                                        <a href="#" onclick="onDelete(this)" data-id="' . $id . '" title="Delete Data" class="btn btn-danger btn-sm"><i class="align-middle fa fa-trash fw-light"> </i></a>
-                                </div>
+                    $btn = '<div class="dropstart">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Aksi
+                            </button>
+                            <ul class="dropdown-menu" style="z-index: 1050 !important; ">
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="onEdit(this)" data-id="' . $id . '">
+                                        <i class="fa fa-pencil me-2 text-warning"></i>Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="onDelete(this)" data-id="' . $id . '">
+                                        <i class="fa fa-trash me-2"></i>Hapus
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                                 ';
 
                     return $btn;
