@@ -15,4 +15,5 @@ Route::prefix('backoffice/superior')->as('backoffice.superior.')
 
     Route::get('fetch-option', [SuperiorsController::class, 'fetchOptions'])->name('fetch-option');
     Route::get('export-excel', [SuperiorsController::class, 'exportExcel'])->name('export-excel');
+    
 });
