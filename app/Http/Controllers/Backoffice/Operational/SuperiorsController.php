@@ -25,7 +25,18 @@ class SuperiorsController extends Controller
     public function initTable(Request $request)
     {
         if ($request->ajax()) {
-            $data = Superior::with('company')->get();
+            $query = Superior::with('company');
+
+           if ($request->filled('position')) {
+                $query->where('position', $request->position);
+            }
+
+            if ($request->filled('company')) {
+                $query->where('company_id', $request->company);
+            }
+
+
+            $data = $query->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -89,57 +100,69 @@ class SuperiorsController extends Controller
     public function fetchOptions(Request $request)
     {
         $companies = Company::get();
+        $positions = Superior::select('position')->distinct()->pluck('position');
+
         return response()->json([
-            'companies' => $companies
+            'companies' => $companies,
+            'positions' => $positions
         ]);
     }
 
-    public function exportExcel()
-    {
-        // Ambil data superior dengan relasi company
-        $superiors = Superior::with('company')->get();
-        
-        // Buat spreadsheet baru
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        
-        // Set header kolom
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nama Lengkap');
-        $sheet->setCellValue('C1', 'Posisi');
-        $sheet->setCellValue('D1', 'Telepon');
-        $sheet->setCellValue('E1', 'Email');
-        $sheet->setCellValue('F1', 'Perusahaan');
-        
-        // Isi data
-        $row = 2;
-        foreach ($superiors as $index => $superior) {
-            $sheet->setCellValue('A'.$row, $index + 1);
-            $sheet->setCellValue('B'.$row, $superior->full_name);
-            $sheet->setCellValue('C'.$row, $superior->position);
-            $sheet->setCellValue('D'.$row, $superior->phone);
-            $sheet->setCellValue('E'.$row, $superior->email);
-            $sheet->setCellValue('F'.$row, $superior->company?->name ?? '-');
-            $row++;
-        }
-        
-        // Set auto size untuk kolom
-        foreach (range('A', 'F') as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
-        }
-        
-        // Set judul sheet
-        $sheet->setTitle('Data Superior');
-        
-        // Buat writer dan output
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'Data_Superior_'.date('Y-m-d_His').'.xlsx';
-        
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$filename.'"');
-        header('Cache-Control: max-age=0');
-        
-        $writer->save('php://output');
-        exit;
+    public function exportExcel(Request $request)
+{
+    \Log::info('Export filter position: ' . $request->position);
+    \Log::info('Export filter company: ' . $request->company);
+
+    $query = Superior::with('company');
+
+    if (!empty($request->position)) {
+        $query->where('position', $request->position);
     }
+
+    if (!empty($request->company)) {
+        $query->where('company_id', $request->company);
+    }
+
+    $superiors = $query->get();
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Header
+    $sheet->setCellValue('A1', 'No');
+    $sheet->setCellValue('B1', 'Nama Lengkap');
+    $sheet->setCellValue('C1', 'Posisi');
+    $sheet->setCellValue('D1', 'Telepon');
+    $sheet->setCellValue('E1', 'Email');
+    $sheet->setCellValue('F1', 'Perusahaan');
+
+    // Data
+    $row = 2;
+    foreach ($superiors as $index => $superior) {
+        $sheet->setCellValue('A'.$row, $index + 1);
+        $sheet->setCellValue('B'.$row, $superior->full_name);
+        $sheet->setCellValue('C'.$row, $superior->position);
+        $sheet->setCellValue('D'.$row, $superior->phone);
+        $sheet->setCellValue('E'.$row, $superior->email);
+        $sheet->setCellValue('F'.$row, $superior->company?->name ?? '-');
+        $row++;
+    }
+
+    foreach (range('A', 'F') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $sheet->setTitle('Data Superior');
+
+    $writer = new Xlsx($spreadsheet);
+    $filename = 'Data_Superior_'.date('Y-m-d_His').'.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="'.$filename.'"');
+    header('Cache-Control: max-age=0');
+
+    $writer->save('php://output');
+    exit;
+}
+
 }
