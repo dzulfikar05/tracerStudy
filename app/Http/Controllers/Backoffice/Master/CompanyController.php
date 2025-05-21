@@ -129,8 +129,8 @@ class CompanyController extends Controller
             }
 
             $scopeLabel = "";
-            if ($company->scope == 'local') {
-                $scopeLabel = "Lokal";
+            if ($company->scope == 'businessman') {
+                $scopeLabel = "Wirausaha";
             } elseif ($company->scope == 'national') {
                 $scopeLabel = "Nasional";
             } elseif ($company->scope == 'international') {

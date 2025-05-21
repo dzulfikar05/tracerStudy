@@ -85,6 +85,16 @@ class HomeController extends Controller
         if (!isset($alumni)) {
             $status = false;
         } else {
+            $questionnaireId = $params['questionnaire_id'];
+            $checkAlreadyAnswer = Answer::where('filler_type', 'alumni')->where('questionnaire_id', $questionnaireId)->where('filler_id', $alumni->id);
+            if ($checkAlreadyAnswer->exists()) {
+                 return [
+                    'success' => false,
+                    'title' => 'Failed',
+                    'message' => 'Anda sudah mengisi questionnaire ini',
+                ];
+            }
+
             if ($alumni->graduation_date != $params['graduation_date'] && $alumni->study_program != $params['study_program']) {
                 $status = false;
                 session(['code_validation' => false]);
@@ -111,6 +121,16 @@ class HomeController extends Controller
         if (!isset($superior)) {
             $status = false;
         } else {
+            $questionnaireId = $params['questionnaire_id'];
+            $checkAlreadyAnswer = Answer::where('filler_type', 'superior')->where('questionnaire_id', $questionnaireId)->where('filler_id', $superior->id);
+            if ($checkAlreadyAnswer->exists()) {
+                 return [
+                    'success' => false,
+                    'title' => 'Failed',
+                    'message' => 'Anda sudah mengisi questionnaire ini',
+                ];
+            }
+
             if ($superior->passcode != $params['passcode']) {
                 $status = false;
                 session(['code_validation' => false]);
@@ -190,23 +210,26 @@ class HomeController extends Controller
                 ];
             }
 
-            $checkSuperior = Superior::where('email', $paramsSuperior['email'])->first();
+            if(!is_null($paramsSuperior['email'])) {
 
-            $superior= null;
-            if(isset($checkSuperior)) {
-                $superior = $checkSuperior;
-            }else{
-                $superior = Superior::create($paramsSuperior);
+                $checkSuperior = Superior::where('email', $paramsSuperior['email'])->first();
+
+                $superior= null;
+                if(isset($checkSuperior)) {
+                    $superior = $checkSuperior;
+                }else{
+                    $superior = Superior::create($paramsSuperior);
+                }
+
+                $passcode = $superior->passcode;
+                if($passcode == null) {
+                    $passcode = rand(100000, 999999);
+                    $superior->update(['passcode' => $passcode]);
+                }
+
+
+                $paramsAlumni['superior_id'] = $superior->id;
             }
-
-            $passcode = $superior->passcode;
-            if($passcode == null) {
-                $passcode = rand(100000, 999999);
-                $superior->update(['passcode' => $passcode]);
-            }
-
-
-            $paramsAlumni['superior_id'] = $superior->id;
 
             $alumni = Alumni::find($params['alumni_id']);
             if(!is_null($alumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
@@ -216,13 +239,16 @@ class HomeController extends Controller
             $alumni = Alumni::where('id', $params['alumni_id'])->update($paramsAlumni);
             $answer = Answer::insert($paramsAnswer);
 
-            $emailParams = [
-                'passcode' => $superior->passcode,
-                'nim' => $params['alumni_id'],
-                'name' => $superior->full_name,
-                'link' => route('list-questionnaire'),
-                'email' => $superior->email
-            ];
+            $emailParams = null;
+            if(!is_null($paramsSuperior['email'])) {
+                $emailParams = [
+                    'passcode' => $superior->passcode,
+                    'nim' => $params['alumni_id'],
+                    'name' => $superior->full_name,
+                    'link' => route('list-questionnaire'),
+                    'email' => $superior->email
+                ];
+            }
 
 
             DB::commit();

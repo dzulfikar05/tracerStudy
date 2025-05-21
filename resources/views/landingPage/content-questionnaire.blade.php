@@ -14,7 +14,7 @@
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#data-diri"
                                 role="tab">Data Diri</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" id="tab-atasan">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#data-atasan"
                                 role="tab">Data Atasan Alumni</a>
                         </li>
@@ -117,7 +117,7 @@
                                 </div>
 
                                 <div class="form-group col-md-6">
-                                    <label for="company_id" class="required">Perusahaan</label>
+                                    <label for="company_id" class="required">Perusahaan / Tempat Bekerja</label>
                                     <div class="input-group">
                                         <select name="alumni[company_id]" class="form-control company_id" required>
                                             <option value="">- Pilih Perusahaan -</option>
@@ -143,25 +143,25 @@
                             <div class="row">
                                 <div class="form-label col-md-6">
                                     <label class="mb-2 required" for="full_name">Nama Lengkap</label>
-                                    <input name="superior[full_name]" class="form-control mb-3" type="text"
+                                    <input name="superior[full_name]" class="form-control mb-3 input-atasan-alumni" type="text"
                                         required placeholder="Nama Lengkap"
                                         value="{{ $data['superior']['full_name'] ?? '' }}">
                                 </div>
                                 <div class="form-label col-md-6">
                                     <label class="mb-2 required" for="full_name">Position</label>
-                                    <input name="superior[position]" class="form-control mb-3" type="text"
+                                    <input name="superior[position]" class="form-control mb-3 input-atasan-alumni" type="text"
                                         required placeholder="Position"
                                         value="{{ $data['superior']['position'] ?? '' }}">
                                 </div>
                                 <div class="form-label col-md-6">
                                     <label class="mb-2 required" for="phone">Nomor Telepon</label>
-                                    <input name="superior[phone]" class="form-control mb-3" type="text" required
+                                    <input name="superior[phone]" class="form-control mb-3 input-atasan-alumni" type="text" required
                                         placeholder="Nomor Telepon, ex: 628...."
                                         value="{{ $data['superior']['phone'] ?? '' }}">
                                 </div>
                                 <div class="form-label col-md-6">
                                     <label class="mb-2 required" for="email">Email</label>
-                                    <input name="superior[email]" class="form-control mb-3" type="text" required
+                                    <input name="superior[email]" class="form-control mb-3 input-atasan-alumni" type="text" required
                                         placeholder="Email" value="{{ $data['superior']['email'] ?? '' }}">
                                 </div>
                             </div>
@@ -232,7 +232,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <input type="text" name="name" class="form-control mb-2"
-                                        placeholder="Nama Perusahaan" required />
+                                        placeholder="Nama Perusahaan / Tempat Bekerja" required />
                                     <select name="company_type" class="form-control mb-2" required>
                                         <option value="">Pilih Tipe</option>
                                         <option value="higher_education">Perguruan Tinggi</option>
@@ -243,7 +243,7 @@
 
                                     <select name="scope" class="form-control mb-2" required>
                                         <option value="">Pilih Skala</option>
-                                        <option value="local">Lokal</option>
+                                        <option value="businessman">Wirausaha</option>
                                         <option value="national">Nasional</option>
                                         <option value="international">Internasional</option>
                                     </select>
@@ -273,7 +273,7 @@
                                     </select>
 
                                     <input type="text" name="name" class="form-control mt-2"
-                                        placeholder="Nama Perusahaan" required />
+                                        placeholder="Nama Tempat Kerja" required />
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Simpan</button>

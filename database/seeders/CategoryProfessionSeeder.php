@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Profession;
 use Illuminate\Database\Seeder;
 use App\Models\ProfessionCategory;
 
@@ -12,15 +13,11 @@ class CategoryProfessionSeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = [
+        $data = [
             'Infokom',
             'Non Infokom',
         ];
 
-        foreach ($categories as $categoryName) {
-            ProfessionCategory::firstOrCreate([
-                'name' => $categoryName
-            ]);
-        }
+        ProfessionCategory::insert($data);
     }
 }

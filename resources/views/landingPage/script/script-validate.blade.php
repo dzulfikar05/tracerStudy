@@ -51,7 +51,11 @@
                     title: res['title'],
                     message: res['message'],
                     callback: function() {
-                        window.location.href = "{{ route('questionnaire.content', $questionnaire->id) }}";
+                        if(res['success']) {
+                            window.location.href = "{{ route('questionnaire.content', $questionnaire->id) }}";
+                        }else{
+                            window.location.href = "{{ route('list-questionnaire') }}";
+                        }
                     }
                 })
             }
@@ -77,7 +81,11 @@
                     title: res['title'],
                     message: res['message'],
                     callback: function() {
-                        window.location.href = "{{ route('questionnaire.content', $questionnaire->id) }}";
+                        if(res['success']) {
+                            window.location.href = "{{ route('questionnaire.content', $questionnaire->id) }}";
+                        }else{
+                            window.location.href = "{{ route('list-questionnaire') }}";
+                        }
                     }
                 })
             }

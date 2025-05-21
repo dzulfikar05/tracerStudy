@@ -183,7 +183,7 @@ class DashboardController extends Controller
 
             $wirausaha = (clone $alumnis)
                 ->whereHas('company', function ($q) {
-                    $q->where('scope', 'local');
+                    $q->where('scope', 'businessman');
                 })->count();
 
             $result[] = [
