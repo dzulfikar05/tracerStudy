@@ -78,8 +78,8 @@
                     name: 'scope',
                     render: function(data, type, full, meta) {
                         html = ``;
-                        if (full.scope == 'local') {
-                            html = `Lokal`;
+                        if (full.scope == 'businessman') {
+                            html = `Wirausaha`;
                         } else if (full.scope == 'national') {
                             html = `Nasional`;
                         } else if (full.scope == 'international') {

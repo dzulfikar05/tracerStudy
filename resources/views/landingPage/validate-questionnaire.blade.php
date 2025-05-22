@@ -10,7 +10,7 @@
                 <form action="javascript:validateAlumni(this)" method="post" id="form_alumni" name="form_alumni"
                     autocomplete="off">
                     <div class="row">
-
+                        <input name="questionnaire_id" type="hidden" value="{{ $questionnaire->id }}">
                         <div class="form-label col-md-6">
                             <label class="mb-2 required" for="nim">NIM</label>
                             <input id="nim" name="nim" class="form-control mb-3" type="text" maxlength="10"
@@ -40,6 +40,7 @@
                 <form action="javascript:validateSuperior(this)" method="post" id="form_superior" name="form_superior"
                     autocomplete="off">
                     <div class="row">
+                        <input name="questionnaire_id" type="hidden" value="{{ $questionnaire->id }}">
                         <div class="form-label col-md-6">
                             <label class="mb-2 required" for="email">Email</label>
                             <input id="email" name="email" class="form-control mb-3" type="text"

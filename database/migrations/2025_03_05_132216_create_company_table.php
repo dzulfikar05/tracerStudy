@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->enum('company_type', ['higher_education', 'government_agency', 'state-owned_enterprise', 'private_company']);
-            $table->enum('scope', ['local', 'national', 'international']);
+            $table->enum('scope', ['businessman', 'national', 'international']);
             $table->text('address');
             $table->string('phone',20)->nullable();
             $table->timestamps();

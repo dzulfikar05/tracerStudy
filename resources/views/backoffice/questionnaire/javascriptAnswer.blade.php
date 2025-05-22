@@ -92,8 +92,8 @@
                 data: 'company_scope',
                 title: 'Skala',
                 render: (data) => {
-                    if (data === 'local') {
-                        return `<span>Lokal</span>`;
+                    if (data === 'businessman') {
+                        return `<span>Wirausaha</span>`;
                     }else if (data === 'national') {
                         return `<span>Nasional</span>`;
                     }else if (data === 'international') {

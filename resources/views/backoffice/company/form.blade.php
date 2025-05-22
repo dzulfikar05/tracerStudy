@@ -31,7 +31,7 @@
                         <select id="scope" required name="scope" class="form-control mb-3 col-12"
                             style="width: 100%">
                             <option value="">Pilih Skala</option>
-                            <option value="local">Lokal</option>
+                            <option value="businessman">Wirausaha</option>
                             <option value="national">Nasional</option>
                             <option value="international">Internasional</option>
                         </select>

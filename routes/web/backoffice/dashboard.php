@@ -13,5 +13,7 @@ Route::prefix('backoffice/dashboard')->as('backoffice.dashboard.')
         Route::post('get-chart-company-type', [DashboardController::class, 'getChartCompanyType'])->name('get-chart-company-type');
         Route::post('get-table-profession', [DashboardController::class, 'getTableProfession'])->name('get-table-profession');
         Route::post('get-table-waiting-time', [DashboardController::class, 'getTableWaitingTime'])->name('get-table-waiting-time');
+        Route::post('get-table-assessment', [DashboardController::class, 'getTableAssessment'])->name('get-table-assessment');
+        Route::post('get-chart-assessment', [DashboardController::class, 'getChartAssessment'])->name('get-chart-assessment');
 
     });
