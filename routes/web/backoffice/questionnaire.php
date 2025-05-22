@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backoffice\Operational\QuestionController;
 use App\Http\Controllers\Backoffice\Operational\QuestionnaireController;
+use App\Models\Questionnaire;
 use Illuminate\Support\Facades\Route;
 
 
@@ -28,4 +29,6 @@ Route::prefix('backoffice/questionnaire')->as('backoffice.questionnaire.')
         Route::post('answer/delete', [QuestionnaireController::class, 'deleteAnswer'])->name('answer.delete');
         Route::get('show-assessment/{id}', [QuestionnaireController::class, 'showAssessment'])->name('show-assessment');
 
+        Route::get('fetch-option', [QuestionnaireController::class, 'fetchOption'])->name('fetch-option');
+        Route::get('{id}/export-answer', [QuestionnaireController::class, 'exportAnswer'])->name('export-answer');
     });
