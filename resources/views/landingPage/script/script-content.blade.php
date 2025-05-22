@@ -121,16 +121,16 @@
         var scope = $(this).find('option:selected').attr('data-scope');
 
         if (scope == "businessman") {
-            $('#data-atasan').hide();
-            $('a[href="#data-atasan"]').closest('li').hide();
+            $('#data-atasan').addClass('d-none');
+            $('a[href="#data-atasan"]').closest('li').addClass('d-none');
             $('.input-atasan-alumni').removeAttr('required');
-
         } else {
-            $('#data-atasan').show();
-            $('a[href="#data-atasan"]').closest('li').show();
+            $('#data-atasan').removeClass('d-none');
+            $('a[href="#data-atasan"]').closest('li').removeClass('d-none');
             $('.input-atasan-alumni').attr('required', true);
         }
     });
+
 
 
     onSaveSuperior = () => {
@@ -204,19 +204,23 @@
                                 message: res['message'],
                                 callback: function() {
                                     if (res['success']) {
-                                        if(res['data'] != null){
+                                        if (res['data'] != null) {
                                             sendEmail({
-                                                name: res['data']['name'],
-                                                email: res['data']['email'],
+                                                name: res['data'][
+                                                    'name'],
+                                                email: res['data'][
+                                                    'email'
+                                                ],
                                                 passcode: res['data'][
                                                     'passcode'
                                                 ],
-                                                redirect_link: res['data'][
+                                                redirect_link: res[
+                                                    'data'][
                                                     'link'
                                                 ],
                                                 company_name: "Jurusan Teknologi Informasi Politeknik Negeri Malang",
                                             });
-                                        }else{
+                                        } else {
                                             window.location.href = "/";
                                         }
                                     }
