@@ -5,6 +5,13 @@
                 <div style="overflow-x: auto; width: 100%;">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
                            id="table_answer" style="white-space: nowrap;">
+                            <div class="card-body">
+                            <div class="form-group d-flex justify-content-end mb-3">
+                        <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal" style="float: left">
+                        <i class="fa fa-filter"></i> Filter
+                        </button>
+                        <a href="{{ route('backoffice.questionnaire.export-answer', $data->id) }}" class="btn btn-primary me-2"><i class="align-middle" data-feather="download"></i>Export Excel</a>
+
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>
@@ -64,5 +71,70 @@
         </div>
     </div>
 </div>
+<div class="modal fade filterModal" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"> <!-- Gunakan modal-lg agar lebih lebar -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filterModalLabel">Filter Jawaban</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3"> <!-- Grid layout -->
+          <div class="col-md-6">
+            <label for="filter_study_program" class="form-label">Program Studi</label>
+            <select id="program_studi" name="program_studi" class="form-control">
+            <option value="">-- Pilih Program Studi --</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="filter_nim" class="form-label">NIM</label>
+            <input type="text" id="filter_nim" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="filter_study_start_year" class="form-label">Tahun Angkatan</label>
+            <input type="text" id="filter_study_start_year" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="filter_graduation_year" class="form-label">Tahun Lulus</label>
+            <input type="text" id="filter_graduation_year" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label for="filter_company" class="form-label">Perusahaan</label>
+            <select id="company" name="company" class="form-control">
+            <option value="">-- Pilih Perusahaan --</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="filter_scale" class="form-label">Skala</label>
+            <select id="filter_scale" class="form-control"></select>
+          </div>
+          <div class="col-md-6">
+            <label for="filter_profession_category" class="form-label">Kategori Profesi</label>
+            <select id="profession_category" name="profession_category" class="form-control">
+            <option value="">-- Pilih Kategori Profesi --</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="filter_profession" class="form-label">Profesi</label>
+            <select id="profession" name="profession" class="form-control">
+            <option value="">-- Pilih Profesi --</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="filter_superior_name" class="form-label">Nama Atasan</label>
+            <select id="superior" name="superior" class="form-control">
+            <option value="">-- Pilih Atasan --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="applyFilter()" class="btn btn-primary">Terapkan</button>
+        <button type="button" onclick="resetFilter()" class="btn btn-secondary" data-bs-dismiss="modal">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 @include('backoffice.questionnaire.javascriptAnswer')
