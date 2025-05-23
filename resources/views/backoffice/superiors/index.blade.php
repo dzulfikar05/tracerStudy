@@ -15,9 +15,7 @@
                         <i class="align-middle" data-feather="file-text"></i> Export Excel
                     </a>
 
-                    
-                    <a href="{{ route('backoffice.superior.export-excel') }}" class="btn btn-success me-3"><i class="align-middle" data-feather="file-text"></i> Export Excel</a>
-                    <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle" data-feather="plus"> </i> Tambah</button>
+                    <button type="button" onclick="showForm()" class="btn btn-primary me-2"><i class="align-middle" data-feather="plus"> </i> Tambah</button>
                     <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle" data-feather="rotate-ccw"> </i> Refresh</button>
                 </div>
                 <div class="table-responsive">
@@ -53,10 +51,10 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="mb-3">
+        {{-- <div class="mb-3">
             <label for="filter_position col-12" class="form-label">Jabatan</label>
             <select id="filter_position" class="form-control" style="width: 100%"></select>
-        </div>
+        </div> --}}
         <div class="mb-3">
             <label for="filter_company_id col-12" class="form-label">Perusahaan</label>
             <select id="filter_company_id" class="form-control" style="width: 100%"></select>
