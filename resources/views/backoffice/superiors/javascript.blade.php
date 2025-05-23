@@ -184,6 +184,7 @@
         $.each(company_data, function(i, v) {
             html += `<option value="${v.id}">${v.name}</option>`;
         });
+        $('#company_id').append(html);
         $('#filter_company_id').append(html);
     }
 
@@ -201,7 +202,7 @@
         var id = $(el).data('id');
         // Remove the .then() since setOptionCompany doesn't return a promise
         setOptionCompany(); // This line changed
-        
+
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -267,7 +268,7 @@
         $('#filter_position').val(null).trigger('change');
         $('#filter_company_id').val(null).trigger('change');
         initTable();
-        
+
     }
     $('#btnExportExcel').on('click', function(e) {
     e.preventDefault();
