@@ -5,6 +5,7 @@
                 <div class="logo-container">
                     <img src="{{ asset('img/logos/Logo_Polinema.png') }}" alt="Logo_Polinema">
                     <img src="{{ asset('img/logos/Logo_Jti.png') }}" alt="Logo_Jti">
+                    <img src="{{ asset('img/icons/LogoTracerOrange.png') }}" alt="Logo_Tracer">
                     <h1 class="logo-text">
                         TRACER STUDY
                         <small>Politeknik Negeri Malang</small>

@@ -62,7 +62,9 @@
         font-weight: bold;
         color: #333;
         margin-bottom: 1.5rem;
+        margin-top: 20px;
         font-size: 2rem;
+        
     }
 
     .hero-title span {
@@ -84,6 +86,7 @@
         font-weight: 600;
         border: 2px solid var(--primary-color);
         transition: all 0.3s;
+        margin-bottom: 30px; 
     }
 
     .btn-survey:hover {
@@ -414,4 +417,106 @@
         }
 
     }
+
+    .slider{
+    width: 1300px;
+    max-width: 100vw;
+    height: 700px;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    margin-top: 20px; /* Atau sesuai kebutuhan, misal 40px */
+}
+.slider .list{
+    position: absolute;
+    width: max-content;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    transition: 1s;
+}
+.slider .list img{
+    width: 1300px;
+    max-width: 100vw;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slider .item img {
+  border-radius: 15px;
+}
+
+.slider .buttons{
+    position: absolute;
+    top: 45%;
+    left: 5%;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+}
+.slider .buttons button{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff5;
+    color: #fff;
+    border: none;
+    font-family: monospace;
+    font-weight: bold;
+    opacity: 0%
+}
+.slider .dots{
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    color: #fff;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+.slider .dots li{
+    list-style: none;
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    margin: 10px;
+    border-radius: 20px;
+    transition: 0.5s;
+}
+.slider .dots li.active{
+    width: 30px;
+}
+@media screen and (max-width: 768px){
+    .slider{
+        height: 400px;
+    }
+}
+.slider {
+  position: relative;
+}
+
+.slider-text {
+  position: absolute;
+  top: 50%; /* posisi vertikal tengah */
+  right: 30px; /* jarak dari kiri */
+  transform: translateY(-50%); /* agar benar-benar di tengah vertikal */
+  z-index: 10;
+  color: white;
+  font-size: 24px;
+  background-color: rgb(255, 255, 255);
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-align: righ; /* rata kiri */
+  max-width: 400px; /* opsional biar nggak terlalu lebar */
+}
+
+.slider-text .col-lg-7 {
+    max-width: 500px; /* Atau sesuaikan sesuai kebutuhan */
+    white-space: normal;
+}
+
+
 </style>
