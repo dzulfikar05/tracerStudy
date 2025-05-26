@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    <link rel="shortcut icon" href="{{ asset('img/icons/LogoTracerOrange.png') }}" />
     <title>Tracer Study - Politeknik Negeri Malang</title>
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -20,6 +20,9 @@
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+
+    <!--AOS-->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
     <style>
         :root {
@@ -88,6 +91,7 @@
 <body>
     <!-- Header -->
     @include('landingPage.layouts.header')
+    
 
     {!! $content !!}
 
@@ -150,6 +154,15 @@
 
     <!-- Helper Functions -->
     <script src="{{ asset('assets/helpers/helper.js') }}"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: false
+        });
+    </script>
+
+    
 </body>
 
 </html>

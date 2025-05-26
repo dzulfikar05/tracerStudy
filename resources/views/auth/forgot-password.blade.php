@@ -11,8 +11,7 @@
     <meta name="author" content="AdminKit">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
-
+    <link rel="shortcut icon" href="{{ asset('img/icons/LogoTracerOrange.png') }}" />
     <title>Forgot Password</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">

@@ -1,32 +1,51 @@
 <!-- Hero Section -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-5">
-                <div class="circle-image-container">
-                    <div class="circle-bg"></div>
-                    <div class="circle-image">
-                        <img src="{{ asset('img/photos/GedungAA_Polinema.jpg') }}" alt="GedungAA_Polinema"
-                            class="illustration-img">
-                    </div>
-                </div>
-            </div>
+<div class="slider">
+        <div class="slider-text">
             <div class="col-lg-7">
-                <h1 class="hero-title">Selamat Datang Di Website <span>Tracer Study</span> Politeknik Negeri Malang.
+                <h1 class="hero-title">
+                    Mari Bagikan <br>
+                    Perjalanan Anda <br>
+                    Bersama Polinema
                 </h1>
-                <p class="hero-subtitle">Ayo sukseskan pelaksanaan <a href="#" class="text-primary">tracer
-                        study</a> Politeknik Negeri Malang.</p>
-                <a href="#survey" class="btn btn-survey">Isi Survey</a>
+    
+                <a href="/list-questionnaire" class="btn btn-survey">Isi Survey</a>
             </div>
         </div>
+        
+        <div class="list">
+            
+            <div class="item">
+                <img src="{{ asset('img/photos/Greeting.png') }}" alt="Slide 1">
+            </div>
+            <div class="item">
+                <img src="{{ asset('img/photos/Alumni.png') }}" alt="Slide 2">
+            </div>
+            <div class="item">
+                <img src="{{ asset('img/photos/Atasan.png') }}" alt="Slide 3">
+            </div>
+            <div class="item">
+                <img src="{{ asset('img/photos/Akreditasi.png') }}" alt="Slide 3">
+            </div>
+        </div>
+        <div class="buttons">
+            <button id="prev"><</button>
+            <button id="next">></button>
+        </div>
+        <ul class="dots">
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
     </div>
-</section>
+
+
 
 <!-- About Section -->
 <section class="about-section" id="about">
-    <div class="container">
+    <div class="container" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-6" >
                 <h2 class="section-title">TENTANG TRACER STUDY</h2>
                 <h3 class="about-title">Apa itu <span>Tracer Study</span>?</h3>
                 <p class="about-text">
@@ -45,24 +64,24 @@
 
 <!-- Features Section -->
 <section class="features-section">
-    <div class="container">
+    <div class="container" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
         <div class="row">
             <div class="col-lg-6">
-                <div class="feature-card">
+                <div class="feature-card" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
                     <div class="feature-number">01</div>
                     <div class="feature-content">
                         <h3>Database Alumni</h3>
                         <p>Sebagai database alumni terkini dan memudahkan pengiriman alumni.</p>
                     </div>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
                     <div class="feature-number">02</div>
                     <div class="feature-content">
                         <h3>Kerja Sama</h3>
                         <p>Sebagai pintu masuk bagi program kerja sama dengan alumni dan perusahaan terkait alumni.</p>
                     </div>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
                     <div class="feature-number">03</div>
                     <div class="feature-content">
                         <h3>Perbaikan</h3>
@@ -90,7 +109,7 @@
 
 <!-- Goals Section -->
 <section class="goals-section">
-    <div class="container">
+    <div class="container" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
         <div class="row">
             <div class="col-lg-6">
                 <h2 class="section-title">TUJUAN TRACER STUDY</h2>
@@ -118,8 +137,8 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-lg-6">
-                <img src="{{ asset('img/photos/Illustrasi_Tracer.jpg') }}" alt="Illustrasi_Tracer"
+            <div class="col-lg-6" >
+                <img src="{{ asset('img/photos/Illustrasi_Tracer2.png') }}" alt="Illustrasi_Tracer"
                     class="illustration-img">
             </div>
         </div>
@@ -134,8 +153,9 @@
                 <h3 class="cta-text">Ayo sukseskan pelaksanaan <span>Tracer Study</span> Politeknik Negeri Malang.</h3>
             </div>
             <div class="col-md-4 text-md-right">
-                <a href="#" class="btn btn-survey-footer">Isi Survey</a>
+                <a href="/list-questionnaire" class="btn btn-survey-footer">Isi Survey</a>
             </div>
         </div>
     </div>
 </section>
+@include('landingPage.script.script-LandingPage')

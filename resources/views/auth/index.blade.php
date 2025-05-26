@@ -11,7 +11,7 @@
     <meta name="author" content="AdminKit">
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('img/icons/LogoTracer.png') }}" />
 
     <title>Login Admin</title>
 
