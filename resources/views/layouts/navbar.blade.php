@@ -4,7 +4,7 @@
     </a>
 
     <div class="navbar-collapse collapse">
-        <ul class="navbar-nav d-none d-lg-flex ms-3">
+        {{-- <ul class="navbar-nav d-none d-lg-flex ms-3">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -19,7 +19,7 @@
                         User</a>
                 </div>
             </li>
-        </ul>
+        </ul> --}}
         <ul class="navbar-nav navbar-align">
             {{-- <li class="nav-item dropdown">
                 <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
@@ -170,6 +170,8 @@
                     <span class="text-dark me-3 fs-5" id="nama_user">Admin</span>
                     <img src="" style="object-fit: cover" id="pp_user" class="avatar img-fluid rounded me-1"
                         alt="Photo Profile" />
+
+
                 </a>
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="menu-profile d-none dropdown-item {{ set_active('profile') }}" href="profile"><i
@@ -182,8 +184,8 @@
                     <a class="dropdown-item" href="#"><i class="align-middle me-1"
                             data-feather="help-circle"></i> Help Center</a> --}}
                     <div class="dropdown-divider"></div>
-                        <a type="button" href="{{ route('auth.logout') }}" class="dropdown-item"><i class="align-middle me-1"
-                                data-feather="log-out"></i> Log out</a>
+                    <a type="button" href="{{ route('auth.logout') }}" class="dropdown-item"><i
+                            class="align-middle me-1" data-feather="log-out"></i> Log out</a>
                     {{-- <a class="dropdown-item" href="#">Log out</a> --}}
                 </div>
             </li>
@@ -191,8 +193,7 @@
     </div>
 </nav>
 
-<script>
-
+{{-- <script>
     var image_pp = "<?= Session::get('userdata.photo') ?>";
     $(() => {
         $('#nama_user').html("<?= Session::get('userdata') ?>");
@@ -202,4 +203,16 @@
             $('#pp_user').attr('src', '{{ asset('assets/user.png') }}');
         }
     })
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userName = '{{ Auth::user()->name }}'; // Ganti dengan nama pengguna
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random&color=fff&size=128`;
+
+        const ppUserElement = document.getElementById('pp_user');
+        if (ppUserElement) {
+            ppUserElement.src = avatarUrl;
+        }
+    });
 </script>
