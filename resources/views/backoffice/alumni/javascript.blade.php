@@ -445,4 +445,21 @@
     window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
 });
 
+    $('#btnDownloadTemplate').on('click', function(e) {
+    e.preventDefault();
+
+    let params = {
+        nim: $('#filter_nim').val(),
+        study_program: $('#filter_study_program').val(),
+        study_start_year: $('#filter_study_start_year').val(),
+        company_id: $('#filter_company_id').val()
+    };
+
+    // Buat query string dari filter
+    let query = $.param(params);
+
+    // Redirect ke URL export dengan filter
+    window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
+});
+
 </script>
