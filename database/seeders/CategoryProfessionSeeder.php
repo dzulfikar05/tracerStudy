@@ -14,8 +14,8 @@ class CategoryProfessionSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            'Infokom',
-            'Non Infokom',
+            ['name' => 'Infokom'],
+            ['name' => 'Non Infokom'],
         ];
 
         ProfessionCategory::insert($data);

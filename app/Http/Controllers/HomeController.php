@@ -70,7 +70,9 @@ class HomeController extends Controller
 
     public function fetchAlumni(Request $request)
     {
-        $alumni = Alumni::get();
+        $getExitingAlumni = Answer::where('alumni_id', '!=', null)->pluck('alumni_id')->toArray();
+
+        $alumni = Alumni::whereNotIn('id', $getExitingAlumni)->get();
         return response()->json([
             'alumni' => $alumni
         ]);
@@ -88,10 +90,10 @@ class HomeController extends Controller
             $questionnaireId = $params['questionnaire_id'];
             $checkAlreadyAnswer = Answer::where('filler_type', 'alumni')->where('questionnaire_id', $questionnaireId)->where('filler_id', $alumni->id);
             if ($checkAlreadyAnswer->exists()) {
-                 return [
+                return [
                     'success' => false,
                     'title' => 'Failed',
-                    'message' => 'Anda sudah mengisi questionnaire ini',
+                    'message' => 'Anda sudah mengisi kuisioner ini',
                 ];
             }
 
@@ -99,7 +101,7 @@ class HomeController extends Controller
                 $status = false;
                 session(['code_validation' => false]);
             } else {
-                $code = str_replace('-', '', $alumni->nim . $alumni->graduation_date .'.'.$alumni->id);
+                $code = str_replace('-', '', $alumni->nim . $alumni->graduation_date . '.' . $alumni->id);
                 session(['code_validation' => $code]);
             }
         }
@@ -121,21 +123,21 @@ class HomeController extends Controller
         if (!isset($superior)) {
             $status = false;
         } else {
-            $questionnaireId = $params['questionnaire_id'];
-            $checkAlreadyAnswer = Answer::where('filler_type', 'superior')->where('questionnaire_id', $questionnaireId)->where('filler_id', $superior->id);
-            if ($checkAlreadyAnswer->exists()) {
-                 return [
-                    'success' => false,
-                    'title' => 'Failed',
-                    'message' => 'Anda sudah mengisi questionnaire ini',
-                ];
-            }
+            // $questionnaireId = $params['questionnaire_id'];
+            // $checkAlreadyAnswer = Answer::where('filler_type', 'superior')->where('questionnaire_id', $questionnaireId)->where('filler_id', $superior->id);
+            // if ($checkAlreadyAnswer->exists()) {
+            //      return [
+            //         'success' => false,
+            //         'title' => 'Failed',
+            //         'message' => 'Anda sudah mengisi questionnaire ini',
+            //     ];
+            // }
 
             if ($superior->passcode != $params['passcode']) {
                 $status = false;
                 session(['code_validation' => false]);
             } else {
-                $code = str_replace('-', '', date('Ymd') . $superior->passcode .'.'. $superior->id);
+                $code = str_replace('-', '', date('Ymd') . $superior->passcode . '.' . $superior->id);
                 session(['code_validation' => $code]);
             }
         }
@@ -210,19 +212,19 @@ class HomeController extends Controller
                 ];
             }
 
-            if(!is_null($paramsSuperior['email'])) {
+            if (!is_null($paramsSuperior['email'])) {
 
                 $checkSuperior = Superior::where('email', $paramsSuperior['email'])->first();
 
-                $superior= null;
-                if(isset($checkSuperior)) {
+                $superior = null;
+                if (isset($checkSuperior)) {
                     $superior = $checkSuperior;
-                }else{
+                } else {
                     $superior = Superior::create($paramsSuperior);
                 }
 
                 $passcode = $superior->passcode;
-                if($passcode == null) {
+                if ($passcode == null) {
                     $passcode = rand(100000, 999999);
                     $superior->update(['passcode' => $passcode]);
                 }
@@ -232,7 +234,7 @@ class HomeController extends Controller
             }
 
             $alumni = Alumni::find($params['alumni_id']);
-            if(!is_null($alumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])){
+            if (!is_null($alumni['graduation_date']) && !is_null($paramsAlumni['start_work_date'])) {
                 $paramsAlumni['waiting_time'] = $this->getWaitingTime($alumni['graduation_date'], $paramsAlumni['start_work_date']);
             }
 
@@ -240,7 +242,7 @@ class HomeController extends Controller
             $answer = Answer::insert($paramsAnswer);
 
             $emailParams = null;
-            if(!is_null($paramsSuperior['email'])) {
+            if (!is_null($paramsSuperior['email'])) {
                 $emailParams = [
                     'passcode' => $superior->passcode,
                     'nim' => $params['alumni_id'],
@@ -316,7 +318,6 @@ class HomeController extends Controller
                 'title' => 'Success',
                 'message' => 'Data Kuisioner Berhasil di Simpan ',
             ];
-
         } catch (\Exception $e) {
             DB::rollBack();
             return [
