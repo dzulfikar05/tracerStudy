@@ -28,9 +28,9 @@
                                 <th>Telepon</th>
                                 <th>Email</th>
                                 <th>Perusahaan</th>
+                                <th>List Alumni</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
-
                         </thead>
                         <tbody>
                         </tbody>
@@ -67,5 +67,6 @@
     </div>
   </div>
 </div>
+<div id="myModal" class="modal fade" tabindex="-1" aria-hidden="true"></div>
 
 @include('backoffice.superiors.javascript')
