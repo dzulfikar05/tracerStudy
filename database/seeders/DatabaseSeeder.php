@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
             CategoryProfessionSeeder::class,
             ProfessionSeeder::class,
+            QuestionnaireSeeder::class,
+            QuestionSeeder::class,
         ]);
 
     }
