@@ -94,11 +94,21 @@
                     }
                 },
                 {
+                    data: null,
+                    name: 'list_alumni',
+                    orderable: false,
+                    searchable: false,
+                    render: function(data, type, full, meta) {
+                        return `<button class="btn btn-sm btn-secondary" onclick="showAlumni(${full.id})">List Alumni</button>`;
+                    }
+                },
+                {
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false
-                }
+                },
+               
             ]
         });
         unblock();
@@ -285,4 +295,18 @@
     // Redirect ke URL export dengan filter
     window.location.href = "{{ route('backoffice.superior.export-excel') }}?" + query;
     });
+
+    function showAlumni(id) {
+    $.ajax({
+        url: `/backoffice/superior/${id}/alumni`, // MODIFIKASI
+        type: 'GET',
+        success: function(html) {
+            $('#myModal').html(html); // MODIFIKASI
+            $('#myModal').modal('show'); // MODIFIKASI
+        },
+        error: function() {
+            alert('Gagal mengambil data alumni.'); // MODIFIKASI
+        }
+    });
+}
 </script>

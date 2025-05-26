@@ -165,4 +165,10 @@ class SuperiorsController extends Controller
     exit;
 }
 
+public function showAlumni($id)
+{
+    $alumnis = \App\Models\Alumni::where('superior_id', $id)->get(); // pastikan kolom ini ada
+    return view('backoffice.superiors.modal_alumni', compact('alumnis'));
+}
+
 }
