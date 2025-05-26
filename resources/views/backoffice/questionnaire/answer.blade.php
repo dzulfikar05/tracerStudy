@@ -4,136 +4,135 @@
             <div class="card-body">
                 <div style="overflow-x: auto; width: 100%;">
                     <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
-                           id="table_answer" style="white-space: nowrap;">
-                            <div class="card-body">
+                        id="table_answer" style="white-space: nowrap;">
+                        <div class="card-body">
                             <div class="form-group d-flex justify-content-end mb-3">
-                        <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal" style="float: left">
-                        <i class="fa fa-filter"></i> Filter
-                        </button>
-                        <a href="{{ route('backoffice.questionnaire.export-answer', $data->id) }}" class="btn btn-primary me-2"><i class="align-middle" data-feather="download"></i>Export Excel</a>
+                                <button type="button" class="btn btn-info me-2" data-bs-toggle="modal"
+                                    data-bs-target="#filterModal" style="float: left">
+                                    <i class="fa fa-filter"></i> Filter
+                                </button>
+                                <button type="button"
+                                    class="btn btn-primary me-2 btn-export-excel"><i class="align-middle"
+                                        data-feather="download"></i>Export Excel</button>
 
-                        <thead class="text-center">
-                            <tr class="fw-bolder">
-                                <th style="width: 50px">No</th>
+                                <thead class="text-center">
+                                    <tr class="fw-bolder">
+                                        <th style="width: 50px">No</th>
 
-                                @if ($data['type'] === 'alumni')
-                                    <th>Program Studi</th>
-                                    <th>NIM</th>
-                                    <th>Nama</th>
-                                    <th>No. HP</th>
-                                    <th>Email</th>
-                                    <th>Angkatan</th>
-                                    <th>Tanggal Lulus</th>
-                                    <th>Tahun Lulus</th>
-                                    <th>Tanggal Pertama Kerja</th>
-                                    <th>Masa Tunggu</th>
-                                    <th>Tanggal Kerja Instansi</th>
+                                        @if ($data['type'] === 'alumni')
+                                            <th>Program Studi</th>
+                                            <th>NIM</th>
+                                            <th>Nama</th>
+                                            <th>No. HP</th>
+                                            <th>Email</th>
+                                            <th>Angkatan</th>
+                                            <th>Tanggal Lulus</th>
+                                            <th>Tahun Lulus</th>
+                                            <th>Tanggal Pertama Kerja</th>
+                                            <th>Masa Tunggu</th>
+                                            <th>Tanggal Kerja Instansi</th>
 
-                                    <th>Jenis Instansi</th>
-                                    <th>Nama Instansi</th>
-                                    <th>Skala</th>
-                                    <th>Lokasi</th>
+                                            <th>Jenis Instansi</th>
+                                            <th>Nama Instansi</th>
+                                            <th>Skala</th>
+                                            <th>Lokasi</th>
 
-                                    <th>Kategori Profesi</th>
-                                    <th>Profesi</th>
+                                            <th>Kategori Profesi</th>
+                                            <th>Profesi</th>
 
-                                    <th>Nama Atasan Langsung</th>
-                                    <th>Jabatan Atasan Langsung</th>
-                                    <th>No. HP Atasan Langsung</th>
-                                    <th>Email Atasan</th>
+                                            <th>Nama Atasan Langsung</th>
+                                            <th>Jabatan Atasan Langsung</th>
+                                            <th>No. HP Atasan Langsung</th>
+                                            <th>Email Atasan</th>
+                                        @elseif ($data['type'] === 'superior')
+                                            <th>Nama</th>
+                                            <th>Instansi</th>
+                                            <th>Jabatan</th>
+                                            <th>Email</th>
 
-                                @elseif ($data['type'] === 'superior')
-                                    <th>Nama</th>
-                                    <th>Instansi</th>
-                                    <th>Jabatan</th>
-                                    <th>Email</th>
-
-                                    <th>Nama Alumni</th>
-                                    <th>Program Studi</th>
-                                    <th>Angkatan</th>
-                                    <th>Tahun Lulus</th>
-                                @endif
-
+                                            <th>Nama Alumni</th>
+                                            <th>Program Studi</th>
+                                            <th>Angkatan</th>
+                                            <th>Tahun Lulus</th>
+                                        @endif
 
 
-                                @foreach ($data['questions'] as $question)
-                                    <th>{{ $question->question }}</th>
-                                @endforeach
 
-                                <th style="width: 100px">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
+                                        @foreach ($data['questions'] as $question)
+                                            <th>{{ $question->question }}</th>
+                                        @endforeach
+
+                                        <th style="width: 100px">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </div>
+                        </div>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade filterModal" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg"> <!-- Gunakan modal-lg agar lebih lebar -->
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="filterModalLabel">Filter Jawaban</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3"> <!-- Grid layout -->
-          <div class="col-md-6">
-            <label for="filter_study_program" class="form-label">Program Studi</label>
-            <select id="program_studi" name="program_studi" class="form-control">
-            <option value="">-- Pilih Program Studi --</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="filter_nim" class="form-label">NIM</label>
-            <input type="text" id="filter_nim" class="form-control">
-          </div>
-          <div class="col-md-6">
-            <label for="filter_study_start_year" class="form-label">Tahun Angkatan</label>
-            <input type="text" id="filter_study_start_year" class="form-control">
-          </div>
-          <div class="col-md-6">
-            <label for="filter_graduation_year" class="form-label">Tahun Lulus</label>
-            <input type="text" id="filter_graduation_year" class="form-control">
-          </div>
-          <div class="col-md-6">
-            <label for="filter_company" class="form-label">Perusahaan</label>
-            <select id="company" name="company" class="form-control">
-            <option value="">-- Pilih Perusahaan --</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="filter_scale" class="form-label">Skala</label>
-            <select id="filter_scale" class="form-control"></select>
-          </div>
-          <div class="col-md-6">
-            <label for="filter_profession_category" class="form-label">Kategori Profesi</label>
-            <select id="profession_category" name="profession_category" class="form-control">
-            <option value="">-- Pilih Kategori Profesi --</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="filter_profession" class="form-label">Profesi</label>
-            <select id="profession" name="profession" class="form-control">
-            <option value="">-- Pilih Profesi --</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="filter_superior_name" class="form-label">Nama Atasan</label>
-            <select id="superior" name="superior" class="form-control">
-            <option value="">-- Pilih Atasan --</option>
-            </select>
-          </div>
+<div class="modal fade filterModal" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Jawaban</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="filter_study_program" class="form-label col-12">Program Studi</label>
+                        <select id="filter_study_program" name="filter_study_program" class="form-control"
+                            style="width: 100%">
+                            <option value="">-- Pilih Program Studi --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_nim" class="form-label col-12">NIM</label>
+                        <input type="text" id="filter_nim" class="form-control" style="width: 100%">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_study_start_year" class="form-label col-12">Tahun Angkatan</label>
+                        <input type="text" id="filter_study_start_year" class="form-control" style="width: 100%">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_graduation_year" class="form-label col-12">Tahun Lulus</label>
+                        <input type="text" id="filter_graduation_year" class="form-control" style="width: 100%">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_company" class="form-label col-12">Perusahaan</label>
+                        <select id="filter_company" name="filter_company" class="form-control" style="width: 100%">
+                            <option value="">-- Pilih Perusahaan --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_profession_category" class="form-label col-12">Kategori Profesi</label>
+                        <select id="filter_profession_category" name="filter_profession_category" class="form-control"
+                            style="width: 100%">
+                            <option value="">-- Pilih Kategori Profesi --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="filter_profession" class="form-label col-12">Profesi</label>
+                        <select id="filter_profession" name="filter_profession" class="form-control"
+                            style="width: 100%">
+                            <option value="">-- Pilih Profesi --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="applyFilter()" class="btn btn-primary">Terapkan</button>
+                <button type="button" onclick="resetFilter()" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Reset</button>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" onclick="applyFilter()" class="btn btn-primary">Terapkan</button>
-        <button type="button" onclick="resetFilter()" class="btn btn-secondary" data-bs-dismiss="modal">Reset</button>
-      </div>
     </div>
-  </div>
 </div>
 
 
