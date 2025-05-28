@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('type', ['alumni', 'superior']);
             $table->string('title');
             $table->text('description')->nullable();
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(false);
             $table->boolean('is_dashboard')->default(false);
             $table->timestamps();
             $table->softDeletes();
