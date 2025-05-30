@@ -15,6 +15,11 @@
             dropdownParent: $('.viewForm')
         });
 
+        $('#filter_type').select2({
+            dropdownParent: $('.filterModal')
+        });
+
+
         loadBlock();
         initTable();
     });
@@ -30,8 +35,17 @@
             serverSide: true,
             searching: true,
             paging: true,
+            scrollX: true,
             bDestroy: true,
-            ajax: "{{ route('backoffice.questionnaire.table') }}",
+            // ajax: "{{ route('backoffice.questionnaire.table') }}",
+            ajax: {
+                url: "{{ route('backoffice.questionnaire.table') }}",
+                data: function(d) {
+                    d.title = $('#filter_title').val();
+                    d.period_year = $('#filter_period_year').val();
+                    d.type = $('#filter_type').val();
+                }
+            },
             columns: [{
                     data: null,
                     sortable: false,
@@ -115,6 +129,18 @@
             ]
         });
         unblock();
+    }
+
+    function applyFilter() {
+        $('#filterModal').modal('hide');
+        initTable();
+    }
+
+    function resetFilter() {
+        $('#filter_title').val(null).trigger('change');
+        $('#filter_type').val(null).trigger('change');
+        $('#filter_period_year').val(null).trigger('change');
+        initTable();
     }
 
     $(document).on('change', '.toggle-status', function() {

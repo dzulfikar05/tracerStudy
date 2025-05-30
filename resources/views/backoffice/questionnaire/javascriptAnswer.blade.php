@@ -172,6 +172,7 @@
         $('#table_answer').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             searching: true,
             paging: true,
             bDestroy: true,

@@ -143,9 +143,9 @@
                             <div class="col-md-12">
                                 <div class="card p-3">
                                     <div class="card-title fs-4">Tabel Rata Rata Masa Tunggu </div>
-                                    <div class="table-responsive">
+                                    <div class="table-responsive ">
                                         <table id="table_waiting_time"
-                                            class="table table-striped table-hover table-row-bordered border align-middle rounded w-100">
+                                            class="table table-striped table-hover nowrap table-row-bordered border align-middle rounded w-100">
                                             <thead class="bg-primary text-white text-center align-middle">
                                                 <tr>
                                                     <th>Tahun Lulus</th>
@@ -171,7 +171,7 @@
                             <div class="card-title fs-4">Tabel Penilaian </div>
                             <div class="table-responsive">
                                 <table id="table_assessment"
-                                    class="table table-bordered table-hover table-striped table-row-bordered align-middle rounded w-100"
+                                    class="table table-bordered table-hover table-striped table-row-bordered align-middle nowrap rounded w-100"
                                     style="white-space: nowrap;">
                                 </table>
                             </div>
