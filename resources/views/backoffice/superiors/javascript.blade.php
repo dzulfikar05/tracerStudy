@@ -108,7 +108,7 @@
                     orderable: false,
                     searchable: false
                 },
-               
+
             ]
         });
         unblock();
@@ -278,8 +278,8 @@
         $('#filter_position').val(null).trigger('change');
         $('#filter_company_id').val(null).trigger('change');
         initTable();
-
     }
+
     $('#btnExportExcel').on('click', function(e) {
     e.preventDefault();
 

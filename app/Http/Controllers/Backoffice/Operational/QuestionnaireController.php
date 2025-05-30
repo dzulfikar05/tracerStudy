@@ -30,9 +30,20 @@ class QuestionnaireController extends Controller
     public function initTable(Request $request)
     {
         if ($request->ajax()) {
-            $data = Questionnaire::get();
+            $data = Questionnaire::query();
 
-            return DataTables::of($data)
+            if ($request->filled('title')) {
+                $data->where('title', 'like', '%' . $request->title . '%');
+            }
+
+            if ($request->filled('period_year')) {
+                $data->where('period_year', 'like', '%' . $request->period_year . '%');
+            }
+            if ($request->filled('type')) {
+                $data->where('type', 'like', '%' . $request->type . '%');
+            }
+
+            return DataTables::of($data->get())
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $hasAssessment = Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->count() > 0;
@@ -147,88 +158,94 @@ class QuestionnaireController extends Controller
             'content' => view('backoffice.questionnaire.answer')->with('data', $data)
         ]);
     }
-    public function answerTable($id, Request $request)
+     public function answerTable($id, Request $request)
     {
         if ($request->ajax()) {
+            // Ambil kuesioner beserta pertanyaannya
             $questionnaire = Questionnaire::with('questions')->findOrFail($id);
             $questions = $questionnaire->questions;
 
-            $respondents = Answer::with([
-                'filler_superior',
-                'filler_alumni.superior',
-                'filler_alumni.company',
-                'filler_alumni.profession.profession_category',
-                'alumni.superior'
-            ])
-                ->where('questionnaire_id', $id)
-                ->select('id', 'filler_type', 'filler_id', 'alumni_id', 'questionnaire_id')
-                ->distinct();
+            // **PERUBAHAN UTAMA DI SINI:**
+            // Kita akan mengambil SEMUA jawaban yang relevan terlebih dahulu,
+            // kemudian mengelompokkan untuk mendapatkan responden unik.
+            $allAnswers = Answer::where('questionnaire_id', $id)
+                ->with([
+                    'filler_superior',
+                    'filler_alumni.superior',
+                    'filler_alumni.company',
+                    'filler_alumni.profession.profession_category',
+                    'alumni.superior'
+                ])
+                ->get();
+
+            // Filter jawaban berdasarkan request (misalnya, program studi, angkatan, dll.)
+            // Kita akan membangun koleksi responden unik dari jawaban yang difilter.
+            $filteredRespondents = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
+                $relationAlumni = $questionnaire->type === 'alumni' ? $answer->filler_alumni : $answer->alumni;
+
+                // Terapkan filter yang sama seperti sebelumnya, tapi pada koleksi Eloquent
+                $matches = true;
+
+                if ($request->filled('study_program') && ($relationAlumni->study_program ?? '-') !== $request->study_program) {
+                    $matches = false;
+                }
+                if ($request->filled('nim') && !str_contains(strtolower($relationAlumni->nim ?? '-'), strtolower($request->nim))) {
+                    $matches = false;
+                }
+                if ($request->filled('study_start_year') && ($relationAlumni->study_start_year ?? '-') != $request->study_start_year) {
+                    $matches = false;
+                }
+                if ($request->filled('graduation_year') && date('Y', strtotime($relationAlumni->graduation_date ?? '')) != $request->graduation_year) {
+                    $matches = false;
+                }
+                if ($request->filled('company_id') && ($relationAlumni->company->id ?? '-') != $request->company_id) {
+                    $matches = false;
+                }
+                if ($request->filled('profession_category_id') && ($relationAlumni->profession->profession_category->id ?? '-') != $request->profession_category_id) {
+                    $matches = false;
+                }
+                if ($request->filled('profession_id') && ($relationAlumni->profession->id ?? '-') != $request->profession_id) {
+                    $matches = false;
+                }
+                return $matches;
+            });
+
+            // Sekarang, kelompokkan responden yang sudah difilter untuk mendapatkan entri unik
+            // untuk ditampilkan di tabel.
+            $respondents = $filteredRespondents->unique(function ($item) {
+                if ($item->filler_type === 'superior') {
+                    // Untuk superior, unik berdasarkan siapa (filler) mengisi untuk siapa (alumni)
+                    return $item->questionnaire_id . '-' . $item->filler_id . '-' . $item->alumni_id;
+                } else {
+                    // Untuk alumni, unik berdasarkan siapa (alumni) mengisi untuk dirinya sendiri
+                    return $item->questionnaire_id . '-' . $item->filler_id;
+                }
+            });
 
 
+            // Ambil semua jawaban yang relevan dari *semua* jawaban yang sudah difilter
+            // dan kelompokkan berdasarkan kombinasi unik yang sama
+            $answersGrouped = $filteredRespondents->groupBy(function ($item) {
+                if ($item->filler_type === 'superior') {
+                    return $item->filler_type . '-' . $item->filler_id . '-' . $item->alumni_id;
+                } else {
+                    return $item->filler_type . '-' . $item->filler_id;
+                }
+            });
 
-            $relationAlumnin = $questionnaire->type === 'alumni' ? 'filler_alumni' : 'alumni';
-
-            if ($request->filled('study_program')) {
-                $respondents = $respondents->whereHas($relationAlumnin, function ($query) use ($request) {
-                    $query->where('study_program', $request->study_program);
-                });
-            }
-
-            if ($request->filled('nim')) {
-                $respondents = $respondents->whereHas($relationAlumnin, function ($query) use ($request) {
-                    $query->where('nim', 'like', '%' . $request->nim . '%');
-                });
-            }
-
-            if ($request->filled('study_start_year')) {
-                $respondents = $respondents->whereHas($relationAlumnin, function ($query) use ($request) {
-                    $query->where('study_start_year', $request->study_start_year);
-                });
-            }
-
-            if ($request->filled('graduation_year')) {
-                $respondents = $respondents->whereHas($relationAlumnin, function ($query) use ($request) {
-                    $query->whereYear('graduation_date', $request->graduation_year);
-                });
-            }
-
-            if ($request->filled('company_id')) {
-                $respondents = $respondents->whereHas($relationAlumnin . '.company', function ($query) use ($request) {
-                    $query->where('id', $request->company_id);
-                });
-            }
-
-            if ($request->filled('profession_category_id')) {
-                $respondents = $respondents->whereHas($relationAlumnin . '.profession.profession_category', function ($query) use ($request) {
-                    $query->where('id', $request->profession_category_id);
-                });
-            }
-
-            if ($request->filled('profession_id')) {
-                $respondents = $respondents->whereHas($relationAlumnin . '.profession', function ($query) use ($request) {
-                    $query->where('id', $request->profession_id);
-                });
-            }
-
-            $respondents = $respondents->get();
-
-            $answers = Answer::where('questionnaire_id', $id)
-                ->whereIn('filler_type', $respondents->pluck('filler_type'))
-                ->whereIn('filler_id', $respondents->pluck('filler_id'))
-                ->get()
-                ->groupBy('filler_id');
-
-            $fillerType = "";
-            $fillerId = "";
-            $data = $respondents->map(function ($responden) use ($questions, $answers, &$fillerType, &$fillerId) {
-                if ($responden->filler_type == $fillerType && $responden->filler_id == $fillerId) {
-                    return null;
+            // Siapkan data untuk DataTables
+            $data = $respondents->map(function ($responden) use ($questions, $answersGrouped) {
+                // Buat kunci komposit yang sama untuk mengambil jawaban spesifik
+                $compositeKey = '';
+                if ($responden->filler_type === 'superior') {
+                    $compositeKey = $responden->filler_type . '-' . $responden->filler_id . '-' . $responden->alumni_id;
+                } else {
+                    $compositeKey = $responden->filler_type . '-' . $responden->filler_id;
                 }
 
-                $fillerType = $responden->filler_type;
-                $fillerId = $responden->filler_id;
+                $responseAnswers = $answersGrouped[$compositeKey] ?? collect();
 
-                $responseAnswers = $answers[$responden->filler_id] ?? collect();
+                // START OF THE PART YOU DO NOT WANT TO CHANGE
                 $row = [
                     'id' => $responden->id,
                     'filler_type' => $responden->filler_type,
@@ -243,9 +260,9 @@ class QuestionnaireController extends Controller
                     $row['full_name'] = $filler->full_name ?? '-';
                     $row['phone'] = $filler->phone ?? '-';
                     $row['email'] = $filler->email ?? '-';
-                    $row['study_start_year'] =  $filler->study_start_year ?? '-';
+                    $row['study_start_year'] = $filler->study_start_year ?? '-';
                     $row['graduation_date'] = $filler->graduation_date ?? '-';
-                    $row['graduation_year'] =  date('Y', strtotime($filler->graduation_date)) ?? '-';
+                    $row['graduation_year'] = date('Y', strtotime($filler->graduation_date)) ?? '-';
                     $row['start_work_date'] = $filler->start_work_date ?? '-';
                     $row['waiting_time'] = $filler->waiting_time ?? '-';
                     $row['start_work_now_date'] = $filler->start_work_now_date ?? '-';
@@ -280,10 +297,13 @@ class QuestionnaireController extends Controller
                 }
 
                 foreach ($questions as $question) {
+                    // Ambil jawaban spesifik dari koleksi $responseAnswers
                     $row["q_{$question->id}"] = $responseAnswers->firstWhere('question_id', $question->id)->answer ?? '-';
                 }
+                // END OF THE PART YOU DO NOT WANT TO CHANGE
 
-                $row['pengisi'] = $row['filler_name'] ?? '-';
+                // Tambahkan kolom 'pengisi' di luar bagian yang tidak ingin diubah
+                $row['pengisi'] = ($responden->filler_type == 'alumni' ? ($responden->filler_alumni->full_name ?? '-') : ($responden->filler_superior->full_name ?? '-'));
 
                 return $row;
             })->filter();
@@ -291,23 +311,26 @@ class QuestionnaireController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
+                    $alumniIdAttribute = ($row['filler_type'] === 'superior' && isset($row['alumni_id'])) ? 'data-alumni-id="' . $row['alumni_id'] . '"' : '';
+
                     return '
-                <div class="dropdown">
-                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        Aksi
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item text-danger" href="#" onclick="onDeleteAnswer(this)"
-                                data-filler-type="' . $row['filler_type'] . '"
-                                data-filler-id="' . $row['filler_id'] . '"
-                                data-questionnaire-id="' . $row['questionnaire_id'] . '"
-                            >
-                                <i class="fa fa-trash me-2"></i>Hapus
-                            </a>
-                        </li>
-                    </ul>
-                </div>';
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Aksi
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="onDeleteAnswer(this)"
+                                        data-filler-type="' . $row['filler_type'] . '"
+                                        data-filler-id="' . $row['filler_id'] . '"
+                                        ' . $alumniIdAttribute . '
+                                        data-questionnaire-id="' . $row['questionnaire_id'] . '"
+                                    >
+                                        <i class="fa fa-trash me-2"></i>Hapus
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -400,103 +423,84 @@ class QuestionnaireController extends Controller
         $questionnaire = Questionnaire::with('questions')->findOrFail($id);
         $questions = $questionnaire->questions;
 
-        $relationAlumnin = $questionnaire->type == 'alumni' ? 'filler_alumni' : 'alumni';
+        $allAnswers = Answer::where('questionnaire_id', $id)
+            ->with([
+                'filler_superior',
+                'filler_alumni.superior',
+                'filler_alumni.company',
+                'filler_alumni.profession.profession_category',
+                'alumni.superior'
+            ])
+            ->get();
 
-        $respondentsQuery = Answer::with([
-            'filler_superior',
-            'filler_alumni.superior',
-            'filler_alumni.company',
-            'filler_alumni.profession.profession_category',
-            'alumni.superior'
-        ])->where('questionnaire_id', $id)->distinct();
+        $filteredAnswers = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
+            $relevantAlumniRelation = null;
+            if ($questionnaire->type === 'alumni') {
+                $relevantAlumniRelation = $answer->filler_alumni;
+            } elseif ($questionnaire->type === 'superior') {
+                $relevantAlumniRelation = $answer->alumni;
+            }
 
-        if ($request->filled('study_program')) {
-            $respondentsQuery->whereHas($relationAlumnin, function ($q) use ($request) {
-                $q->where('study_program', $request->study_program);
-            });
-        }
-        if ($request->filled('nim')) {
-            $respondentsQuery->whereHas($relationAlumnin, function ($q) use ($request) {
-                $q->where('nim', 'like', '%' . $request->nim . '%');
-            });
-        }
-        if ($request->filled('study_start_year')) {
-            $respondentsQuery->whereHas($relationAlumnin, function ($q) use ($request) {
-                $q->where('study_start_year', $request->study_start_year);
-            });
-        }
-        if ($request->filled('graduation_year')) {
-            $respondentsQuery->whereHas($relationAlumnin, function ($q) use ($request) {
-                $q->whereYear('graduation_date', $request->graduation_year);
-            });
-        }
-        if ($request->filled('company_id')) {
-            $respondentsQuery->whereHas($relationAlumnin . '.company', function ($q) use ($request) {
-                $q->where('id', $request->company_id);
-            });
-        }
-        if ($request->filled('profession_category_id')) {
-            $respondentsQuery->whereHas($relationAlumnin . '.profession.profession_category', function ($q) use ($request) {
-                $q->where('id', $request->profession_category_id);
-            });
-        }
-        if ($request->filled('profession_id')) {
-            $respondentsQuery->whereHas($relationAlumnin . '.profession', function ($q) use ($request) {
-                $q->where('id', $request->profession_id);
-            });
-        }
-        if ($request->filled('superior')) {
-            $respondentsQuery->whereHas($relationAlumnin . '.superior', function ($q) use ($request) {
-                $q->where('id', $request->superior);
-            });
-        }
 
-        $respondents = $respondentsQuery->get()->unique(function ($item) {
-            return $item->filler_type . '_' . $item->filler_id;
+            $matches = true;
+
+            if ($request->filled('study_program') && ($relevantAlumniRelation->study_program ?? '-') !== $request->study_program) {
+                $matches = false;
+            }
+            if ($request->filled('nim') && !str_contains(strtolower($relevantAlumniRelation->nim ?? '-'), strtolower($request->nim))) {
+                $matches = false;
+            }
+            if ($request->filled('study_start_year') && ($relevantAlumniRelation->study_start_year ?? '-') != $request->study_start_year) {
+                $matches = false;
+            }
+            if ($request->filled('graduation_year')) {
+                $graduationYear = $relevantAlumniRelation->graduation_date ? date('Y', strtotime($relevantAlumniRelation->graduation_date)) : '-';
+                if ($graduationYear != $request->graduation_year) {
+                    $matches = false;
+                }
+            }
+            if ($request->filled('company_id') && ($relevantAlumniRelation->company->id ?? '-') != $request->company_id) {
+                $matches = false;
+            }
+            if ($request->filled('profession_category_id') && ($relevantAlumniRelation->profession->profession_category->id ?? '-') != $request->profession_category_id) {
+                $matches = false;
+            }
+            if ($request->filled('profession_id') && ($relevantAlumniRelation->profession->id ?? '-') != $request->profession_id) {
+                $matches = false;
+            }
+
+            if ($request->filled('superior')) {
+                if ($questionnaire->type === 'alumni') {
+                    if (($relevantAlumniRelation->superior->id ?? '-') != $request->superior) {
+                        $matches = false;
+                    }
+                }
+
+                elseif ($questionnaire->type === 'superior') {
+                    if (($answer->filler_superior->id ?? '-') != $request->superior) {
+                        $matches = false;
+                    }
+                }
+            }
+
+            return $matches;
         });
 
-        $answers = Answer::where('questionnaire_id', $id)
-            ->whereIn('filler_type', $respondents->pluck('filler_type'))
-            ->whereIn('filler_id', $respondents->pluck('filler_id'))
-            ->get()
-            ->groupBy(function ($item) {
-                return $item->questionnaire_id . '_' . $item->filler_type . '_' . $item->filler_id;
-            });
+        $respondents = $filteredAnswers->unique(function ($item) use ($questionnaire) {
+            if ($item->filler_type === 'superior') {
+                return $item->questionnaire_id . '-' . $item->filler_id . '-' . $item->alumni_id;
+            } else {
+                return $item->questionnaire_id . '-' . $item->filler_id;
+            }
+        });
 
-        $alumniHeaders = [
-            'Program Studi',
-            'NIM',
-            'Nama',
-            'No. HP',
-            'Email',
-            'Angkatan',
-            'Tanggal Lulus',
-            'Tahun Lulus',
-            'Tanggal Pertama Kerja',
-            'Masa Tunggu',
-            'Tanggal Kerja Instansi',
-            'Jenis Instansi',
-            'Nama Instansi',
-            'Skala',
-            'Lokasi',
-            'Kategori Profesi',
-            'Profesi',
-            'Nama Atasan Langsung',
-            'Jabatan Atasan Langsung',
-            'No. HP Atasan Langsung',
-            'Email Atasan'
-        ];
-
-        $superiorHeaders = [
-            'Nama',
-            'Instansi',
-            'Jabatan',
-            'Email',
-            'Nama Alumni',
-            'Program Studi',
-            'Angkatan',
-            'Tahun Lulus'
-        ];
+        $answersGrouped = $filteredAnswers->groupBy(function ($item) {
+            if ($item->filler_type === 'superior') {
+                return $item->filler_type . '-' . $item->filler_id . '-' . $item->alumni_id;
+            } else {
+                return $item->filler_type . '-' . $item->filler_id;
+            }
+        });
 
         $row = 1;
         $colIndex = 1;
@@ -504,7 +508,22 @@ class QuestionnaireController extends Controller
         $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, 'No');
         $colIndex++;
 
-        $type = Questionnaire::find($id)->type;
+        $type = $questionnaire->type;
+
+        $alumniHeaders = [
+            'Program Studi', 'NIM', 'Nama', 'No. HP', 'Email', 'Angkatan',
+            'Tanggal Lulus', 'Tahun Lulus', 'Tanggal Pertama Kerja', 'Masa Tunggu',
+            'Tanggal Kerja Instansi', 'Jenis Instansi', 'Nama Instansi', 'Skala',
+            'Lokasi', 'Kategori Profesi', 'Profesi', 'Nama Atasan Langsung',
+            'Jabatan Atasan Langsung', 'No. HP Atasan Langsung', 'Email Atasan'
+        ];
+
+        $superiorHeaders = [
+            'Nama', 'Instansi', 'Jabatan', 'Email', 'Nama Alumni',
+            'Program Studi Alumni',
+            'Angkatan Alumni',
+            'Tahun Lulus Alumni'
+        ];
 
         if ($type == 'alumni') {
             foreach ($alumniHeaders as $header) {
@@ -548,7 +567,7 @@ class QuestionnaireController extends Controller
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->company_type ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->scope ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->location ?? '-');
+                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->address ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->profession?->profession_category?->name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->profession?->name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->full_name ?? '-');
@@ -557,22 +576,26 @@ class QuestionnaireController extends Controller
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->email ?? '-');
             } elseif ($res->filler_type == 'superior') {
                 $filler = $res->filler_superior;
+                $alumni = $res->alumni;
 
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->full_name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->position ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->email ?? '-');
 
-                $alumni = $res->alumni;
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->full_name ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->study_program ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->study_start_year ?? '-');
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->graduation_date ? date('Y', strtotime($alumni->graduation_date)) : '-');
             }
 
-            $fillerKey = $res->questionnaire_id . '_' . $res->filler_type . '_' . $res->filler_id;
-            $answerList = $answers[$fillerKey] ?? collect();
-
+            $compositeKey = '';
+            if ($res->filler_type === 'superior') {
+                $compositeKey = $res->filler_type . '-' . $res->filler_id . '-' . $res->alumni_id;
+            } else {
+                $compositeKey = $res->filler_type . '-' . $res->filler_id;
+            }
+            $answerList = $answersGrouped[$compositeKey] ?? collect();
             foreach ($questions as $question) {
                 $answerText = $answerList->firstWhere('question_id', $question->id)->answer ?? '-';
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $answerText);
