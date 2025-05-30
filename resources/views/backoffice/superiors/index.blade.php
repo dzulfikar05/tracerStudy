@@ -23,7 +23,7 @@
                 </div>
                 <div class="table-responsive">
                     <table
-                        class="table table-striped table-hover table-row-bordered border align-middle rounded w-100 overflow-y-auto"
+                        class="table table-striped table-hover table-row-bordered border align-middle nowrap  rounded w-100 overflow-y-auto"
                         id="table_superiors">
                         <thead class="text-center">
                             <tr class="fw-bolder">

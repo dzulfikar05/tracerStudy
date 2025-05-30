@@ -48,6 +48,7 @@
     initTable = () => {
         var table = $('#table_profession').DataTable({
             processing: true,
+            scrollX: true,
             serverSide: true,
             searchAble: true,
             searching: true,
@@ -206,7 +207,7 @@
             $('#' + v).val('').change()
         })
     }
-    
+
     function modalAction(url = '') {
     $('#myModal').load(url, function () {
         $('#myModal').modal('show');

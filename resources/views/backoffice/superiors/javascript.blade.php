@@ -39,6 +39,7 @@
             serverSide: true,
             searchAble: true,
             searching: true,
+            scrollX: true,
             paging: true,
             "bDestroy": true,
             //ajax: "{{ route('backoffice.superior.table') }}",

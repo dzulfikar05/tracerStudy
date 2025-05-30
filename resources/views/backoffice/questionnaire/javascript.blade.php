@@ -35,6 +35,7 @@
             serverSide: true,
             searching: true,
             paging: true,
+            scrollX: true,
             bDestroy: true,
             // ajax: "{{ route('backoffice.questionnaire.table') }}",
             ajax: {

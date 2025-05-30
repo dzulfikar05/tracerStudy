@@ -38,14 +38,14 @@
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
     <style>
-        .table-responsive {
+        /* .table-responsive {
             overflow-x: auto;
             width: 100%;
         }
 
         table.dataTable {
             white-space: nowrap;
-        }
+        } */
 
 
         .select2-container .select2-selection--single {

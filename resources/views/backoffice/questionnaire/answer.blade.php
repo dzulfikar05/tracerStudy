@@ -2,9 +2,9 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div style="overflow-x: auto; width: 100%;">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
-                        id="table_answer" style="white-space: nowrap;">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100 nowrap"
+                        id="table_answer">
                         <div class="card-body">
                             <div class="form-group mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
