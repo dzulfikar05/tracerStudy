@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index()
     {
         return view('layouts.index', [
-            'title' => 'User',
+            'title' => 'Pengguna',
             'content' => view('backoffice.user.index')
         ]);
     }

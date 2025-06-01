@@ -66,7 +66,7 @@
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="general-tab" data-toggle="tab" href="#dashboard-general"
-                    role="tab">Dashboard General</a>
+                    role="tab">Dashboard Umum</a>
             </li>
             <li class="nav-item" id="assessment-tab">
                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#dashboard-assessment"
