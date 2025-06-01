@@ -37,7 +37,10 @@
 
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
-    <style>
+
+    <script src="{{ asset('plugins/ckeditor4/ckeditor.js') }}"></script>
+
+<style>
         /* .table-responsive {
             overflow-x: auto;
             width: 100%;
@@ -146,6 +149,8 @@
     <script src="{{ asset('plugins/select2/select2.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- CKEditor --}}
 
     <!-- Helper Functions -->
     <script src="{{ asset('assets/helpers/helper.js') }}"></script>
