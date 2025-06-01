@@ -101,7 +101,7 @@
 
 
         saConfirm({
-            message: 'Are you sure you want to save the data?',
+            message: 'Apakah anda yakin ingin menyimpan data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -172,7 +172,7 @@
     onDelete = (el) => {
         var id = $(el).data('id');
         saConfirm({
-            message: 'Are you sure you want to delete the data?',
+            message: 'Apakah anda yakin ingin menghapus data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({

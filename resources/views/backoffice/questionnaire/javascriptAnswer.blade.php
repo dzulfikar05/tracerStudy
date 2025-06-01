@@ -201,7 +201,7 @@
         var questionnaireId = $(el).data('questionnaire-id');
 
         saConfirm({
-            message: 'Are you sure you want to delete this answer?',
+            message: 'Apakah anda yakin ingin menghapus jawaban ini?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -228,7 +228,7 @@
                             saMessage({
                                 success: false,
                                 title: 'Error',
-                                message: 'An error occurred while deleting the answer.'
+                                message: 'Terjadi error ketika menghapus jawaban.'
                             });
                         }
                     });
