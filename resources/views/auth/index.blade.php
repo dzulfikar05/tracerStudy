@@ -41,37 +41,30 @@
             background-color: #2704b5;
             color: white;
         }
+
+        
     </style>
 </head>
 
-<body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
-    style="font-family: 'Poppins'">
-    <section class="vh-100">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-7 d-flex justify-content-center align-items-center">
-                    <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Login</span> Admin</span>
-                        <form action="javascript:onLogin(this)" method="post" id="form_login" name="form_login" autocomplete="off" class="mt-5">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input class="form-control form-control-lg" id="password" type="password" name="password" placeholder="Enter your password" />
-                            </div>
-                            <a href="{{ route('auth.forgot-password') }}" style="float: right">Lupa Password ?</a>
-                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Log In</button>
-                        </form>
-                    </div>
+<body style="background: url('{{ asset('img/gedung_jti.png') }}') no-repeat center center fixed; background-size: cover; font-family: 'Poppins'">
+    <div class="d-flex align-items-center justify-content-center vh-100" style="background-color: rgba(255,255,255,0.8);">
+        <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 12px;">
+            <h3 class="text-center fw-bold mb-4"><span class="text-dark">Login</span> <span class="text-primary">Admin</span></h3>
+            <form action="javascript:onLogin(this)" method="post" id="form_login" name="form_login" autocomplete="off">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
                 </div>
-                <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Login image" style=" height: 100%; object-fit: cover;">
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input class="form-control form-control-lg" id="password" type="password" name="password" placeholder="Enter your password" />
                 </div>
-            </div>
+                <a href="{{ route('auth.forgot-password') }}" class="d-block text-end mb-3">Lupa Password ?</a>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Log In</button>
+            </form>
         </div>
+    </div>
     </section>
 
     @include('auth.javascript')
