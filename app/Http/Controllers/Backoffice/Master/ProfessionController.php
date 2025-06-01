@@ -16,7 +16,7 @@ class ProfessionController extends Controller
     public function index()
     {
         return view('layouts.index', [
-            'title' => 'Profession',
+            'title' => 'Profesi',
             'content' => view('backoffice.profession.index')
         ]);
     }

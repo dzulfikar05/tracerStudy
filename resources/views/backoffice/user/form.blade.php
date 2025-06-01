@@ -32,7 +32,7 @@
                     <div class="form-group mt-5 d-flex justify-content-end">
                         <button type="button" onclick="onReset()" class="btn btn-light me-3"><i class="align-middle"
                                 data-feather="rotate-ccw"> </i> Reset</button>
-                        <button type="submit" class="btn btn-success"><i class="align-middle" data-feather="save"> </i>
+                        <button type="submit" class="btn btn-success"><i class="align-middle" data-feather="Simpan"> </i>
                             Simpan</button>
                     </div>
                 </form>

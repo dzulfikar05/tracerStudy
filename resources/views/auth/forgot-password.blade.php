@@ -12,7 +12,7 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('img/icons/LogoTracerOrange.png') }}" />
-    <title>Forgot Password</title>
+    <title>Lupa Password</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/light.css') }}" rel="stylesheet">
@@ -53,14 +53,14 @@
             <div class="row">
                 <div class="col-sm-7 d-flex justify-content-center align-items-center">
                     <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Forgot</span> Password</span>
+                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Lupa</span> Password</span>
                         <form action="javascript:onForgot(this)" method="post" id="form_forgot" name="form_forgot" autocomplete="off" class="mt-5">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
                                 <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
                             </div>
-                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Forgot Password</button>
+                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Lupa Password</button>
                         </form>
                     </div>
                 </div>

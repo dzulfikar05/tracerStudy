@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="{{ route('template.import.alumni') }}" class="btn btn-primary" target="_blank">
+                <a href="/file/template_import_alumni.xlsx" class="btn btn-primary" target="_blank">
                     <i class="fa fa-download"></i> Download Template
                 </a>
                 

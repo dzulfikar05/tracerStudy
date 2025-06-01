@@ -38,12 +38,4 @@ Route::post('/questionnaire/store-superior', [HomeController::class, 'storeSuper
 
 Route::post('/company', [CompanyController::class, 'store']);
 Route::post('/profession', [ProfessionController::class, 'store']);
-Route::get('/template-import-alumni', function () {
-    $filePath = public_path('files/template_import_alumni.xlsx');
 
-    if (!file_exists($filePath)) {
-        abort(404, 'File tidak ditemukan.');
-    }
-
-    return response()->download($filePath);
-})->name('template.import.alumni');
