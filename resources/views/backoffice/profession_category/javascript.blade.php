@@ -24,6 +24,7 @@
         var table = $('#table_profession_category').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             searchAble: true,
             searching: true,
             paging: true,

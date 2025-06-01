@@ -237,64 +237,81 @@ class AlumniController extends Controller
         return view('backoffice.alumni.import');
     }
 
-    public function import_ajax(Request $request)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'file_alumni' => ['required', 'mimes:xlsx', 'max:2048']
-            ];
+public function import_ajax(Request $request)
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            'file_alumni' => ['required', 'mimes:xlsx', 'max:2048']
+        ];
 
-            $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
-
-            $file = $request->file('file_alumni');
-            $reader = IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($file->getRealPath());
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray(null, false, true, true);
-
-            $insert = [];
-
-            foreach ($data as $i => $row) {
-                if ($i == 1) continue; // Lewati header
-
-                $nim = $row['B'];
-                if (!$nim || Alumni::where('nim', $nim)->exists()) {
-                    continue; // Skip jika NIM kosong atau sudah ada di database
-                }
-
-                $date = Date::excelToDateTimeObject($row['D']);
-                $graduation_date = $date ? $date->format('Y-m-d') : null;
-
-
-                $insert[] = [
-                    'study_program' => $row['A'],
-                    'nim' => $nim,
-                    'full_name' => $row['C'],
-                    'graduation_date' => $graduation_date,
-                ];
-            }
-
-            if (count($insert)) {
-                Alumni::insert($insert);
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data alumni berhasil diimport'
-                ]);
-            }
-
+        if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => 'Tidak ada data untuk diimport (mungkin semua NIM sudah ada)'
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
             ]);
         }
+
+        $file = $request->file('file_alumni');
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->getRealPath());
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray(null, false, true, true);
+
+        $insert = [];
+        $updated = 0;
+
+        foreach ($data as $i => $row) {
+            if ($i == 1) continue;
+
+            $nim = $row['B'];
+            if (!$nim) continue;
+
+            $date = Date::excelToDateTimeObject($row['D']);
+            $graduation_date = $date ? $date->format('Y-m-d') : null;
+
+            $existingAlumni = Alumni::withTrashed()->where('nim', $nim)->first();
+
+            if ($existingAlumni) {
+                if ($existingAlumni->trashed()) {
+                    $existingAlumni->restore();
+                }
+                $existingAlumni->update([
+                    'study_program'     => $row['A'],
+                    'full_name'         => $row['C'],
+                    'graduation_date'   => $graduation_date,
+                ]);
+                $updated++;
+                continue;
+            }
+
+            $insert[] = [
+                'study_program'     => $row['A'],
+                'nim'               => $nim,
+                'full_name'         => $row['C'],
+                'graduation_date'   => $graduation_date,
+            ];
+        }
+
+        if (count($insert)) {
+            Alumni::insert($insert);
+        }
+
+        if (count($insert) || $updated > 0) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Data alumni berhasil diimport'
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Tidak ada data untuk diimport (mungkin semua NIM sudah ada)'
+        ]);
     }
+}
+
 }

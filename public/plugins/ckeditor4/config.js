@@ -1,14 +1,4 @@
-/**
- * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
- * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
- */
-
 CKEDITOR.editorConfig = function( config ) {
-	// Define changes to default configuration here.
-	// For complete reference see:
-	// https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html
-
-	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
@@ -26,13 +16,18 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'about' }
 	];
 
-	// Remove some buttons provided by the standard plugins, which are
-	// not needed in the Standard(s) toolbar.
-	config.removeButtons = 'Underline,Subscript,Superscript';
+	config.extraPlugins = 'font,colorbutton';
 
-	// Set the most common block elements.
+	config.fontSize_sizes = '8/8px;10/10px;12/12px;14/14px;16/16px;18/18px;24/24px;36/36px;';
 	config.format_tags = 'p;h1;h2;h3;pre';
 
-	// Simplify the dialog windows.
+	config.removeButtons = 'Underline,Subscript,Superscript';
 	config.removeDialogTabs = 'image:advanced;link:advanced';
+
+	// Tambahkan warna khusus
+	config.colorButton_colors = '1a3c8f,FF0000,00FF00,0000FF,FFFF00,FF00FF,00FFFF,000000,FFFFFF';
+	// ↑ kamu bisa tambah warna lainnya di sini jika dibutuhkan
+
+	// (Opsional) Izinkan pengguna memilih warna kustom
+	config.colorButton_enableMore = true;
 };

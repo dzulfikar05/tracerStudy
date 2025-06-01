@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::post('/get-carousel', [HomeController::class, 'getCarousel'])->name('get-carousel');
+Route::post('/get-content-home', [HomeController::class, 'getContentHome'])->name('get-content-home');
+
+
 Route::get('/list-questionnaire', [HomeController::class, 'listQuestionnaireIndex'])->name('list-questionnaire');
 Route::get('/about', [HomeController::class, 'aboutIndex'])->name('about');
 

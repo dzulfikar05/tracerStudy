@@ -10,12 +10,18 @@
                     <i class="align-middle " data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                 </a>
             </li>
+            <li class="sidebar-item  {{ set_active('backoffice.content.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.content.index') }}">
+                    <i class="align-middle " data-feather="layout"></i> <span class="align-middle">Konten Website</span>
+                </a>
+            </li>
 
             {{-- <li class="sidebar-header">
                 Master Data
             </li> --}}
 
-            <li class=" sidebar-item {{ set_active('pendidikan') }} {{ set_active('backoffice.master.job-category.index') }}">
+            <li
+                class=" sidebar-item {{ set_active('pendidikan') }} {{ set_active('backoffice.master.job-category.index') }}">
                 <a data-bs-target="#masters" data-bs-toggle="collapse" class="sidebar-link collapsed  ">
                     <i class="align-middle " data-feather="layers"></i> <span class="align-middle">Master Data</span>
                 </a>
@@ -26,14 +32,15 @@
                     {{ set_show('backoffice.master.company.index') }}
                     {{ set_show('backoffice.master.user.index') }}"
                     data-bs-parent="#sidebar">
-                    <li class="sidebar-item {{ set_active('backoffice.master.profession-category.index') }}"><a class="sidebar-link"
+                    <li class="sidebar-item {{ set_active('backoffice.master.profession-category.index') }}"><a
+                            class="sidebar-link"
                             href="{{ route('backoffice.master.profession-category.index') }}">Kategori Profesi</a>
                     </li>
-                    <li class="sidebar-item {{ set_active('backoffice.master.profession.index') }}"><a class="sidebar-link"
-                            href="{{ route('backoffice.master.profession.index') }}">Profesi</a>
+                    <li class="sidebar-item {{ set_active('backoffice.master.profession.index') }}"><a
+                            class="sidebar-link" href="{{ route('backoffice.master.profession.index') }}">Profesi</a>
                     </li>
-                    <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a class="sidebar-link"
-                            href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
+                    <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a
+                            class="sidebar-link" href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
                     </li>
                     <li class="sidebar-item {{ set_active('backoffice.master.user.index') }}"><a class="sidebar-link"
                             href="{{ route('backoffice.master.user.index') }}">User</a>
@@ -51,7 +58,8 @@
                     <i class="align-middle " data-feather="users"></i> <span class="align-middle">Atasan Alumni</span>
                 </a>
             </li>
-            <li class="sidebar-item
+            <li
+                class="sidebar-item
                 {{ set_active('backoffice.questionnaire.index') }}
                 {{ set_active('backoffice.questionnaire.show') }}
                 {{ set_active('backoffice.questionnaire.show-assessment') }}
