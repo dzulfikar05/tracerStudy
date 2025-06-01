@@ -7,13 +7,13 @@
                     Perjalanan Anda <br>
                     Bersama Polinema
                 </h1>
-    
+
                 <a href="/list-questionnaire" class="btn btn-survey">Isi Survey</a>
             </div>
         </div>
-        
-        <div class="list">
-            
+
+        <div class="list list-image-carousel">
+
             <div class="item">
                 <img src="{{ asset('img/photos/Greeting.png') }}" alt="Slide 1">
             </div>
@@ -42,7 +42,10 @@
 
 
 <!-- About Section -->
-<section class="about-section" id="about">
+<div class="content-home">
+
+</div>
+{{-- <section class="about-section" id="about">
     <div class="container" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
         <div class="row">
             <div class="col-lg-6" >
@@ -143,7 +146,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> --}}
 
 <!-- CTA Section -->
 <section class="cta-section" id="survey">
