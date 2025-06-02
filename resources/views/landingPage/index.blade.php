@@ -21,7 +21,7 @@
                 <img src="{{ asset('img/photos/Alumni.png') }}" alt="Slide 2">
             </div>
             <div class="item">
-                <img src="{{ asset('img/photos/Atasan.png') }}" alt="Slide 3">
+                <img src="{{ asset('img/photos/Perusahaan.png') }}" alt="Slide 3">
             </div>
             <div class="item">
                 <img src="{{ asset('img/photos/Akreditasi.png') }}" alt="Slide 3">
