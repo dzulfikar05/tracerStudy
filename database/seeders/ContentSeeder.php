@@ -19,7 +19,7 @@ class ContentSeeder extends Seeder
                 'type' => 'carousel',
                 'title' => 'Gambar Carousel 1',
                 'text' => null,
-                'image' => '1748699303.png',
+                'image' => '1748700087.png',
                 'order' => 1,
             ],
             [
@@ -40,14 +40,14 @@ class ContentSeeder extends Seeder
                 'type' => 'carousel',
                 'title' => 'Carousel 4',
                 'text' => null,
-                'image' => '1748700087.png',
+                'image' => '1748699261.png',
                 'order' => 4,
             ],
             [
                 'type' => 'home',
                 'title' => 'TENTANG TRACER STUDY',
                 'text' => '<h3><span style="font-size:24px"><strong>Apa itu<span style="color:#1a3c8f"> Tracer Study </span>?</strong></span>&nbsp;</h3><p><span style="font-size:14px">Tracer Study merupakan salah satu metode yang digunakan oleh perguruan tinggi untuk memperoleh umpan balik dari alumni. Umpan balik yang diperoleh dari alumni ini dibutuhkan untuk perbaikan serta pengembangan kualitas dan sistem pendidikan. </span></p>',
-                'image' => '1748702184.jpg',
+                'image' => '1748702184.png',
                 'order' => 5,
             ],
             [

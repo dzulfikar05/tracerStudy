@@ -152,7 +152,7 @@
             <div class="row">
                 <div class="col-lg-10 mx-auto">
                     <div class="LogoHeader">
-                        <img src="{{ asset('img/photos/LogoTracerIlustrasi.png') }}" alt="Illustrasi_Tracer"
+                        <img src="{{ asset('img/photos/LogoTracerIlustrasi.png') }}" alt="Illustrasi_Tracer" style="object-fit: cover; width:50%;"
                             class="illustration-img" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">
                     </div>
                     <h1 class="text-center" data-aos="zoom-in-up" data-aos-delay="50" data-aos-duration="1000">Tentang
