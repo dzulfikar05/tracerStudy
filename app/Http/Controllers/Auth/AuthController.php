@@ -62,8 +62,17 @@ class AuthController extends Controller
     public function sendResetEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
         ]);
+
+        $user = User::where('email', $request['email'])->first();
+        if (!$user) {
+            return [
+                'success' => false,
+                'title' => 'Error',
+                'message' => 'Email tidak ditemukan',
+            ];
+        }
 
         $token = Str::random(64);
 

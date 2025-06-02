@@ -14,6 +14,7 @@ use App\Models\Answer;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Str;
+use Nette\Utils\Random;
 
 class SuperiorsController extends Controller
 {
@@ -202,10 +203,8 @@ class SuperiorsController extends Controller
             $superior = Superior::findOrFail($id);
 
             if (empty($superior->passcode)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Atasan ini belum memiliki passcode'
-                ], 400);
+                $superior->passcode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $superior->save();
             }
 
             return response()->json([

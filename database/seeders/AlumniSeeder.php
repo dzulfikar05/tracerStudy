@@ -7,12 +7,10 @@ use App\Models\Company;
 use App\Models\Profession;
 use App\Models\Superior;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class AlumniSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $companies = Company::pluck('id')->toArray();
@@ -82,13 +80,17 @@ class AlumniSeeder extends Seeder
             ],
         ];
 
-
         foreach ($data as $i => &$row) {
-            $row['graduation_date'] = now()->format('Y-m-d');
+            $graduationDate = now();
+            $startWorkDate = now()->subMonths(rand(1, 12));
+
+            $row['graduation_date'] = $graduationDate->format('Y-m-d');
+            $row['start_work_date'] = $startWorkDate->format('Y-m-d');
+            $row['waiting_time'] = $this->getWaitingTime($graduationDate, $startWorkDate);
+
+            $row['start_work_now_date'] = now()->format('Y-m-d');
             $row['phone'] = '0812345678' . str_pad($i, 2, '0', STR_PAD_LEFT);
             $row['email'] = 'alumni' . ($i + 1) . '@example.com';
-            $row['start_work_date'] = now()->subMonths(rand(1, 12))->format('Y-m-d');
-            $row['start_work_now_date'] = now()->format('Y-m-d');
             $row['study_start_year'] = '20' . rand(16, 21);
             $row['company_id'] = $companies[array_rand($companies)] ?? null;
             $row['profession_id'] = $professions[array_rand($professions)] ?? null;
@@ -96,5 +98,14 @@ class AlumniSeeder extends Seeder
         }
 
         Alumni::insert($data);
+    }
+
+    protected function getWaitingTime($graduationDate, $startWorkDate): string
+    {
+        $graduation = Carbon::parse($graduationDate);
+        $startWork = Carbon::parse($startWorkDate);
+        $diffInDays = $graduation->diffInDays($startWork);
+        $monthFloat = round($diffInDays / 30.44, 1);
+        return number_format($monthFloat, 1, ',', '');
     }
 }
