@@ -60,6 +60,14 @@ class AlumniController extends Controller
             if ($request->filled('company_id')) {
                 $data->where('company_id', $request->company_id);
             }
+            if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $data->where('company_id', '!=', null);
+                $data->where('start_work_date', '!=', null);
+                $data->where('start_work_now_date', '!=', null);
+                $data->where('waiting_time', '!=', null);
+                $data->where('profession_id', '!=', null);
+                $data->where('profession_id', '!=', null);
+            }
 
 
             return DataTables::of($data->get())
@@ -198,6 +206,15 @@ class AlumniController extends Controller
         if ($request->filled('company_id')) {
             $query->where('company_id', $request->company_id);
         }
+
+         if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $query->where('company_id', '!=', null);
+                $query->where('start_work_date', '!=', null);
+                $query->where('start_work_now_date', '!=', null);
+                $query->where('waiting_time', '!=', null);
+                $query->where('profession_id', '!=', null);
+                $query->where('profession_id', '!=', null);
+            }
 
         // Get data after applying filters
         $alumni = $query->get();

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\SuperiorRequest;
+use App\Models\Alumni;
+use App\Models\Answer;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Str;
@@ -36,8 +38,30 @@ class SuperiorsController extends Controller
                 $query->where('company_id', $request->company);
             }
 
-
             $data = $query->get();
+
+            if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $data = $data->filter(function ($item) {
+                    $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
+                        ->select('id')
+                        ->pluck('id')
+                        ->toArray();
+
+                    foreach ($getListAlumniSuperior as $alumni_id) {
+                        $answer = Answer::where('filler_type', 'superior')
+                            ->where('filler_id', $item->id)
+                            ->where('alumni_id', $alumni_id)
+                            ->first();
+
+                        if ($answer == null) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })->values();
+            }
+
 
             return DataTables::of($data)
                 ->addIndexColumn()
