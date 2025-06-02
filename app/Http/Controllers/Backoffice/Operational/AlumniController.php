@@ -203,8 +203,8 @@ class AlumniController extends Controller
     $alumni = $query->get();
 
     $row = 2;
-    foreach ($alumni as $data) {
-        $sheet->setCellValue('A' . $row, $data->id);
+    foreach ($alumni as $index => $data) {
+        $sheet->setCellValue('A' . $row, $index + 1);
         $sheet->setCellValue('B' . $row, $data->full_name);
         $sheet->setCellValue('C' . $row, $data->nim);
         $sheet->setCellValue('D' . $row, $data->study_program);
@@ -220,6 +220,10 @@ class AlumniController extends Controller
         $sheet->setCellValue('N' . $row, $data->superior?->full_name ?? '');
         $row++;
     }
+
+     foreach (range('A', 'N') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
 
     // Siapkan file untuk diunduh
     $writer = new Xlsx($spreadsheet);

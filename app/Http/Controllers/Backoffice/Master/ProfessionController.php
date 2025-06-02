@@ -106,16 +106,20 @@ class ProfessionController extends Controller
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama');
         $sheet->setCellValue('C1', 'Kategori');
 
         $row = 2;
-        foreach ($professions as $profession) {
-            $sheet->setCellValue('A' . $row, $profession->id);
+        foreach ($professions as $index => $profession) {
+            $sheet->setCellValue('A' . $row, $index + 1);
             $sheet->setCellValue('B' . $row, $profession->name);
             $sheet->setCellValue('C' . $row, $profession->profession_category->name ?? '-');
             $row++;
+        }
+
+        foreach (range('A', 'C') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
         $filename = 'Data_Profesi_' . date('Y-m-d_H-i-s') . '.xlsx';

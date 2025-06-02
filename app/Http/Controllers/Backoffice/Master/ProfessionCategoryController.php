@@ -94,15 +94,19 @@ class ProfessionCategoryController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
     
         // Buat header kolom
-        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('A1', 'No'); 
         $sheet->setCellValue('B1', 'Nama');
     
         // Isi data mulai dari baris ke-2
         $row = 2;
-        foreach ($categories as $category) {
-            $sheet->setCellValue('A' . $row, $category->id);
+        foreach ($categories as $index => $category) {
+            $sheet->setCellValue('A' . $row, $index + 1);
             $sheet->setCellValue('B' . $row, $category->name);
             $row++;
+        }
+
+        foreach (range('A', 'B') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
         }
     
         // Siapkan response untuk download

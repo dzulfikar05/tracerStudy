@@ -120,19 +120,23 @@ class UserController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Header kolom
-        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama');
         $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('E1', 'Tanggal Dibuat');
+        $sheet->setCellValue('D1', 'Tanggal Dibuat');
 
         // Isi data mulai dari baris ke-2
         $row = 2;
-        foreach ($users as $user) {
-            $sheet->setCellValue('A' . $row, $user->id);
+        foreach ($users as  $index => $user) {
+            $sheet->setCellValue('A' . $row, $index + 1);
             $sheet->setCellValue('B' . $row, $user->name);
             $sheet->setCellValue('C' . $row, $user->email);
-            $sheet->setCellValue('E' . $row, $user->created_at);
+            $sheet->setCellValue('D' . $row, $user->created_at);
             $row++;
+        }
+
+         foreach (range('A', 'D') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
         // Siapkan nama file
