@@ -40,35 +40,40 @@
             background-color: #2704b5;
             color: white;
         }
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* overlay putih 50% */
+    z-index: 0;
+}
+
+        
     </style>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 </head>
 
-<body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
-    style="font-family: 'Poppins'">
-    <section class="vh-100">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-7 d-flex justify-content-center align-items-center">
-                    <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Lupa</span> Password</span>
-                        <form action="javascript:onForgot(this)" method="post" id="form_forgot" name="form_forgot" autocomplete="off" class="mt-5">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
-                            </div>
-                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Lupa Password</button>
-                        </form>
-                    </div>
+<body style="background: url('{{ asset('img/gedung_jti.png') }}') no-repeat center center fixed; background-size: cover; font-family: 'Poppins'; position: relative;">
+    <div class="overlay"></div>
+    <div class="d-flex align-items-center justify-content-center vh-100 position-relative" style="z-index: 1;">
+        <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 12px;">
+            <h3 class="text-center fw-bold mb-4"><span class="text-dark">Lupa</span> <span class="text-primary">Password</span></h3>
+            <form action="javascript:onForgot(this)" method="post" id="form_forgot" name="form_forgot" autocomplete="off">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control form-control-lg" type="email" name="email" placeholder="Enter your email" />
                 </div>
-                <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Login image" style=" height: 100%; object-fit: cover;">
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Lupa Password</button>
+            </form>
         </div>
+    </div>
+
+
     </section>
 
     @include('auth.javascript')
