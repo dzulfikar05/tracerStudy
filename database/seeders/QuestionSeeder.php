@@ -32,19 +32,43 @@ class QuestionSeeder extends Seeder
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question' => 'Kedisiplinan',
+                'question' => 'Kerjasama Tim',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
             ],
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question' => 'Kebersihan',
+                'question' => 'Keahlian di bidang IT',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
             ],
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question' => 'Kemampuan bermanuver dalam tekanan',
+                'question' => 'Kemampuan bahasa asing (Inggris)',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Kemampuan berkomunikasi',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Pengembangan diri',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Kepemimpinan',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Etos Kerja',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
             ],
         ];
