@@ -176,7 +176,7 @@ class SuperiorsController extends Controller
     {
         try {
             $superior = Superior::findOrFail($id);
-            
+
             if (empty($superior->passcode)) {
                 return response()->json([
                     'success' => false,
@@ -193,21 +193,11 @@ class SuperiorsController extends Controller
                     'company_name' => $superior->company->name ?? 'Jurusan Teknologi Informasi Politeknik Negeri Malang'
                 ]
             ]);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengirim reminder: ' . $e->getMessage()
             ], 500);
         }
- }
+    }
 }
-
-
-
-
-
-
-
-
-
