@@ -40,7 +40,9 @@
 
     <script src="{{ asset('plugins/ckeditor4/ckeditor.js') }}"></script>
 
-<style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
         /* .table-responsive {
             overflow-x: auto;
             width: 100%;

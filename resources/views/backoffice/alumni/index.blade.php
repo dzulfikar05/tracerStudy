@@ -83,6 +83,14 @@
                     <label for="filter_company_id col-12" class="form-label">Perusahaan</label>
                     <select id="filter_company_id" class="form-control" style="width: 100%"></select>
                 </div>
+                <div class="mb-3">
+                    <label for="filter_filled col-12" class="form-label">Status Kuisioner</label>
+                    <select id="filter_filled" class="form-control" style="width: 100%">
+                        <option value="">- Pilih Status Kuisioner -</option>
+                        <option value="unfilled">Belum diisi</option>
+                        <option value="filled">Sudah diisi</option>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="applyFilter()" class="btn btn-primary">Terapkan</button>
