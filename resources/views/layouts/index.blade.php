@@ -23,6 +23,8 @@
     <link href="{{ asset('css/light.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -79,7 +81,7 @@
 </head>
 
 <body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
-    style="font-family: 'Helvetica">
+    style="font-family: 'Poppins', sans-serif;">
 
     <div class="wrapper">
 
