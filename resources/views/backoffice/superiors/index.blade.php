@@ -76,3 +76,4 @@
 <div id="myModal" class="modal fade" tabindex="-1" aria-hidden="true"></div>
 
 @include('backoffice.superiors.javascript')
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>

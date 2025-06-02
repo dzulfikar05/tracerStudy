@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Backoffice\Operational;
 use App\Http\Controllers\Controller;
 use App\Models\Superior;
 use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\SuperiorRequest;
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Str;
 
 class SuperiorsController extends Controller
 {
@@ -170,4 +171,43 @@ class SuperiorsController extends Controller
         $alumnis = \App\Models\Alumni::where('superior_id', $id)->get(); // pastikan kolom ini ada
         return view('backoffice.superiors.modal_alumni', compact('alumnis'));
     }
+
+    public function sendReminder($id)
+    {
+        try {
+            $superior = Superior::findOrFail($id);
+            
+            if (empty($superior->passcode)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Atasan ini belum memiliki passcode'
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'email' => $superior->email,
+                    'name' => $superior->full_name,
+                    'passcode' => $superior->passcode,
+                    'company_name' => $superior->company->name ?? 'Jurusan Teknologi Informasi Politeknik Negeri Malang'
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengirim reminder: ' . $e->getMessage()
+            ], 500);
+        }
+ }
 }
+
+
+
+
+
+
+
+
+

@@ -547,7 +547,7 @@ class QuestionnaireController extends Controller
         foreach ($respondents as $i => $res) {
             $colIndex = 1;
 
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $i + 1);
+            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $row - 1);
             $colIndex++;
 
             if ($res->filler_type == 'alumni') {
@@ -603,6 +603,14 @@ class QuestionnaireController extends Controller
 
             $row++;
         }
+
+        $highestColumn = $sheet->getHighestColumn(); // misalnya: 'Z'
+        $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // jadi: 26
+
+        for ($i = 1; $i <= $highestColumnIndex; $i++) {
+            $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i))->setAutoSize(true);
+        }
+
 
         $writer = new Xlsx($spreadsheet);
         $filename = 'Jawaban_Questionnaire_' . date('Ymd_His') . '.xlsx';
