@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
@@ -31,8 +32,17 @@
                             <td>{{ $alumni->nim }}</td>
                             <td>{{ $alumni->email }}</td>
                             <td>{{ $alumni->phone }}</td>
-                            <td>{{ $isFilled ? 'Terisi' : 'Belum Terisi' }}</td>
-                            
+                            <td>
+                                @if($isFilled)
+                                    <span class="text-success">
+                                        <i class="fas fa-check-circle"></i> Terisi
+                                    </span>
+                                @else
+                                    <span class="text-danger">
+                                        <i class="fas fa-times-circle"></i> Belum Terisi
+                                    </span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
