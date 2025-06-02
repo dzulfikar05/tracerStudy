@@ -41,42 +41,45 @@
             background-color: #2704b5;
             color: white;
         }
+        .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* transparansi putih */
+    z-index: 0;
+}
+
     </style>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 </head>
 
-<body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
-    style="font-family: 'Poppins'">
-    <section class="vh-100">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-7 d-flex justify-content-center align-items-center">
-                    <div class="m-sm-4">
-                        <span class="fs-1 fw-bolder text-primary"><span class="text-dark">Reset</span> Password</span>
-                        <form action="javascript:onReset(this)" method="post" id="form_reset" name="form_reset" autocomplete="off" class="mt-5">
-                            @csrf
-                            <input type="hidden" name="email" id="email" value="{{ $email }}">
-                            <input type="hidden" name="token" id="token" value="{{ $token }}">
-                            <div class="mb-3">
-                                <label class="form-label">New Password</label>
-                                <input class="form-control form-control-lg" type="password" name="password" id="password" placeholder="Enter new password" required />
-                            </div>
+<body style="background: url('{{ asset('img/gedung_jti.png') }}') no-repeat center center fixed; background-size: cover; font-family: 'Poppins'; position: relative;">
+    <div class="overlay"></div>
+    <div class="d-flex align-items-center justify-content-center vh-100 position-relative" style="z-index: 1;">
+        <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px; border-radius: 12px;">
+            <h3 class="text-center fw-bold mb-4"><span class="text-dark">Reset</span> <span class="text-primary">Password</span></h3>
+            <form action="javascript:onReset(this)" method="post" id="form_reset" name="form_reset" autocomplete="off">
+                @csrf
+                <input type="hidden" name="email" id="email" value="{{ $email }}">
+                <input type="hidden" name="token" id="token" value="{{ $token }}">
+                <div class="mb-3">
+                    <label class="form-label">New Password</label>
+                    <input class="form-control form-control-lg" type="password" name="password" id="password" placeholder="Enter new password" required />
+                </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Konfirmasi Password</label>
-                                <input class="form-control form-control-lg" type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required />
-                            </div>
-                            <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Reset Password</button>
-                        </form>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Konfirmasi Password</label>
+                    <input class="form-control form-control-lg" type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required />
                 </div>
-                <div class="col-sm-5 px-0 d-none d-sm-block">
-                    <img src="{{ asset('img/gedung_jti.png') }}" alt="Login image" style=" height: 100%; object-fit: cover;">
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">Reset Password</button>
+            </form>
         </div>
+    </div>
+
     </section>
 
     @include('auth.javascript')
