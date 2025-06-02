@@ -59,7 +59,8 @@
                                         ${data[i].text}
                                     </div>
                                     <div class="col-lg-6">
-                                        <img src="${url}" alt="${data[i].title}" class="illustration-img">
+                                    
+                                        <img src="${url}" alt="${data[i].title}" class="illustration-img" style="object-fit: cover; width:100%; height:300px;">
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +77,7 @@
                                         ${data[i].text}
                                     </div>
                                     <div class="col-lg-6">
-                                        <img src="${url}" alt="${data[i].title}" class="illustration-img">
+                                        <img src="${url}" alt="${data[i].title}" class="illustration-img" style="object-fit: cover; width:100%; height:300px;">
                                     </div>
                                 </div>
                             </div>
