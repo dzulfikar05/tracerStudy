@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Confirm Password</label>
+                                <label class="form-label">Konfirmasi Password</label>
                                 <input class="form-control form-control-lg" type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required />
                             </div>
                             <button type="submit" class="btn btn-lg btn-primary col-12 mt-3">Reset Password</button>

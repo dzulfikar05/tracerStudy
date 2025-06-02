@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ProfessionSeeder::class,
             QuestionnaireSeeder::class,
             QuestionSeeder::class,
+            ContentSeeder::class
         ]);
 
     }

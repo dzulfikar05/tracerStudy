@@ -24,6 +24,7 @@
         var table = $('#table_profession_category').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             searchAble: true,
             searching: true,
             paging: true,
@@ -67,7 +68,7 @@
         }
 
         saConfirm({
-            message: 'Are you sure you want to modify the data?',
+            message: 'Apakah anda yakin ingin mengubah data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -141,7 +142,7 @@
         var urlDelete = `{{ route('backoffice.master.profession-category.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id);
 
         saConfirm({
-            message: 'Are you sure you want to delete the data?',
+            message: 'Apakah anda yakin ingin menghapus data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({

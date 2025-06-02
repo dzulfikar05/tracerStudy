@@ -48,6 +48,7 @@
     initTable = () => {
         var table = $('#table_profession').DataTable({
             processing: true,
+            scrollX: true,
             serverSide: true,
             searchAble: true,
             searching: true,
@@ -100,7 +101,7 @@
 
 
         saConfirm({
-            message: 'Are you sure you want to save the data?',
+            message: 'Apakah anda yakin ingin menyimpan data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -171,7 +172,7 @@
     onDelete = (el) => {
         var id = $(el).data('id');
         saConfirm({
-            message: 'Are you sure you want to delete the data?',
+            message: 'Apakah anda yakin ingin menghapus data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -206,7 +207,7 @@
             $('#' + v).val('').change()
         })
     }
-    
+
     function modalAction(url = '') {
     $('#myModal').load(url, function () {
         $('#myModal').modal('show');

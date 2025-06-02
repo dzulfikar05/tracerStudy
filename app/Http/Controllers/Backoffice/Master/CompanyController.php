@@ -18,7 +18,7 @@ class CompanyController extends Controller
     public function index()
     {
         return view('layouts.index', [
-            'title' => 'Company',
+            'title' => 'Perusahaan',
             'content' => view('backoffice.company.index')
         ]);
     }

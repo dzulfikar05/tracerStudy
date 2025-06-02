@@ -11,7 +11,7 @@
                     <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle" data-feather="rotate-ccw"> </i> Refresh</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100" id="table_questionnaire">
+                    <table class="table table-striped table-hover table-row-bordered border nowrap  nowrap align-middle rounded w-100" id="table_questionnaire">
                         <thead class="text-center">
                             <tr class="fw-bolder">
                                 <th style="width: 50px">No</th>

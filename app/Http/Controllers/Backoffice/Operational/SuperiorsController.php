@@ -18,7 +18,7 @@ class SuperiorsController extends Controller
     public function index()
     {
         return view('layouts.index', [
-            'title' => 'Superiors',
+            'title' => 'Atasan',
             'content' => view('backoffice.superiors.index')
         ]);
     }
@@ -28,7 +28,7 @@ class SuperiorsController extends Controller
         if ($request->ajax()) {
             $query = Superior::with('company');
 
-           if ($request->filled('position')) {
+            if ($request->filled('position')) {
                 $query->where('position', $request->position);
             }
 
@@ -41,10 +41,10 @@ class SuperiorsController extends Controller
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('company_name', function($row) {
+                ->addColumn('company_name', function ($row) {
                     return $row->company?->name ?? '';
                 })
-                ->addColumn('action', function($row) {
+                ->addColumn('action', function ($row) {
                     $id = $row->id;
                     $btn = '<div class="dropstart">
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -110,70 +110,69 @@ class SuperiorsController extends Controller
     }
 
     public function exportExcel(Request $request)
-{
-    \Log::info('Export filter position: ' . $request->position);
-    \Log::info('Export filter company: ' . $request->company);
+    {
+        \Log::info('Export filter position: ' . $request->position);
+        \Log::info('Export filter company: ' . $request->company);
 
-    $query = Superior::with('company');
+        $query = Superior::with('company');
 
-    if (!empty($request->position)) {
-        $query->where('position', $request->position);
+        if (!empty($request->position)) {
+            $query->where('position', $request->position);
+        }
+
+        if (!empty($request->company)) {
+            $query->where('company_id', $request->company);
+        }
+
+        $superiors = $query->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'Posisi');
+        $sheet->setCellValue('D1', 'Telepon');
+        $sheet->setCellValue('E1', 'Email');
+        $sheet->setCellValue('F1', 'Perusahaan');
+
+        // Data
+        $row = 2;
+        foreach ($superiors as $index => $superior) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $superior->full_name);
+            $sheet->setCellValue('C' . $row, $superior->position);
+            $sheet->setCellValue('D' . $row, $superior->phone);
+            $sheet->setCellValue('E' . $row, $superior->email);
+            $sheet->setCellValue('F' . $row, $superior->company?->name ?? '-');
+            $row++;
+        }
+
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $sheet->setTitle('Data Superior');
+
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Data_Superior_' . date('Y-m-d_His') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
     }
 
-    if (!empty($request->company)) {
-        $query->where('company_id', $request->company);
+    public function showAlumni($id)
+    {
+        $alumnis = \App\Models\Alumni::where('superior_id', $id)->get(); // pastikan kolom ini ada
+        return view('backoffice.superiors.modal_alumni', compact('alumnis'));
     }
 
-    $superiors = $query->get();
-
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-
-    // Header
-    $sheet->setCellValue('A1', 'No');
-    $sheet->setCellValue('B1', 'Nama Lengkap');
-    $sheet->setCellValue('C1', 'Posisi');
-    $sheet->setCellValue('D1', 'Telepon');
-    $sheet->setCellValue('E1', 'Email');
-    $sheet->setCellValue('F1', 'Perusahaan');
-
-    // Data
-    $row = 2;
-    foreach ($superiors as $index => $superior) {
-        $sheet->setCellValue('A'.$row, $index + 1);
-        $sheet->setCellValue('B'.$row, $superior->full_name);
-        $sheet->setCellValue('C'.$row, $superior->position);
-        $sheet->setCellValue('D'.$row, $superior->phone);
-        $sheet->setCellValue('E'.$row, $superior->email);
-        $sheet->setCellValue('F'.$row, $superior->company?->name ?? '-');
-        $row++;
-    }
-
-    foreach (range('A', 'F') as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
-
-    $sheet->setTitle('Data Superior');
-
-    $writer = new Xlsx($spreadsheet);
-    $filename = 'Data_Superior_'.date('Y-m-d_His').'.xlsx';
-
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="'.$filename.'"');
-    header('Cache-Control: max-age=0');
-
-    $writer->save('php://output');
-    exit;
-}
-
-public function showAlumni($id)
-{
-    $alumnis = \App\Models\Alumni::where('superior_id', $id)->get(); 
-    return view('backoffice.superiors.modal_alumni', compact('alumnis'));
-}
-
-
-public function sendReminder($id)
+    public function sendReminder($id)
     {
         try {
             $superior = Superior::findOrFail($id);
@@ -201,8 +200,14 @@ public function sendReminder($id)
                 'message' => 'Gagal mengirim reminder: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-
-
+ }
 }
+
+
+
+
+
+
+
+
+

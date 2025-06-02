@@ -62,7 +62,7 @@
                 }else{
                     saMessage({
                         success: false,
-                        title: "Failed",
+                        title: "Gagal",
                         message: "Email tidak ditemukan",
                     });
                 }
@@ -150,7 +150,7 @@
                 }else{
                     saMessage({
                         success: false,
-                        title: "Failed",
+                        title: "Gagal",
                         message: "Gagal Mengubah Password",
                     });
                 }

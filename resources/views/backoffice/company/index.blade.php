@@ -13,10 +13,10 @@
                     <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle"
                             data-feather="plus"> </i> Tambah</button>
                     <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
-                            data-feather="rotate-ccw"> </i> Refresh</button>
+                            data-feather="rotate-ccw"> </i> Muat Ulang</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
+                    <table class="table table-striped table-hover table-row-bordered border nowrap  align-middle rounded w-100"
                         id="table_company">
                         <thead class="text-center">
                             <tr class="fw-bolder">

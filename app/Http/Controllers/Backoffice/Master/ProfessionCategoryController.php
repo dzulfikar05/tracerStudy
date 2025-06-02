@@ -15,7 +15,7 @@ class ProfessionCategoryController extends Controller
     public function index()
     {
         return view('layouts.index', [
-            'title' => 'Job Category',
+            'title' => 'Kategori Profesi',
             'content' => view('backoffice.profession_category.index')
         ]);
     }
