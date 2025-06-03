@@ -119,65 +119,87 @@
         unblock();
     }
 
-    onSave = () => {
-        var formData = new FormData($(`[name="${form}"]`)[0]);
-        let id_superior = $('#id').val();
-        let urlSave = "";
+  onSave = () => {
+    var formData = new FormData($(`[name="${form}"]`)[0]);
 
-        if (!id_superior) {
-            urlSave = `{{ route('backoffice.superior.store') }}`;
-        } else {
-            urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__',
-            id_superior);
-        }
+    let fullName = $('#full_name').val().trim();
+    let phone = $('#phone').val().trim();
 
-        saConfirm({
-            message: 'Apakah Anda yakin ingin menyimpan data?',
-            callback: function(res) {
-                if (res) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: urlSave,
-                        method: 'post',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(res) {
-                            $('.viewForm').modal('hide');
-                            onReset();
-                            saMessage({
-                                success: res['success'],
-                                title: res['title'],
-                                message: res['message'],
-                                callback: function() {
-                                    initTable();
-                                }
-                            });
-                        },
-                        error: function(xhr) {
-                            if (xhr.status === 422) {
-                                const errors = xhr.responseJSON.errors;
-                                let messages = Object.values(errors).flat().join('<br>');
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    const phoneRegex = /^[0-9]+$/;
 
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'bottom-end',
-                                    icon: 'error',
-                                    title: 'Validasi Gagal',
-                                    html: messages,
-                                    showConfirmButton: false,
-                                    timer: 6000,
-                                    timerProgressBar: true
-                                });
-                            }
-                        }
-                    });
-                }
-            }
+    // Validasi Nama Lengkap
+    if (!nameRegex.test(fullName)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'Nama Lengkap hanya boleh berisi huruf dan spasi.',
         });
+        return;
     }
+
+    // Validasi Nomor Telepon
+    if (!phoneRegex.test(phone)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'Nomor Telepon hanya boleh berisi angka.',
+        });
+        return;
+    }
+
+    let id_superior = $('#id').val();
+    let urlSave = "";
+
+    if (!id_superior) {
+        urlSave = `{{ route('backoffice.superior.store') }}`;
+    } else {
+        urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__', id_superior);
+    }
+
+    saConfirm({
+        message: 'Apakah Anda yakin ingin menyimpan data?',
+        callback: function(res) {
+            if (res) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: urlSave,
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        $('.viewForm').modal('hide');
+                        onReset();
+                        saMessage({
+                            success: res['success'],
+                            title: res['title'],
+                            message: res['message'],
+                            callback: function() {
+                                initTable();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            let messages = Object.values(errors).flat().join('<br>');
+
+                            saMessage({
+                                success: false,
+                                title: 'Validasi Gagal',
+                                message: messages,
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
+
 
     onFetchOptionForm = () => {
         $.ajax({
