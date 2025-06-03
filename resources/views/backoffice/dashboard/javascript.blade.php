@@ -406,13 +406,23 @@
     }
 
     generateColors = (count) => {
-        const colors = [
-            '#FF6384', '#36A2EB', '#FFCE56',
-            '#4BC0C0', '#9966FF', '#FF9F40',
-            '#8BC34A', '#FF5722', '#795548',
-            '#607D8B', '#BDBDBD', '#009688',
-            '#3F51B5', '#E91E63', '#CDDC39'
+        const pieChartColors = [
+            '#FFB5A7', // soft coral pink
+            '#FCD5CE', // light peach
+            '#F8EDEB', // off white blush
+            '#F9DCC4', // muted beige
+            '#A2D2FF', // light sky blue
+            '#BDE0FE', // pastel blue
+            '#CDB4DB', // soft purple
+            '#FFC8DD', // soft pink
+            '#D8E2DC', // muted mint gray
+            '#E2ECE9', // cool soft teal
+            '#B5DAD8', // muted aqua
+            '#E4C1F9', // soft lilac
+            '#B5EAD7', // pastel green
+            '#FFDAC1', // peach
+            '#FFD6A5' // soft orange
         ];
-        return colors.slice(0, count);
+        return pieChartColors.slice(0, count);
     }
 </script>

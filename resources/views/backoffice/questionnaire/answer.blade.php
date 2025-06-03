@@ -12,7 +12,7 @@
                                         <i class="fa fa-arrow-left"></i> Back
                                     </a>
                                     <div class="d-flex">
-                                        <button type="button" class="btn btn-info me-2" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
                                             data-bs-target="#filterModal">
                                             <i class="fa fa-filter"></i> Filter
                                         </button>
