@@ -184,7 +184,7 @@
                     data: 'superior_name',
                     name: 'superior_name',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.superior_name ?? ''}</span>`;
+                        return `<span>${full.superior.full_name ?? ''}</span>`;
                     }
                 },
                 {
