@@ -42,4 +42,3 @@ Route::post('/questionnaire/store-superior', [HomeController::class, 'storeSuper
 
 Route::post('/company', [CompanyController::class, 'store']);
 Route::post('/profession', [ProfessionController::class, 'store']);
-
