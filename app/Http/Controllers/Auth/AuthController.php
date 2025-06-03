@@ -36,19 +36,11 @@ class AuthController extends Controller
 
             Auth::attempt($credentials);
             session()->put('user', Auth::user());
-<<<<<<< HEAD
+
             return redirect()->route('dashboard');
         } else {
             $response['success'] = false;
-            $response['message'] = 'Your username or password is wrong !';
-=======
-            return redirect()->route('backoffice.dashboard.index');
-
-        } else {
-            $response['success'] = false;
             $response['message'] = 'Username atau Password anda Salah !';
-
->>>>>>> 9bbd046d6f3b6b7963ea75504ad4d082b2709c22
             return $response;
         }
         $response['success'] = false;
