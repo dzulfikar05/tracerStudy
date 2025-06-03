@@ -23,6 +23,8 @@
     <link href="{{ asset('css/light.css') }}" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
 
@@ -37,15 +39,20 @@
 
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
+
+    <script src="{{ asset('plugins/ckeditor4/ckeditor.js') }}"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
     <style>
-        .table-responsive {
+        /* .table-responsive {
             overflow-x: auto;
             width: 100%;
         }
 
         table.dataTable {
             white-space: nowrap;
-        }
+        } */
 
 
         .select2-container .select2-selection--single {
@@ -74,7 +81,7 @@
 </head>
 
 <body data-theme="colored" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default"
-    style="font-family: 'Helvetica">
+    style="font-family: 'Poppins', sans-serif;">
 
     <div class="wrapper">
 
@@ -146,6 +153,8 @@
     <script src="{{ asset('plugins/select2/select2.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- CKEditor --}}
 
     <!-- Helper Functions -->
     <script src="{{ asset('assets/helpers/helper.js') }}"></script>

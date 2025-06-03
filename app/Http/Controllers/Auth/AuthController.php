@@ -29,19 +29,20 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if(Auth::attempt($credentials)){
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             Auth::attempt($credentials);
             session()->put('user', Auth::user());
-            return redirect()->route('backoffice');
-        }else{
-            $response['success']=false;
-            $response['message']='Your username or password is wrong !';
+            return redirect()->route('backoffice.dashboard.index');
+
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Username atau Password anda Salah !';
             return $response;
         }
-        $response['success']=false;
-        $response['message']='Please contact administrator !';
+        $response['success'] = false;
+        $response['message'] = 'Silahkan hubungi administrator !';
         return $response;
     }
 
@@ -62,8 +63,17 @@ class AuthController extends Controller
     public function sendResetEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
         ]);
+
+        $user = User::where('email', $request['email'])->first();
+        if (!$user) {
+            return [
+                'success' => false,
+                'title' => 'Error',
+                'message' => 'Email tidak ditemukan',
+            ];
+        }
 
         $token = Str::random(64);
 
@@ -86,9 +96,9 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
-        if($request['token'] && $request['email']){
+        if ($request['token'] && $request['email']) {
             $checkEmail = User::where('email', $request['email'])->first();
-            if($checkEmail){
+            if ($checkEmail) {
                 $updatedAt = Carbon::parse($checkEmail->updated_at);
                 if ($updatedAt->diffInMinutes(now()) > 60 || $checkEmail->remember_token != $request['token']) {
                     return response()->json(['message' => 'Reset password telah kedaluwarsa'], 400);
@@ -98,10 +108,10 @@ class AuthController extends Controller
                     'token' => $request['token'],
                     'email' => $request['email']
                 ]);
-            }else{
+            } else {
                 return redirect()->route('backoffice');
             }
-        }else{
+        } else {
             return redirect()->route('backoffice');
         }
     }
