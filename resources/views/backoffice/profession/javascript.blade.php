@@ -48,6 +48,7 @@
     initTable = () => {
         var table = $('#table_profession').DataTable({
             processing: true,
+            scrollX: true,
             serverSide: true,
             searchAble: true,
             searching: true,
@@ -90,14 +91,27 @@
         var formData = new FormData($(`[name="${form}"]`)[0]);
 
         let id_profession = $('#id').val();
-        let urlSave = "";
+        let name = $('#name').val().trim();
 
+        const nameRegex = /^[a-zA-Z\s]+$/;
+
+        // Validasi nama tidak mengandung angka atau simbol
+        if (!nameRegex.test(name)) {
+            saMessage({
+                success: false,
+                title: 'Validasi Gagal',
+                message: 'Nama hanya boleh berisi huruf dan spasi.',
+            });
+            return;
+        }
+
+        let urlSave = "";
         if (id_profession == '' || id_profession == null) {
             urlSave = `{{ route('backoffice.master.profession.store') }}`;
         } else {
-            urlSave = `{{ route('backoffice.master.profession.update', ['id' => '__ID__']) }}`.replace('__ID__', id_profession);
+            urlSave = `{{ route('backoffice.master.profession.update', ['id' => '__ID__']) }}`.replace('__ID__',
+                id_profession);
         }
-
 
         saConfirm({
             message: 'Apakah anda yakin ingin menyimpan data?',
@@ -122,9 +136,9 @@
                                 callback: function() {
                                     initTable();
                                 }
-                            })
+                            });
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             if (xhr.status === 422) {
                                 const errors = xhr.responseJSON.errors;
                                 let messages = Object.values(errors).flat().join('<br>');
@@ -141,12 +155,12 @@
                                 });
                             }
                         }
-                    })
+                    });
                 }
-
             }
-        })
+        });
     }
+
 
     onEdit = (el) => {
         var id = $(el).data('id');
@@ -154,7 +168,8 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: `{{ route('backoffice.master.profession.edit', ['id' => '__ID__']) }}`.replace('__ID__', id),
+            url: `{{ route('backoffice.master.profession.edit', ['id' => '__ID__']) }}`.replace('__ID__',
+                id),
             data: {
                 id: id
             },
@@ -178,7 +193,8 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: `{{ route('backoffice.master.profession.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
+                        url: `{{ route('backoffice.master.profession.destroy', ['id' => '__ID__']) }}`
+                            .replace('__ID__', id),
                         data: {
                             id: id
                         },
@@ -206,10 +222,10 @@
             $('#' + v).val('').change()
         })
     }
-    
+
     function modalAction(url = '') {
-    $('#myModal').load(url, function () {
-        $('#myModal').modal('show');
-    });
-}
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
+        });
+    }
 </script>

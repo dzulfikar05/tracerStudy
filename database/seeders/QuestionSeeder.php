@@ -20,37 +20,65 @@ class QuestionSeeder extends Seeder
             [
                 'questionnaire_id' => 1,
                 'type' => 'essay',
-                'question_text' => 'Apa kesulitan yang anda alami pada saat masa pengenalan kerja',
+                'question' => 'Apa kesulitan yang anda alami pada saat masa pengenalan kerja',
                 'options' => null,
-                'is_active' => false,
+                'is_assessment' => false
             ],
             [
                 'questionnaire_id' => 1,
                 'type' => 'choice',
-                'question_text' => 'Berapa Gaji anda',
+                'question' => 'Berapa Gaji anda',
                 'options' => json_encode(["<3 Juta", "3 juta sampai < 5 juta", "5 juta sampai < 10 juta", "> 10 juta"]),
-                'is_active' => false,
+                'is_assessment' => false
             ],
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question_text' => 'Kedisiplinan',
+                'question' => 'Kerjasama Tim',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
-                'is_active' => true,
+                'is_assessment' => true
             ],
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question_text' => 'Kebersihan',
+                'question' => 'Keahlian di bidang IT',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
-                'is_active' => true,
+                'is_assessment' => true
             ],
             [
                 'questionnaire_id' => 2,
                 'type' => 'choice',
-                'question_text' => 'Kemampuan bermanuver dalam tekanan',
+                'question' => 'Kemampuan bahasa asing (Inggris)',
                 'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
-                'is_active' => true,
+                'is_assessment' => true
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Kemampuan berkomunikasi',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+                'is_assessment' => true
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Pengembangan diri',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+                'is_assessment' => true
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Kepemimpinan',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+                'is_assessment' => true
+            ],
+            [
+                'questionnaire_id' => 2,
+                'type' => 'choice',
+                'question' => 'Etos Kerja',
+                'options' => json_encode(["Sangat Baik", "Baik", "Cukup", "Kurang"]),
+                'is_assessment' => true
             ],
         ];
 

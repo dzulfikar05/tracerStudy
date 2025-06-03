@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Backoffice\Operational;
 use App\Http\Controllers\Controller;
 use App\Models\Superior;
 use App\Models\Company;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\SuperiorRequest;
-
+use App\Models\Alumni;
+use App\Models\Answer;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Illuminate\Support\Str;
+use Nette\Utils\Random;
 
 class SuperiorsController extends Controller
 {
@@ -35,8 +39,30 @@ class SuperiorsController extends Controller
                 $query->where('company_id', $request->company);
             }
 
-
             $data = $query->get();
+
+            if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $data = $data->filter(function ($item) {
+                    $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
+                        ->select('id')
+                        ->pluck('id')
+                        ->toArray();
+
+                    foreach ($getListAlumniSuperior as $alumni_id) {
+                        $answer = Answer::where('filler_type', 'superior')
+                            ->where('filler_id', $item->id)
+                            ->where('alumni_id', $alumni_id)
+                            ->first();
+
+                        if ($answer == null) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                })->values();
+            }
+
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -169,5 +195,32 @@ class SuperiorsController extends Controller
     {
         $alumnis = \App\Models\Alumni::where('superior_id', $id)->get(); // pastikan kolom ini ada
         return view('backoffice.superiors.modal_alumni', compact('alumnis'));
+    }
+
+    public function sendReminder($id)
+    {
+        try {
+            $superior = Superior::findOrFail($id);
+
+            if (empty($superior->passcode)) {
+                $superior->passcode = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $superior->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'email' => $superior->email,
+                    'name' => $superior->full_name,
+                    'passcode' => $superior->passcode,
+                    'company_name' => $superior->company->name ?? 'Jurusan Teknologi Informasi Politeknik Negeri Malang'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengirim reminder: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

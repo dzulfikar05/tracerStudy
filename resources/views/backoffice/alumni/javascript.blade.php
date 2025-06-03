@@ -46,6 +46,9 @@
         $('#filter_study_program').select2({
             dropdownParent: $('.filterModal')
         });
+        $('#filter_filled').select2({
+            dropdownParent: $('.filterModal')
+        });
 
 
         loadBlock();
@@ -66,6 +69,7 @@
             serverSide: true,
             searchAble: true,
             searching: true,
+            scrollX: true,
             paging: true,
             "bDestroy": true,
             ajax: {
@@ -75,6 +79,7 @@
                     d.study_program = $('#filter_study_program').val();
                     d.study_start_year = $('#filter_study_start_year').val();
                     d.company_id = $('#filter_company_id').val();
+                    d.is_filled = $('#filter_filled').val();
                 }
             },
             columns: [{
@@ -179,7 +184,7 @@
                     data: 'superior_name',
                     name: 'superior_name',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.superior_name ?? ''}</span>`;
+                        return `<span>${full.superior.full_name ?? ''}</span>`;
                     }
                 },
                 {
@@ -426,40 +431,41 @@
         $('#filter_study_program').val('').change();
         $('#filter_study_start_year').val('');
         $('#filter_company_id').val('').change();
+        $('#filter_filled').val('').change();
         initTable();
     }
     $('#btnExportExcel').on('click', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let params = {
-        nim: $('#filter_nim').val(),
-        study_program: $('#filter_study_program').val(),
-        study_start_year: $('#filter_study_start_year').val(),
-        company_id: $('#filter_company_id').val()
-    };
+        let params = {
+            nim: $('#filter_nim').val(),
+            study_program: $('#filter_study_program').val(),
+            study_start_year: $('#filter_study_start_year').val(),
+            company_id: $('#filter_company_id').val(),
+            is_filled: $('#filter_filled').val()
+        };
 
-    // Buat query string dari filter
-    let query = $.param(params);
+        // Buat query string dari filter
+        let query = $.param(params);
 
-    // Redirect ke URL export dengan filter
-    window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
-});
+        // Redirect ke URL export dengan filter
+        window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
+    });
 
     $('#btnDownloadTemplate').on('click', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let params = {
-        nim: $('#filter_nim').val(),
-        study_program: $('#filter_study_program').val(),
-        study_start_year: $('#filter_study_start_year').val(),
-        company_id: $('#filter_company_id').val()
-    };
+        let params = {
+            nim: $('#filter_nim').val(),
+            study_program: $('#filter_study_program').val(),
+            study_start_year: $('#filter_study_start_year').val(),
+            company_id: $('#filter_company_id').val()
+        };
 
-    // Buat query string dari filter
-    let query = $.param(params);
+        // Buat query string dari filter
+        let query = $.param(params);
 
-    // Redirect ke URL export dengan filter
-    window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
-});
-
+        // Redirect ke URL export dengan filter
+        window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
+    });
 </script>

@@ -37,6 +37,7 @@
             processing: true,
             serverSide: true,
             searchAble: true,
+            scrollX: true,
             searching: true,
             paging: true,
             "bDestroy": true,
@@ -115,16 +116,30 @@
 
     onSave = () => {
         var formData = new FormData($(`[name="${form}"]`)[0]);
-        let id_company = $('#id').val();
-        let urlSave = "";
 
+        let id_company = $('#id').val();
+        let name = $('#name').val().trim();
+        let phone = $('#phone').val().trim();
+
+        // Validasi phone tidak boleh mengandung huruf
+        const phoneRegex = /^[0-9+\-()\s]+$/;
+
+        if (!phoneRegex.test(phone)) {
+            saMessage({
+                success: false,
+                title: 'Validasi Gagal',
+                message: 'Nomor telepon hanya boleh berisi angka dan simbol (+ - ( )). Tidak boleh ada huruf.',
+            });
+            return;
+        }
+
+        let urlSave = "";
         if (id_company == '' || id_company == null) {
             urlSave = `{{ route('backoffice.master.company.store') }}`;
         } else {
             urlSave = `{{ route('backoffice.master.company.update', ['id' => '__ID__']) }}`.replace('__ID__',
                 id_company);
         }
-
 
         saConfirm({
             message: 'Apakah anda yakin ingin menyimpan data?',
@@ -149,7 +164,7 @@
                                 callback: function() {
                                     initTable();
                                 }
-                            })
+                            });
                         },
                         error: function(xhr) {
                             if (xhr.status === 422) {
@@ -168,12 +183,12 @@
                                 });
                             }
                         }
-                    })
+                    });
                 }
-
             }
-        })
+        });
     }
+
 
     onEdit = (el) => {
         var id = $(el).data('id');

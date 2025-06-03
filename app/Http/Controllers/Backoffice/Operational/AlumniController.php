@@ -60,6 +60,14 @@ class AlumniController extends Controller
             if ($request->filled('company_id')) {
                 $data->where('company_id', $request->company_id);
             }
+            if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $data->where('company_id', '!=', null);
+                $data->where('start_work_date', '!=', null);
+                $data->where('start_work_now_date', '!=', null);
+                $data->where('waiting_time', '!=', null);
+                $data->where('profession_id', '!=', null);
+                $data->where('profession_id', '!=', null);
+            }
 
 
             return DataTables::of($data->get())
@@ -109,7 +117,7 @@ class AlumniController extends Controller
     public function store(AlumniRequest $request)
     {
         $payload = $request->validated();
-        if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
+        if (!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])) {
             $payload['waiting_time'] = $this->getWaitingTime($payload['graduation_date'], $payload['start_work_date']);
         }
 
@@ -127,7 +135,7 @@ class AlumniController extends Controller
     {
         $payload = $request->validated();
 
-        if(!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])){
+        if (!is_null($payload['graduation_date']) && !is_null($payload['start_work_date'])) {
             $payload['waiting_time'] = $this->getWaitingTime($payload['graduation_date'], $payload['start_work_date']);
         }
 
@@ -158,79 +166,92 @@ class AlumniController extends Controller
         ]);
     }
 
- public function export_excel(Request $request)
-{
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+    public function export_excel(Request $request)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-    // Header kolom
-    $sheet->setCellValue('A1', 'No');
-    $sheet->setCellValue('B1', 'Nama Lengkap');
-    $sheet->setCellValue('C1', 'NIM');
-    $sheet->setCellValue('D1', 'Program Studi');
-    $sheet->setCellValue('E1', 'Tahun Mulai Studi');
-    $sheet->setCellValue('F1', 'Tanggal Lulus');
-    $sheet->setCellValue('G1', 'Telepon');
-    $sheet->setCellValue('H1', 'Email');
-    $sheet->setCellValue('I1', 'Tanggal Mulai Kerja');
-    $sheet->setCellValue('J1', 'Tanggal Mulai Pekerjaan Sekarang');
-    $sheet->setCellValue('K1', 'Perusahaan');
-    $sheet->setCellValue('L1', 'Kategori Profesi');
-    $sheet->setCellValue('M1', 'Profesi');
-    $sheet->setCellValue('N1', 'Atasan');
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'NIM');
+        $sheet->setCellValue('D1', 'Program Studi');
+        $sheet->setCellValue('E1', 'Tahun Mulai Studi');
+        $sheet->setCellValue('F1', 'Tanggal Lulus');
+        $sheet->setCellValue('G1', 'Telepon');
+        $sheet->setCellValue('H1', 'Email');
+        $sheet->setCellValue('I1', 'Tanggal Mulai Kerja');
+        $sheet->setCellValue('J1', 'Tanggal Mulai Pekerjaan Sekarang');
+        $sheet->setCellValue('K1', 'Perusahaan');
+        $sheet->setCellValue('L1', 'Kategori Profesi');
+        $sheet->setCellValue('M1', 'Profesi');
+        $sheet->setCellValue('N1', 'Atasan');
 
-    // Ambil data alumni dengan menerapkan filter yang sama seperti di tabel
-    $query = Alumni::with(['company', 'profession.profession_category', 'superior']);
-    
-    // Apply filters based on request parameters
-    if ($request->filled('nim')) {
-        $query->where('nim', 'like', '%' . $request->nim . '%');
+        // Ambil data alumni dengan menerapkan filter yang sama seperti di tabel
+        $query = Alumni::with(['company', 'profession.profession_category', 'superior']);
+
+        // Apply filters based on request parameters
+        if ($request->filled('nim')) {
+            $query->where('nim', 'like', '%' . $request->nim . '%');
+        }
+
+        if ($request->filled('study_program')) {
+            $query->where('study_program', $request->study_program);
+        }
+
+        if ($request->filled('study_start_year')) {
+            $query->where('study_start_year', $request->study_start_year);
+        }
+
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
+
+         if ($request->filled('is_filled') && $request->is_filled == "filled") {
+                $query->where('company_id', '!=', null);
+                $query->where('start_work_date', '!=', null);
+                $query->where('start_work_now_date', '!=', null);
+                $query->where('waiting_time', '!=', null);
+                $query->where('profession_id', '!=', null);
+                $query->where('profession_id', '!=', null);
+            }
+
+        // Get data after applying filters
+        $alumni = $query->get();
+
+        $row = 2;
+        foreach ($alumni as $index => $data) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $data->full_name);
+            $sheet->setCellValue('C' . $row, $data->nim);
+            $sheet->setCellValue('D' . $row, $data->study_program);
+            $sheet->setCellValue('E' . $row, $data->study_start_year);
+            $sheet->setCellValue('F' . $row, $data->graduation_date);
+            $sheet->setCellValue('G' . $row, $data->phone);
+            $sheet->setCellValue('H' . $row, $data->email);
+            $sheet->setCellValue('I' . $row, $data->start_work_date);
+            $sheet->setCellValue('J' . $row, $data->start_work_now_date);
+            $sheet->setCellValue('K' . $row, $data->company?->name ?? '');
+            $sheet->setCellValue('L' . $row, $data->profession?->profession_category?->name ?? '');
+            $sheet->setCellValue('M' . $row, $data->profession?->name ?? '');
+            $sheet->setCellValue('N' . $row, $data->superior?->full_name ?? '');
+            $row++;
+        }
+
+        foreach (range('A', 'N') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Siapkan file untuk diunduh
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
-
-    if ($request->filled('study_program')) {
-        $query->where('study_program', $request->study_program);
-    }
-
-    if ($request->filled('study_start_year')) {
-        $query->where('study_start_year', $request->study_start_year);
-    }
-
-    if ($request->filled('company_id')) {
-        $query->where('company_id', $request->company_id);
-    }
-    
-    // Get data after applying filters
-    $alumni = $query->get();
-
-    $row = 2;
-    foreach ($alumni as $data) {
-        $sheet->setCellValue('A' . $row, $data->id);
-        $sheet->setCellValue('B' . $row, $data->full_name);
-        $sheet->setCellValue('C' . $row, $data->nim);
-        $sheet->setCellValue('D' . $row, $data->study_program);
-        $sheet->setCellValue('E' . $row, $data->study_start_year);
-        $sheet->setCellValue('F' . $row, $data->graduation_date);
-        $sheet->setCellValue('G' . $row, $data->phone);
-        $sheet->setCellValue('H' . $row, $data->email);
-        $sheet->setCellValue('I' . $row, $data->start_work_date);
-        $sheet->setCellValue('J' . $row, $data->start_work_now_date);
-        $sheet->setCellValue('K' . $row, $data->company?->name ?? '');
-        $sheet->setCellValue('L' . $row, $data->profession?->profession_category?->name ?? '');
-        $sheet->setCellValue('M' . $row, $data->profession?->name ?? '');
-        $sheet->setCellValue('N' . $row, $data->superior?->full_name ?? '');
-        $row++;
-    }
-
-    // Siapkan file untuk diunduh
-    $writer = new Xlsx($spreadsheet);
-    $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
-
-    return response()->streamDownload(function () use ($writer) {
-        $writer->save('php://output');
-    }, $filename, [
-        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ]);
-}
 
     public function import()
     {
@@ -262,29 +283,45 @@ class AlumniController extends Controller
             $data = $sheet->toArray(null, false, true, true);
 
             $insert = [];
+            $updated = 0;
 
             foreach ($data as $i => $row) {
-                if ($i == 1) continue; // Lewati header
+                if ($i == 1) continue;
 
                 $nim = $row['B'];
-                if (!$nim || Alumni::where('nim', $nim)->exists()) {
-                    continue; // Skip jika NIM kosong atau sudah ada di database
-                }
+                if (!$nim) continue;
 
                 $date = Date::excelToDateTimeObject($row['D']);
                 $graduation_date = $date ? $date->format('Y-m-d') : null;
 
+                $existingAlumni = Alumni::withTrashed()->where('nim', $nim)->first();
+
+                if ($existingAlumni) {
+                    if ($existingAlumni->trashed()) {
+                        $existingAlumni->restore();
+                    }
+                    $existingAlumni->update([
+                        'study_program'     => $row['A'],
+                        'full_name'         => $row['C'],
+                        'graduation_date'   => $graduation_date,
+                    ]);
+                    $updated++;
+                    continue;
+                }
 
                 $insert[] = [
-                    'study_program' => $row['A'],
-                    'nim' => $nim,
-                    'full_name' => $row['C'],
-                    'graduation_date' => $graduation_date,
+                    'study_program'     => $row['A'],
+                    'nim'               => $nim,
+                    'full_name'         => $row['C'],
+                    'graduation_date'   => $graduation_date,
                 ];
             }
 
             if (count($insert)) {
                 Alumni::insert($insert);
+            }
+
+            if (count($insert) || $updated > 0) {
                 return response()->json([
                     'status' => true,
                     'message' => 'Data alumni berhasil diimport'

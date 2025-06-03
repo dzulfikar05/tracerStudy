@@ -22,6 +22,9 @@
         $('#filter_company_id').select2({
             dropdownParent: $('.filterModal')
         });
+        $('#filter_filled').select2({
+            dropdownParent: $('.filterModal')
+        });
 
         loadBlock();
         initTable();
@@ -39,6 +42,7 @@
             serverSide: true,
             searchAble: true,
             searching: true,
+            scrollX: true,
             paging: true,
             "bDestroy": true,
             //ajax: "{{ route('backoffice.superior.table') }}",
@@ -47,11 +51,12 @@
                 data: function(d) {
                     d.position = $('#filter_position').val();
                     d.company = $('#filter_company_id').val();
+                    d.is_filled = $('#filter_filled').val();
+
                     console.log('Filter values:', d.position, d.company);
                 }
             },
-            columns: [
-                {
+            columns: [{
                     data: null,
                     sortable: false,
                     render: function(data, type, row, meta) {
@@ -99,7 +104,7 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return `<button class="btn btn-sm btn-secondary" onclick="showAlumni(${full.id})">List Alumni</button>`;
+                        return `<button class="btn btn-info me-2" onclick="showAlumni(${full.id})">List Alumni</button>`;
                     }
                 },
                 {
@@ -108,7 +113,7 @@
                     orderable: false,
                     searchable: false
                 },
-               
+
             ]
         });
         unblock();
@@ -122,7 +127,8 @@
         if (!id_superior) {
             urlSave = `{{ route('backoffice.superior.store') }}`;
         } else {
-            urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__', id_superior);
+            urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__',
+            id_superior);
         }
 
         saConfirm({
@@ -218,7 +224,9 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             url: '{{ route('backoffice.superior.edit', ['id' => '__ID__']) }}'.replace('__ID__', id),
-            data: { id: id },
+            data: {
+                id: id
+            },
             method: 'post',
             success: function(data) {
                 showForm();
@@ -240,8 +248,11 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: `{{ route('backoffice.superior.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id),
-                        data: { id: id },
+                        url: `{{ route('backoffice.superior.destroy', ['id' => '__ID__']) }}`
+                            .replace('__ID__', id),
+                        data: {
+                            id: id
+                        },
                         method: 'post',
                         success: function(res) {
                             saMessage({
@@ -277,36 +288,39 @@
     function resetFilter() {
         $('#filter_position').val(null).trigger('change');
         $('#filter_company_id').val(null).trigger('change');
+        $('#filter_filled').val('').change();
         initTable();
-
     }
+
     $('#btnExportExcel').on('click', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let params = {
-        position: $('#filter_position').val(),
-        //company_id: $('#filter_company_id').val()
-        company: $('#filter_company_id').val()
-    };
+        let params = {
+            position: $('#filter_position').val(),
+            //company_id: $('#filter_company_id').val()
+            company: $('#filter_company_id').val(),
+            is_filled: $('#filter_filled').val()
 
-    // Buat query string dari filter
-    let query = $.param(params);
+        };
 
-    // Redirect ke URL export dengan filter
-    window.location.href = "{{ route('backoffice.superior.export-excel') }}?" + query;
+        // Buat query string dari filter
+        let query = $.param(params);
+
+        // Redirect ke URL export dengan filter
+        window.location.href = "{{ route('backoffice.superior.export-excel') }}?" + query;
     });
 
     function showAlumni(id) {
-    $.ajax({
-        url: `/backoffice/superior/${id}/alumni`, // MODIFIKASI
-        type: 'GET',
-        success: function(html) {
-            $('#myModal').html(html); // MODIFIKASI
-            $('#myModal').modal('show'); // MODIFIKASI
-        },
-        error: function() {
-            alert('Gagal mengambil data alumni.'); // MODIFIKASI
-        }
-    });
-}
+        $.ajax({
+            url: `/backoffice/superior/${id}/alumni`, // MODIFIKASI
+            type: 'GET',
+            success: function(html) {
+                $('#myModal').html(html); // MODIFIKASI
+                $('#myModal').modal('show'); // MODIFIKASI
+            },
+            error: function() {
+                alert('Gagal mengambil data alumni.'); // MODIFIKASI
+            }
+        });
+    }
 </script>

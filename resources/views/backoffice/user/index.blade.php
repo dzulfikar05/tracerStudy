@@ -16,7 +16,7 @@
                             data-feather="rotate-ccw"> </i> Muat Ulang</button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100"
+                    <table class="table table-striped table-hover table-row-bordered border nowrap align-middle rounded w-100"
                         id="table_user">
                         <thead class="text-center">
                             <tr class="fw-bolder">

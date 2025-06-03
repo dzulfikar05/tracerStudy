@@ -11,7 +11,7 @@
                         style="float: left">
                         <i class="fa fa-filter"></i> Filter
                     </button>
-                    
+
                     <button onclick="modalAction('{{ route('backoffice.alumni.alumni.import') }}')"
                         class="btn btn-success me-2">
                         <i class="fa fa-upload"></i> Import Excel</button>
@@ -24,7 +24,7 @@
                 </div>
                 <div class="table-responsive">
                     <table
-                        class="table table-striped table-hover table-row-bordered border align-middle rounded w-100 overflow-y-auto"
+                        class="table table-striped table-hover table-row-bordered border align-middle nowrap rounded w-100 overflow-y-auto"
                         id="table_alumni">
                         <thead class="text-center">
                             <tr class="fw-bolder">
@@ -82,6 +82,14 @@
                 <div class="mb-3">
                     <label for="filter_company_id col-12" class="form-label">Perusahaan</label>
                     <select id="filter_company_id" class="form-control" style="width: 100%"></select>
+                </div>
+                <div class="mb-3">
+                    <label for="filter_filled col-12" class="form-label">Status Kuisioner</label>
+                    <select id="filter_filled" class="form-control" style="width: 100%">
+                        <option value="">- Pilih Status Kuisioner -</option>
+                        <option value="unfilled">Belum diisi</option>
+                        <option value="filled">Sudah diisi</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
