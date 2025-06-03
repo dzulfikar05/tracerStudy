@@ -30,8 +30,7 @@
             paging: true,
             "bDestroy": true,
             ajax: "{{ route('backoffice.master.profession-category.table') }}",
-            columns: [
-                {
+            columns: [{
                     "data": null,
                     "sortable": false,
                     render: function(data, type, row, meta) {
@@ -55,16 +54,32 @@
         });
         unblock();
     };
-
     onSave = () => {
         var formData = new FormData($(`[name="${form}"]`)[0]);
         var id = $('#id').val();
         var urlSave = "";
 
+        // Ambil nilai name
+        let name = $('#name').val().trim();
+
+        // Regex hanya huruf dan spasi
+        const nameRegex = /^[a-zA-Z\s]+$/;
+
+        // Validasi nama
+        if (!nameRegex.test(name)) {
+            saMessage({
+                success: false,
+                title: 'Validasi Gagal',
+                message: 'Nama hanya boleh berisi huruf dan spasi.',
+            });
+            return;
+        }
+
         if (id === '' || id === null) {
             urlSave = "{{ route('backoffice.master.profession-category.store') }}";
         } else {
-            urlSave = `{{ route('backoffice.master.profession-category.update', ['id' => '__ID__']) }}`.replace('__ID__', id);
+            urlSave = `{{ route('backoffice.master.profession-category.update', ['id' => '__ID__']) }}`.replace(
+                '__ID__', id);
         }
 
         saConfirm({
@@ -92,7 +107,7 @@
                                 }
                             });
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             if (xhr.status === 422) {
                                 const errors = xhr.responseJSON.errors;
                                 let messages = Object.values(errors).flat().join('<br>');
@@ -115,9 +130,11 @@
         });
     };
 
+
     onEdit = (el) => {
         var id = $(el).data('id');
-        var urlEdit = `{{ route('backoffice.master.profession-category.edit', ['id' => '__ID__']) }}`.replace('__ID__', id);
+        var urlEdit = `{{ route('backoffice.master.profession-category.edit', ['id' => '__ID__']) }}`.replace(
+            '__ID__', id);
 
         $.ajax({
             headers: {
@@ -139,7 +156,8 @@
 
     onDelete = (el) => {
         var id = $(el).data('id');
-        var urlDelete = `{{ route('backoffice.master.profession-category.destroy', ['id' => '__ID__']) }}`.replace('__ID__', id);
+        var urlDelete = `{{ route('backoffice.master.profession-category.destroy', ['id' => '__ID__']) }}`.replace(
+            '__ID__', id);
 
         saConfirm({
             message: 'Apakah anda yakin ingin menghapus data?',

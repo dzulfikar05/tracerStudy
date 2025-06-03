@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
+use App\Http\Controllers\DashboardController;
+
 
 class AuthController extends Controller
 {
@@ -34,16 +36,23 @@ class AuthController extends Controller
 
             Auth::attempt($credentials);
             session()->put('user', Auth::user());
+<<<<<<< HEAD
+            return redirect()->route('dashboard');
+        } else {
+            $response['success'] = false;
+            $response['message'] = 'Your username or password is wrong !';
+=======
             return redirect()->route('backoffice.dashboard.index');
 
         } else {
             $response['success'] = false;
             $response['message'] = 'Username atau Password anda Salah !';
 
+>>>>>>> 9bbd046d6f3b6b7963ea75504ad4d082b2709c22
             return $response;
         }
         $response['success'] = false;
-        $response['message'] = 'Silahkan hubungi administrator !';
+        $response['message'] = 'Please contact administrator !';
         return $response;
     }
 
@@ -53,7 +62,7 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return redirect()->route('backoffice');
+        return redirect()->route('dashboard');
     }
 
     public function forgotPassword()
@@ -64,17 +73,8 @@ class AuthController extends Controller
     public function sendResetEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users,email',
         ]);
-
-        $user = User::where('email', $request['email'])->first();
-        if (!$user) {
-            return [
-                'success' => false,
-                'title' => 'Error',
-                'message' => 'Email tidak ditemukan',
-            ];
-        }
 
         $token = Str::random(64);
 
@@ -110,10 +110,10 @@ class AuthController extends Controller
                     'email' => $request['email']
                 ]);
             } else {
-                return redirect()->route('backoffice');
+                return redirect()->route('dashboard');
             }
         } else {
-            return redirect()->route('backoffice');
+            return redirect()->route('dashboard');
         }
     }
 
