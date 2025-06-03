@@ -37,6 +37,7 @@
             processing: true,
             serverSide: true,
             searchAble: true,
+            scrollX: true,
             searching: true,
             paging: true,
             "bDestroy": true,

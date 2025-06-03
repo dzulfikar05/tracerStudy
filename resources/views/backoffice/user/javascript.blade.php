@@ -25,6 +25,7 @@
         processing: true,
         serverSide: true,
         searching: true,
+        scrollX: true,
         paging: true,
         bDestroy: true,
         ajax: "{{ route('backoffice.master.user.table') }}",
@@ -56,69 +57,92 @@
                 orderable: false,
                 searchable: false
             },
-        ]
+        ],
+        drawCallback: function (settings) {
+            let rowCount = settings.aoData.length;
+            if (rowCount < 3) {
+                $('#table_user tbody tr td:nth-child(4)').find('.btn').addClass('table-action-margin');
+            } else {
+                $('#table_user tbody tr td:nth-child(4)').find('.btn').removeClass('table-action-margin');
+            }
+        }
     });
     unblock();
 }
 
+
     onSave = () => {
-        var formData = new FormData($(`[name="${form}"]`)[0]);
-        let id_user = $('#id').val();
-        let urlSave = "";
+    var formData = new FormData($(`[name="${form}"]`)[0]);
+    let id_user = $('#id').val();
+    let name = $('#name').val().trim();
+    let urlSave = "";
 
-        if (id_user == '' || id_user == null) {
-            urlSave = `{{ route('backoffice.master.user.store') }}`;
-        } else {
-            urlSave = `{{ route('backoffice.master.user.update', ['id' => '__ID__']) }}`.replace('__ID__', id_user);
-        }
+    // Regex validasi: hanya huruf dan spasi
+    const nameRegex = /^[a-zA-Z\s]+$/;
 
-        saConfirm({
-            message: 'apakah anda yakin ingin menyimpan data?',
-            callback: function (res) {
-                if (res) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: urlSave,
-                        method: 'post',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (res) {
-                            $('.viewForm').modal('hide');
-                            onReset();
-                            saMessage({
-                                success: res['success'],
-                                title: res['title'],
-                                message: res['message'],
-                                callback: function () {
-                                    initTable();
-                                }
-                            })
-                        },
-                        error: function (xhr) {
-                            if (xhr.status === 422) {
-                                const errors = xhr.responseJSON.errors;
-                                let messages = Object.values(errors).flat().join('<br>');
-
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'bottom-end',
-                                    icon: 'error',
-                                    title: 'Validasi Gagal',
-                                    html: messages,
-                                    showConfirmButton: false,
-                                    timer: 6000,
-                                    timerProgressBar: true
-                                });
-                            }
-                        }
-                    })
-                }
-            }
+    // Validasi Nama
+    if (!nameRegex.test(name)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'Nama hanya boleh berisi huruf dan spasi.',
         });
+        return;
     }
+
+    if (id_user == '' || id_user == null) {
+        urlSave = `{{ route('backoffice.master.user.store') }}`;
+    } else {
+        urlSave = `{{ route('backoffice.master.user.update', ['id' => '__ID__']) }}`.replace('__ID__', id_user);
+    }
+
+    saConfirm({
+        message: 'apakah anda yakin ingin menyimpan data?',
+        callback: function (res) {
+            if (res) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: urlSave,
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        $('.viewForm').modal('hide');
+                        onReset();
+                        saMessage({
+                            success: res['success'],
+                            title: res['title'],
+                            message: res['message'],
+                            callback: function () {
+                                initTable();
+                            }
+                        })
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            let messages = Object.values(errors).flat().join('<br>');
+
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom-end',
+                                icon: 'error',
+                                title: 'Validasi Gagal',
+                                html: messages,
+                                showConfirmButton: false,
+                                timer: 6000,
+                                timerProgressBar: true
+                            });
+                        }
+                    }
+                })
+            }
+        }
+    });
+}
 
     onEdit = (el) => {
         var id = $(el).data('id');

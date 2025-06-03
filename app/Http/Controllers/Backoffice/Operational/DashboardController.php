@@ -41,6 +41,7 @@ class DashboardController extends Controller
             'study_program' => 'nullable|string|max:255',
         ]);
 
+
         $currentYear = now()->year;
         $startYear = $request->year_start ?? $currentYear - 3;
         $endYear = $request->year_end ?? $currentYear;
@@ -51,14 +52,13 @@ class DashboardController extends Controller
             $alumnis->whereYear('graduation_date', '>=', $startYear);
         }
         if ($request->filled('year_end')) {
-            $alumnis->whereYear('graduation_date', '<=', $request->year_end);
+            $alumnis->whereYear('graduation_date', '<=', $endYear);
         }
         if ($request->filled('study_program')) {
-            $alumnis->where('study_program', $endYear);
+            $alumnis->where('study_program', $request->study_program);
         }
 
         $total = (clone $alumnis)->count();
-
         $topProfessions = (clone $alumnis)
             ->select('profession_id', DB::raw('count(*) as total'))
             ->groupBy('profession_id')

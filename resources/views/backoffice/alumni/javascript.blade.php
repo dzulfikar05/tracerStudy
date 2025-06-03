@@ -46,6 +46,9 @@
         $('#filter_study_program').select2({
             dropdownParent: $('.filterModal')
         });
+        $('#filter_filled').select2({
+            dropdownParent: $('.filterModal')
+        });
 
 
         loadBlock();
@@ -66,6 +69,7 @@
             serverSide: true,
             searchAble: true,
             searching: true,
+            scrollX: true,
             paging: true,
             "bDestroy": true,
             ajax: {
@@ -75,6 +79,7 @@
                     d.study_program = $('#filter_study_program').val();
                     d.study_start_year = $('#filter_study_start_year').val();
                     d.company_id = $('#filter_company_id').val();
+                    d.is_filled = $('#filter_filled').val();
                 }
             },
             columns: [{
@@ -179,7 +184,7 @@
                     data: 'superior_name',
                     name: 'superior_name',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.superior_name ?? ''}</span>`;
+                        return `<span>${full.superior.full_name ?? ''}</span>`;
                     }
                 },
                 {
@@ -194,66 +199,105 @@
     }
 
     onSave = () => {
-        var formData = new FormData($(`[name="${form}"]`)[0]);
-        let id_alumni = $('#id').val();
-        let urlSave = "";
+    var formData = new FormData($(`[name="${form}"]`)[0]);
 
-        if (id_alumni == '' || id_alumni == null) {
-            urlSave = `{{ route('backoffice.alumni.store') }}`;
-        } else {
-            urlSave = `{{ route('backoffice.alumni.update', ['id' => '__ID__']) }}`.replace('__ID__',
-                id_alumni);
-        }
+    // Ambil nilai input
+    let fullName = $('#full_name').val().trim();
+    let nim = $('#nim').val().trim();
+    let phone = $('#phone').val().trim();
+    let id_alumni = $('#id').val();
+    let urlSave = "";
 
+    // Regex validasi
+    const nameRegex = /^[a-zA-Z\s]+$/;     // Hanya huruf dan spasi
+    const numberOnlyRegex = /^[0-9]+$/;    // Hanya angka
 
-        saConfirm({
-            message: 'Are you sure you want to save the data?',
-            callback: function(res) {
-                if (res) {
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: urlSave,
-                        method: 'post',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(res) {
-                            $('.viewForm').modal('hide');
-                            onReset();
-                            saMessage({
-                                success: res['success'],
-                                title: res['title'],
-                                message: res['message'],
-                                callback: function() {
-                                    initTable();
-                                }
-                            })
-                        },
-                        error: function(xhr) {
-                            if (xhr.status === 422) {
-                                const errors = xhr.responseJSON.errors;
-                                let messages = Object.values(errors).flat().join('<br>');
-
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'bottom-end',
-                                    icon: 'error',
-                                    title: 'Validasi Gagal',
-                                    html: messages,
-                                    showConfirmButton: false,
-                                    timer: 6000,
-                                    timerProgressBar: true
-                                });
-                            }
-                        }
-                    })
-                }
-
-            }
-        })
+    // Validasi Nama Lengkap
+    if (!nameRegex.test(fullName)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'Nama Lengkap hanya boleh berisi huruf dan spasi.',
+        });
+        return;
     }
+
+    // Validasi NIM
+    if (!numberOnlyRegex.test(nim)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'NIM hanya boleh berisi angka.',
+        });
+        return;
+    }
+
+    // Validasi Nomor Telepon (jika diisi)
+    if (phone !== '' && !numberOnlyRegex.test(phone)) {
+        saMessage({
+            success: false,
+            title: 'Validasi Gagal',
+            message: 'Nomor Telepon hanya boleh berisi angka.',
+        });
+        return;
+    }
+
+    // Tentukan URL
+    if (id_alumni == '' || id_alumni == null) {
+        urlSave = `{{ route('backoffice.alumni.store') }}`;
+    } else {
+        urlSave = `{{ route('backoffice.alumni.update', ['id' => '__ID__']) }}`.replace('__ID__', id_alumni);
+    }
+
+    // Konfirmasi dan AJAX
+    saConfirm({
+        message: 'Are you sure you want to save the data?',
+        callback: function(res) {
+            if (res) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: urlSave,
+                    method: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(res) {
+                        $('.viewForm').modal('hide');
+                        onReset();
+                        saMessage({
+                            success: res['success'],
+                            title: res['title'],
+                            message: res['message'],
+                            callback: function() {
+                                initTable();
+                            }
+                        });
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON.errors;
+                            let messages = Object.values(errors).flat().join('<br>');
+
+                            Swal.fire({
+                                toast: true,
+                                position: 'bottom-end',
+                                icon: 'error',
+                                title: 'Validasi Gagal',
+                                html: messages,
+                                showConfirmButton: false,
+                                timer: 6000,
+                                timerProgressBar: true
+                            });
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
+
 
     onFetchOptionForm = () => {
         $.ajax({
@@ -426,40 +470,41 @@
         $('#filter_study_program').val('').change();
         $('#filter_study_start_year').val('');
         $('#filter_company_id').val('').change();
+        $('#filter_filled').val('').change();
         initTable();
     }
     $('#btnExportExcel').on('click', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let params = {
-        nim: $('#filter_nim').val(),
-        study_program: $('#filter_study_program').val(),
-        study_start_year: $('#filter_study_start_year').val(),
-        company_id: $('#filter_company_id').val()
-    };
+        let params = {
+            nim: $('#filter_nim').val(),
+            study_program: $('#filter_study_program').val(),
+            study_start_year: $('#filter_study_start_year').val(),
+            company_id: $('#filter_company_id').val(),
+            is_filled: $('#filter_filled').val()
+        };
 
-    // Buat query string dari filter
-    let query = $.param(params);
+        // Buat query string dari filter
+        let query = $.param(params);
 
-    // Redirect ke URL export dengan filter
-    window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
-});
+        // Redirect ke URL export dengan filter
+        window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
+    });
 
     $('#btnDownloadTemplate').on('click', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    let params = {
-        nim: $('#filter_nim').val(),
-        study_program: $('#filter_study_program').val(),
-        study_start_year: $('#filter_study_start_year').val(),
-        company_id: $('#filter_company_id').val()
-    };
+        let params = {
+            nim: $('#filter_nim').val(),
+            study_program: $('#filter_study_program').val(),
+            study_start_year: $('#filter_study_start_year').val(),
+            company_id: $('#filter_company_id').val()
+        };
 
-    // Buat query string dari filter
-    let query = $.param(params);
+        // Buat query string dari filter
+        let query = $.param(params);
 
-    // Redirect ke URL export dengan filter
-    window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
-});
-
+        // Redirect ke URL export dengan filter
+        window.location.href = "{{ route('backoffice.alumni.export') }}?" + query;
+    });
 </script>

@@ -18,7 +18,7 @@
                 <a href="/file/template_import_alumni.xlsx" class="btn btn-primary" target="_blank">
                     <i class="fa fa-download"></i> Download Template
                 </a>
-                
+
                 <button type="submit" class="btn btn-primary">Import</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
             </div>
@@ -39,8 +39,14 @@
             success: function(res) {
                 if (res.status) {
                     $('#myModal').modal('hide');
-                    Swal.fire('Sukses!', res.message, 'success');
-                    $('#table_alumni').DataTable().ajax.reload();
+                    saMessage({
+                        success: true,
+                        title: 'Sukses!',
+                        message: res.message,
+                        callback: function() {
+                            $('#table_alumni').DataTable().ajax.reload();
+                        }
+                    })
                 } else {
                     Swal.fire('Gagal!', res.message, 'error');
                 }

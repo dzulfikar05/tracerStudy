@@ -108,15 +108,16 @@ class CompanyController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Header
-        $sheet->setCellValue('A1', 'Nama');
-        $sheet->setCellValue('B1', 'Tipe Perusahaan');
-        $sheet->setCellValue('C1', 'Skala');
-        $sheet->setCellValue('D1', 'Alamat');
-        $sheet->setCellValue('E1', 'No. Telepon');
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nama');
+        $sheet->setCellValue('C1', 'Tipe Perusahaan');
+        $sheet->setCellValue('D1', 'Skala');
+        $sheet->setCellValue('E1', 'Alamat');
+        $sheet->setCellValue('F1', 'No. Telepon');
 
 
         $row = 2;
-        foreach ($companies as $company) {
+        foreach ($companies as $index => $company) {
             $companyType = "";
             if ($company->company_type == 'private_company') {
                 $companyType = "Perusahaan Swasta";
@@ -137,12 +138,17 @@ class CompanyController extends Controller
                 $scopeLabel = "Internasional";
             }
 
-            $sheet->setCellValue('A' . $row, $company->name);
-            $sheet->setCellValue('B' . $row, $companyType);
-            $sheet->setCellValue('C' . $row, $scopeLabel);
-            $sheet->setCellValue('D' . $row, $company->address);
-            $sheet->setCellValue('E' . $row, $company->phone);
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $company->name);
+            $sheet->setCellValue('C' . $row, $companyType);
+            $sheet->setCellValue('D' . $row, $scopeLabel);
+            $sheet->setCellValue('E' . $row, $company->address);
+            $sheet->setCellValue('F' . $row, $company->phone);
             $row++;
+        }
+
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
         $filename = 'Data_Perusahaan_' . date('Y-m-d_H-i-s') . '.xlsx';

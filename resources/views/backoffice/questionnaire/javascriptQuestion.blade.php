@@ -146,10 +146,10 @@
     }
 
     function onSaveQuestion(uniqueId) {
-        let card    = $(`#question_${uniqueId}`);
-        let isNew   = uniqueId.startsWith('new_');
+        let card = $(`#question_${uniqueId}`);
+        let isNew = uniqueId.startsWith('new_');
         let payload = {
-            question: card.find('[data-field="question"]').val().trim(),
+            question: card.find('[data-field="question"]').val()?.trim() || '',
             type: card.find('[data-field="type"]').val(),
             options: [],
         };
@@ -159,6 +159,7 @@
                 let v = $(this).val().trim();
                 if (v) payload.options.push(v);
             });
+
             if (payload.options.length === 0) {
                 return saMessage({
                     success: false,
@@ -170,11 +171,10 @@
             payload.is_assessment = card.find('[data-field="is_assessment"]').is(':checked') ? 1 : 0;
         }
 
-        const storeUrl        = `{{ route('backoffice.questionnaire.question.store', $data->id) }}`;
-        const updateTemplate  = `{{ route('backoffice.questionnaire.question.update', ['id' => $data->id, 'question' => 'QUESTION_ID']) }}`;
-        const url             = isNew
-            ? storeUrl
-            : updateTemplate.replace('QUESTION_ID', uniqueId);
+        const storeUrl = `{{ route('backoffice.questionnaire.question.store', $data->id) }}`;
+        const updateTemplate =
+            `{{ route('backoffice.questionnaire.question.update', ['id' => $data->id, 'question' => 'QUESTION_ID']) }}`;
+        const url = isNew ? storeUrl : updateTemplate.replace('QUESTION_ID', uniqueId);
 
         saConfirm({
             message: 'Yakin akan menyimpan pertanyaan ini?',
@@ -186,18 +186,26 @@
                     data: payload,
                     success: function(res) {
                         if (isNew) {
-                            card.attr('id', 'question_' + res.id).data('id', res.id);
+                            // Hapus card lama
+                            card.remove();
+
+                            // Tambahkan ulang dengan ID baru dari backend
+                            appendCard(res.id, payload.question, payload.type, payload.options,
+                                payload.is_assessment || false);
                         }
+
                         saMessage({
                             success: true,
                             title: 'Berhasil',
                             message: 'Pertanyaan disimpan.'
                         });
+
                         updateCardNumbers();
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
-                            let msgs = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                            let msgs = Object.values(xhr.responseJSON.errors).flat().join(
+                                '<br>');
                             Swal.fire({
                                 toast: true,
                                 position: 'bottom-end',
@@ -221,8 +229,9 @@
         });
     }
 
+
     function onDeleteQuestion(uniqueId) {
-        let card  = $(`#question_${uniqueId}`);
+        let card = $(`#question_${uniqueId}`);
         let isNew = uniqueId.startsWith('new_');
 
         saConfirm({
@@ -233,7 +242,8 @@
                     card.remove();
                     updateCardNumbers();
                 } else {
-                    const destroyTemplate = `{{ route('backoffice.questionnaire.question.destroy', ['id' => $data->id, 'question' => 'QUESTION_ID']) }}`;
+                    const destroyTemplate =
+                        `{{ route('backoffice.questionnaire.question.destroy', ['id' => $data->id, 'question' => 'QUESTION_ID']) }}`;
                     let url = destroyTemplate.replace('QUESTION_ID', uniqueId);
                     $.ajax({
                         url: url,

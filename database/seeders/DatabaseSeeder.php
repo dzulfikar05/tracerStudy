@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             ProfessionSeeder::class,
             QuestionnaireSeeder::class,
             QuestionSeeder::class,
+            ContentSeeder::class,
+            SuperiorSeeder::class,
+            AlumniSeeder::class,
+            AnswerSeeder::class
         ]);
 
     }

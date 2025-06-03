@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Alumni;
 use App\Models\Answer;
 use App\Models\Company;
+use App\Models\Content;
 use App\Models\Profession;
 use App\Models\ProfessionCategory;
 use App\Models\Question;
@@ -24,6 +25,17 @@ class HomeController extends Controller
         ]);
     }
 
+    public function getCarousel()
+    {
+        $data = Content::where('type', 'carousel')->orderBy('order', 'asc')->get();
+        return $data;
+    }
+    public function getContentHome()
+    {
+        $data = Content::where('type', 'home')->orderBy('order', 'asc')->get();
+        return $data;
+    }
+
     public function listQuestionnaireIndex()
     {
         $data = Questionnaire::where('is_active', true)->get();
@@ -36,8 +48,11 @@ class HomeController extends Controller
 
     public function aboutIndex()
     {
+        $content = Content::where('type', 'about')->orderBy('order', 'asc')->get();
         return view('landingPage.layouts.index', [
-            'content' => view('landingPage.about')
+            'content' => view('landingPage.about', [
+                'content' => $content
+            ])
         ]);
     }
 

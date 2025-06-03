@@ -10,6 +10,11 @@
                     <i class="align-middle " data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                 </a>
             </li>
+            <li class="sidebar-item  {{ set_active('backoffice.content.index') }}">
+                <a class="sidebar-link  " href="{{ route('backoffice.content.index') }}">
+                    <i class="align-middle " data-feather="layout"></i> <span class="align-middle">Konten Website</span>
+                </a>
+            </li>
 
             {{-- <li class="sidebar-header">
                 Master Data
