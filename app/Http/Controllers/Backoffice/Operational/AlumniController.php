@@ -84,6 +84,15 @@ class AlumniController extends Controller
                 ->addColumn('superior_name', function ($row) {
                     return $row->superior?->name ?? '';
                 })
+                ->addColumn('graduation_date', function ($row) {
+                    return $row->graduation_date ? \Carbon\Carbon::parse($row->graduation_date)->format('d/m/Y') : '';
+                })
+                ->addColumn('start_work_date', function ($row) {
+                    return $row->start_work_date ? \Carbon\Carbon::parse($row->start_work_date)->format('d/m/Y') : '';
+                })
+                ->addColumn('start_work_now_date', function ($row) {
+                    return $row->start_work_now_date ? \Carbon\Carbon::parse($row->start_work_now_date)->format('d/m/Y') : '';
+                })
                 ->addColumn('action', function ($row) {
                     $id = $row->id;
                     $btn = ' <div class="dropstart">
@@ -207,14 +216,14 @@ class AlumniController extends Controller
             $query->where('company_id', $request->company_id);
         }
 
-         if ($request->filled('is_filled') && $request->is_filled == "filled") {
-                $query->where('company_id', '!=', null);
-                $query->where('start_work_date', '!=', null);
-                $query->where('start_work_now_date', '!=', null);
-                $query->where('waiting_time', '!=', null);
-                $query->where('profession_id', '!=', null);
-                $query->where('profession_id', '!=', null);
-            }
+        if ($request->filled('is_filled') && $request->is_filled == "filled") {
+            $query->where('company_id', '!=', null);
+            $query->where('start_work_date', '!=', null);
+            $query->where('start_work_now_date', '!=', null);
+            $query->where('waiting_time', '!=', null);
+            $query->where('profession_id', '!=', null);
+            $query->where('profession_id', '!=', null);
+        }
 
         // Get data after applying filters
         $alumni = $query->get();

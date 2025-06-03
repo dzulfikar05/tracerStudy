@@ -38,7 +38,7 @@
 
             <div class="card-body">
                 <div class="form-group d-flex justify-content-end mb-3">
-                    <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal"
+                    <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal"
                         style="float: left">
                         <i class="fa fa-filter"></i> Filter
                     </button>
