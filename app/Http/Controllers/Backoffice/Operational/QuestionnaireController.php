@@ -43,56 +43,66 @@ class QuestionnaireController extends Controller
                 $data->where('type', 'like', '%' . $request->type . '%');
             }
 
+            // return DataTables::of($data->get())
+            //     ->addIndexColumn()
+            //     ->addColumn('action', function ($row) {
+            //         $hasAssessment = Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->count() > 0;
+
+            //         $id = $row->id;
+            //         $btn = '
+            //             <div class="dropstart">
+            //                 <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            //                     Aksi
+            //                 </button>
+            //                 <ul class="dropdown-menu" style="z-index: 1050 !important; ">
+            //                     <li>
+            //                         <a class="dropdown-item" href="#" onclick="onEdit(this)" data-id="' . $id . '">
+            //                             <i class="fa fa-pencil me-2 text-warning"></i>Edit
+            //                         </a>
+            //                     </li>
+            //                     <li>
+            //                         <a class="dropdown-item" href="' . route('backoffice.questionnaire.show', $id) . '">
+            //                             <i class="fa fa-question-circle me-2 text-primary"></i>Lihat Pertanyaan
+            //                         </a>
+            //                     </li>
+            //                     <li>
+            //                         <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-answer', $id) . '">
+            //                             <i class="fa fa-eye me-2 text-primary"></i>Lihat Jawaban
+            //                         </a>
+            //                     </li>
+            //             ';
+            //         if ($hasAssessment) {
+            //             $btn .= '<li>
+            //                             <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-assessment', $id) . '">
+            //                                 <i class="fa fa-eye me-2 text-primary"></i>Tabel Penilaian
+            //                             </a>
+            //                         </li>';
+            //         }
+
+            //         $btn .= '
+            //                     <li>
+            //                         <a class="dropdown-item text-danger" href="#" onclick="onDelete(this)" data-id="' . $id . '">
+            //                             <i class="fa fa-trash me-2"></i>Hapus
+            //                         </a>
+            //                     </li>
+            //                 </ul>
+            //             </div>';
+
+            //         return $btn;
+            //     })
+
+            //     ->rawColumns(['action'])
+            //     ->make(true);
+
             return DataTables::of($data->get())
                 ->addIndexColumn()
-                ->addColumn('action', function ($row) {
-                    $hasAssessment = Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->count() > 0;
-
-                    $id = $row->id;
-                    $btn = '
-                        <div class="dropstart">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Aksi
-                            </button>
-                            <ul class="dropdown-menu" style="z-index: 1050 !important; ">
-                                <li>
-                                    <a class="dropdown-item" href="#" onclick="onEdit(this)" data-id="' . $id . '">
-                                        <i class="fa fa-pencil me-2 text-warning"></i>Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="' . route('backoffice.questionnaire.show', $id) . '">
-                                        <i class="fa fa-question-circle me-2 text-primary"></i>Lihat Pertanyaan
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-answer', $id) . '">
-                                        <i class="fa fa-eye me-2 text-primary"></i>Lihat Jawaban
-                                    </a>
-                                </li>
-                        ';
-                    if ($hasAssessment) {
-                        $btn .= '<li>
-                                        <a class="dropdown-item" href="' . route('backoffice.questionnaire.show-assessment', $id) . '">
-                                            <i class="fa fa-eye me-2 text-primary"></i>Tabel Penilaian
-                                        </a>
-                                    </li>';
-                    }
-
-                    $btn .= '
-                                <li>
-                                    <a class="dropdown-item text-danger" href="#" onclick="onDelete(this)" data-id="' . $id . '">
-                                        <i class="fa fa-trash me-2"></i>Hapus
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>';
-
-                    return $btn;
-                })
-
+                ->addColumn('action', fn($row) => 'unused') // Tidak terpakai
+                ->addColumn('show_url', fn($row) => route('backoffice.questionnaire.show', $row->id))
+                ->addColumn('answer_url', fn($row) => route('backoffice.questionnaire.show-answer', $row->id))
+                ->addColumn('assessment_url', fn($row) => route('backoffice.questionnaire.show-assessment', $row->id))
+                ->addColumn('has_assessment', fn($row) => Question::where('questionnaire_id', $row->id)->where('is_assessment', true)->exists())
                 ->rawColumns(['action'])
-                ->make(true);
+                ->toJson();
         }
 
         return view('backoffice.questionnaire.index');
@@ -158,7 +168,7 @@ class QuestionnaireController extends Controller
             'content' => view('backoffice.questionnaire.answer')->with('data', $data)
         ]);
     }
-     public function answerTable($id, Request $request)
+    public function answerTable($id, Request $request)
     {
         if ($request->ajax()) {
             // Ambil kuesioner beserta pertanyaannya
@@ -474,9 +484,7 @@ class QuestionnaireController extends Controller
                     if (($relevantAlumniRelation->superior->id ?? '-') != $request->superior) {
                         $matches = false;
                     }
-                }
-
-                elseif ($questionnaire->type === 'superior') {
+                } elseif ($questionnaire->type === 'superior') {
                     if (($answer->filler_superior->id ?? '-') != $request->superior) {
                         $matches = false;
                     }
@@ -511,15 +519,35 @@ class QuestionnaireController extends Controller
         $type = $questionnaire->type;
 
         $alumniHeaders = [
-            'Program Studi', 'NIM', 'Nama', 'No. HP', 'Email', 'Angkatan',
-            'Tanggal Lulus', 'Tahun Lulus', 'Tanggal Pertama Kerja', 'Masa Tunggu',
-            'Tanggal Kerja Instansi', 'Jenis Instansi', 'Nama Instansi', 'Skala',
-            'Lokasi', 'Kategori Profesi', 'Profesi', 'Nama Atasan Langsung',
-            'Jabatan Atasan Langsung', 'No. HP Atasan Langsung', 'Email Atasan'
+            'Program Studi',
+            'NIM',
+            'Nama',
+            'No. HP',
+            'Email',
+            'Angkatan',
+            'Tanggal Lulus',
+            'Tahun Lulus',
+            'Tanggal Pertama Kerja',
+            'Masa Tunggu',
+            'Tanggal Kerja Instansi',
+            'Jenis Instansi',
+            'Nama Instansi',
+            'Skala',
+            'Lokasi',
+            'Kategori Profesi',
+            'Profesi',
+            'Nama Atasan Langsung',
+            'Jabatan Atasan Langsung',
+            'No. HP Atasan Langsung',
+            'Email Atasan'
         ];
 
         $superiorHeaders = [
-            'Nama', 'Instansi', 'Jabatan', 'Email', 'Nama Alumni',
+            'Nama',
+            'Instansi',
+            'Jabatan',
+            'Email',
+            'Nama Alumni',
             'Program Studi Alumni',
             'Angkatan Alumni',
             'Tahun Lulus Alumni'
