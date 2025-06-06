@@ -113,7 +113,6 @@
                     orderable: false,
                     searchable: false
                 },
-
             ],
             drawCallback: function(settings) {
                 let rowCount = this.api().rows({

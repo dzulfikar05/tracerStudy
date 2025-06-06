@@ -25,10 +25,16 @@ class Controller extends BaseController
         $graduation_date = Carbon::parse($graduationDate);
         $start_work_date = Carbon::parse($startWorkDate);
 
-        $diffInDays = $graduation_date->diffInDays($start_work_date);
+        $diffInDays = $start_work_date->diffInDays($graduation_date);
         $monthFloat = round($diffInDays / 30.44, 1);
+
         $formatted = number_format($monthFloat, 1, ',', '');
 
-        return $formatted;
+        $isMinus = false;
+        if ($start_work_date < $graduation_date) {
+            $isMinus = true;
+        }
+
+        return $isMinus ? '-' . $formatted : $formatted;
     }
 }
