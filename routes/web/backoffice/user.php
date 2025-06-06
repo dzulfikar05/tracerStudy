@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('backoffice/master/user')->as('backoffice.master.user.')
-    ->middleware('auth')
+    ->middleware('auth', 'superadmin')
     ->group(function () {
         Route::get('', [UserController::class, 'index'])->name('index');
         Route::get('table', [UserController::class, 'initTable'])->name('table');

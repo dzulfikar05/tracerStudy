@@ -7,8 +7,8 @@
             </div> --}}
             <div class="card-body">
                 <div class="form-group d-flex justify-content-end mb-3">
-                    <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal"
-                        style="float: left">
+                    <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
+                        data-bs-target="#filterModal" style="float: left">
                         <i class="fa fa-filter"></i> Filter
                     </button>
 
@@ -16,8 +16,12 @@
                         <i class="align-middle" data-feather="file-text"></i> Export Excel
                     </a>
 
-                    <button type="button" onclick="showForm()" class="btn btn-primary me-2"><i class="align-middle" data-feather="plus"> </i> Tambah</button>
-                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle" data-feather="rotate-ccw"> </i> Muat Ulang</button>
+                    @if (Auth::user()->is_super == true)
+                        <button type="button" onclick="showForm()" class="btn btn-primary me-2"><i class="align-middle"
+                                data-feather="plus"> </i> Tambah</button>
+                    @endif
+                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
+                            data-feather="rotate-ccw"> </i> Muat Ulang</button>
 
                 </div>
                 <div class="table-responsive">

@@ -42,9 +42,11 @@
                     <li class="sidebar-item {{ set_active('backoffice.master.company.index') }}"><a
                             class="sidebar-link" href="{{ route('backoffice.master.company.index') }}">Perusahaan</a>
                     </li>
-                    <li class="sidebar-item {{ set_active('backoffice.master.user.index') }}"><a class="sidebar-link"
-                            href="{{ route('backoffice.master.user.index') }}">User</a>
-                    </li>
+                    @if (Auth::user()->is_super == true)
+                        <li class="sidebar-item {{ set_active('backoffice.master.user.index') }}"><a
+                                class="sidebar-link" href="{{ route('backoffice.master.user.index') }}">User</a>
+                        </li>
+                    @endif
                 </ul>
             </li>
             <li class="sidebar-item  {{ set_active('backoffice.alumni.index') }}">
