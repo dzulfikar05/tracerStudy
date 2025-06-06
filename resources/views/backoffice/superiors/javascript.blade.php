@@ -114,7 +114,19 @@
                     searchable: false
                 },
 
-            ]
+            ],
+            drawCallback: function(settings) {
+                let rowCount = this.api().rows({
+                    page: 'current'
+                }).count();
+
+                let tbody = $('#table_superiors tbody');
+                if (rowCount < 2) {
+                    tbody.find('tr').css('height', '100px');
+                } else {
+                    tbody.find('tr').css('height', '');
+                }
+            }
         });
         unblock();
     }

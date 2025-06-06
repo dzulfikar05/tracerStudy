@@ -77,6 +77,19 @@
         .select2-results__option {
             padding: 5px 12px;
         }
+
+        .dropstart .dropdown-menu {
+            z-index: 9999 !important;
+        }
+
+        .dropstart {
+            position: relative;
+        }
+
+        .dropstart .dropdown-menu {
+            margin-top: 5px;
+            /* Menambah jarak di atas dropdown */
+        }
     </style>
 </head>
 

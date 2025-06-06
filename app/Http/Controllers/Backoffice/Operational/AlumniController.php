@@ -99,7 +99,7 @@ class AlumniController extends Controller
                             <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Aksi
                             </button>
-                            <ul class="dropdown-menu" style="z-index: 1050 !important; ">
+                            <ul class="dropdown-menu" style="z-index: 9999 !important; ">
                                 <li>
                                     <a class="dropdown-item" href="#" onclick="onEdit(this)" data-id="' . $id . '">
                                         <i class="fa fa-pencil me-2 text-warning"></i>Edit
