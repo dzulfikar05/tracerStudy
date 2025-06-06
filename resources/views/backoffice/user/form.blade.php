@@ -28,11 +28,19 @@
                         <input id="password" name="password" class="form-control mb-3" type="password"
                             placeholder="Password">
                     </div>
+                    <div class="form-check mb-3">
+                        <input type="hidden" name="is_super" value="0">
+                        <input id="is_super" name="is_super" class="form-check-input" type="checkbox" value="1">
+                        <label class="form-check-label" for="is_super">
+                            Superadmin
+                        </label>
+                    </div>
 
                     <div class="form-group mt-5 d-flex justify-content-end">
                         <button type="button" onclick="onReset()" class="btn btn-light me-3"><i class="align-middle"
                                 data-feather="rotate-ccw"> </i> Reset</button>
-                        <button type="submit" class="btn btn-success"><i class="align-middle" data-feather="Simpan"> </i>
+                        <button type="submit" class="btn btn-success"><i class="align-middle" data-feather="Simpan">
+                            </i>
                             Simpan</button>
                     </div>
                 </form>

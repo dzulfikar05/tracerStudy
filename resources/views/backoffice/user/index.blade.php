@@ -24,6 +24,7 @@
                                 <th style="width: 50px">No</th>
                                 <th>Nama</th>
                                 <th>Email</th>
+                                <th>Superadmin</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>

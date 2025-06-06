@@ -25,6 +25,7 @@ class userRequest extends FormRequest
             'name' => ['required', 'string'],
             'email' => ['required', 'string'],
             'password' => ['nullable', 'string'],
+            'is_super' => ['required'],
         ];
     }
 }

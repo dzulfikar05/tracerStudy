@@ -37,7 +37,7 @@ class AuthController extends Controller
             Auth::attempt($credentials);
             session()->put('user', Auth::user());
 
-            return redirect()->route('dashboard');
+            return redirect()->route('backoffice.dashboard.index');
         } else {
             $response['success'] = false;
             $response['message'] = 'Username atau Password anda Salah !';
@@ -54,7 +54,7 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return redirect()->route('dashboard');
+        return redirect()->route('backoffice.dashboard.index');
     }
 
     public function forgotPassword()
