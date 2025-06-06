@@ -54,7 +54,7 @@
                     data: 'is_super',
                     name: 'is_super',
                     render: function(data, type, full, meta) {
-                        return `<span>${full.is_super == true ? 'Superior' : 'Admin'}</span>`;
+                        return `<span>${full.is_super == true ? 'Superadmin' : 'Admin'}</span>`;
                     }
                 },
                 {

@@ -171,13 +171,9 @@ class QuestionnaireController extends Controller
     public function answerTable($id, Request $request)
     {
         if ($request->ajax()) {
-            // Ambil kuesioner beserta pertanyaannya
             $questionnaire = Questionnaire::with('questions')->findOrFail($id);
             $questions = $questionnaire->questions;
 
-            // **PERUBAHAN UTAMA DI SINI:**
-            // Kita akan mengambil SEMUA jawaban yang relevan terlebih dahulu,
-            // kemudian mengelompokkan untuk mendapatkan responden unik.
             $allAnswers = Answer::where('questionnaire_id', $id)
                 ->with([
                     'filler_superior',
@@ -186,14 +182,12 @@ class QuestionnaireController extends Controller
                     'filler_alumni.profession.profession_category',
                     'alumni.superior'
                 ])
+                ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Filter jawaban berdasarkan request (misalnya, program studi, angkatan, dll.)
-            // Kita akan membangun koleksi responden unik dari jawaban yang difilter.
             $filteredRespondents = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
                 $relationAlumni = $questionnaire->type === 'alumni' ? $answer->filler_alumni : $answer->alumni;
 
-                // Terapkan filter yang sama seperti sebelumnya, tapi pada koleksi Eloquent
                 $matches = true;
 
                 if ($request->filled('study_program') && ($relationAlumni->study_program ?? '-') !== $request->study_program) {
@@ -220,21 +214,14 @@ class QuestionnaireController extends Controller
                 return $matches;
             });
 
-            // Sekarang, kelompokkan responden yang sudah difilter untuk mendapatkan entri unik
-            // untuk ditampilkan di tabel.
             $respondents = $filteredRespondents->unique(function ($item) {
                 if ($item->filler_type === 'superior') {
-                    // Untuk superior, unik berdasarkan siapa (filler) mengisi untuk siapa (alumni)
                     return $item->questionnaire_id . '-' . $item->filler_id . '-' . $item->alumni_id;
                 } else {
-                    // Untuk alumni, unik berdasarkan siapa (alumni) mengisi untuk dirinya sendiri
                     return $item->questionnaire_id . '-' . $item->filler_id;
                 }
             });
 
-
-            // Ambil semua jawaban yang relevan dari *semua* jawaban yang sudah difilter
-            // dan kelompokkan berdasarkan kombinasi unik yang sama
             $answersGrouped = $filteredRespondents->groupBy(function ($item) {
                 if ($item->filler_type === 'superior') {
                     return $item->filler_type . '-' . $item->filler_id . '-' . $item->alumni_id;
@@ -243,9 +230,7 @@ class QuestionnaireController extends Controller
                 }
             });
 
-            // Siapkan data untuk DataTables
             $data = $respondents->map(function ($responden) use ($questions, $answersGrouped) {
-                // Buat kunci komposit yang sama untuk mengambil jawaban spesifik
                 $compositeKey = '';
                 if ($responden->filler_type === 'superior') {
                     $compositeKey = $responden->filler_type . '-' . $responden->filler_id . '-' . $responden->alumni_id;
@@ -255,7 +240,6 @@ class QuestionnaireController extends Controller
 
                 $responseAnswers = $answersGrouped[$compositeKey] ?? collect();
 
-                // START OF THE PART YOU DO NOT WANT TO CHANGE
                 $row = [
                     'id' => $responden->id,
                     'filler_type' => $responden->filler_type,
@@ -271,11 +255,11 @@ class QuestionnaireController extends Controller
                     $row['phone'] = $filler->phone ?? '-';
                     $row['email'] = $filler->email ?? '-';
                     $row['study_start_year'] = $filler->study_start_year ?? '-';
-                    $row['graduation_date'] = $filler->graduation_date ?? '-';
+                    $row['graduation_date'] = date('d/m/Y', strtotime($filler->graduation_date)) ?? '-';
                     $row['graduation_year'] = date('Y', strtotime($filler->graduation_date)) ?? '-';
-                    $row['start_work_date'] = $filler->start_work_date ?? '-';
+                    $row['start_work_date'] = date('d/m/Y', strtotime($filler->start_work_date)) ??  '-';
                     $row['waiting_time'] = $filler->waiting_time ?? '-';
-                    $row['start_work_now_date'] = $filler->start_work_now_date ?? '-';
+                    $row['start_work_now_date'] = date('d/m/Y', strtotime($filler->start_work_now_date)) ?? '-';
 
                     $row['company_type'] = $filler->company?->company_type ?? '-';
                     $row['company_name'] = $filler->company?->name ?? '-';
@@ -307,12 +291,9 @@ class QuestionnaireController extends Controller
                 }
 
                 foreach ($questions as $question) {
-                    // Ambil jawaban spesifik dari koleksi $responseAnswers
                     $row["q_{$question->id}"] = $responseAnswers->firstWhere('question_id', $question->id)->answer ?? '-';
                 }
-                // END OF THE PART YOU DO NOT WANT TO CHANGE
 
-                // Tambahkan kolom 'pengisi' di luar bagian yang tidak ingin diubah
                 $row['pengisi'] = ($responden->filler_type == 'alumni' ? ($responden->filler_alumni->full_name ?? '-') : ($responden->filler_superior->full_name ?? '-'));
 
                 return $row;
@@ -345,7 +326,6 @@ class QuestionnaireController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
         return view('backoffice.questionnaire.index');
     }
 
@@ -441,6 +421,7 @@ class QuestionnaireController extends Controller
                 'filler_alumni.profession.profession_category',
                 'alumni.superior'
             ])
+            ->orderBy('created_at', 'desc')
             ->get();
 
         $filteredAnswers = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
