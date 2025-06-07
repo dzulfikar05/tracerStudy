@@ -11,6 +11,7 @@ use Yajra\DataTables\DataTables;
 use App\Http\Requests\SuperiorRequest;
 use App\Models\Alumni;
 use App\Models\Answer;
+use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Str;
@@ -20,9 +21,11 @@ class SuperiorsController extends Controller
 {
     public function index()
     {
+        $is_super = Auth::user()->is_super;
+
         return view('layouts.index', [
             'title' => 'Atasan',
-            'content' => view('backoffice.superiors.index')
+            'content' => view('backoffice.superiors.index', compact('is_super'))
         ]);
     }
 

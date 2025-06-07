@@ -16,7 +16,7 @@
                         <i class="align-middle" data-feather="file-text"></i> Export Excel
                     </a>
 
-                    @if (Auth::user()->is_super == true)
+                    @if ($is_super == true)
                         <button type="button" onclick="showForm()" class="btn btn-primary me-2"><i class="align-middle"
                                 data-feather="plus"> </i> Tambah</button>
                     @endif

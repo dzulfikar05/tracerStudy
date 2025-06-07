@@ -1,10 +1,10 @@
 <script>
     let questions = @json($data->questions ?? []);
     let type = @json($data->type); // 'alumni' atau 'superior'
+    const isSuper = "{{ $data['is_super'] }}";
 
     $(() => {
         initTable();
-
         $('#filter_study_program').select2({
             dropdownParent: $('.filterModal')
         });
@@ -157,16 +157,27 @@
         return columns;
     };
 
+    const getActionColumn = () => {
+
+        if(isSuper != true){
+            return [];
+        }
+
+        let columns = [{
+            data: 'action',
+            title: 'Aksi',
+            orderable: false,
+            searchable: false
+        }];
+
+        return columns;
+    }
     const initTable = () => {
         const columns = [
             ...getDynamicColumns(),
             ...generateQuestionColumns(),
-            {
-                data: 'action',
-                title: 'Aksi',
-                orderable: false,
-                searchable: false
-            }
+            ...getActionColumn()
+
         ];
 
         $('#table_answer').DataTable({

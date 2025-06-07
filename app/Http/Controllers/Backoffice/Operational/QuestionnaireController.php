@@ -10,6 +10,7 @@ use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\Superior;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Yajra\DataTables\DataTables;
@@ -21,9 +22,10 @@ class QuestionnaireController extends Controller
 {
     public function index()
     {
+        $is_super = Auth::user()->is_super;
         return view('layouts.index', [
             'title' => 'Kuisioner',
-            'content' => view('backoffice.questionnaire.index')
+            'content' => view('backoffice.questionnaire.index', compact('is_super'))
         ]);
     }
 
@@ -162,6 +164,7 @@ class QuestionnaireController extends Controller
     public function showAnswer($id)
     {
         $data = Questionnaire::with('questions')->find($id);
+        $data['is_super'] = Auth::user()->is_super;
 
         return view('layouts.index', [
             'title' => 'List Jawaban ' . $data->title,

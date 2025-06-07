@@ -2,17 +2,17 @@
     .questionnaire-card {
         transition: all 0.3s ease-in-out;
         cursor: pointer;
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
-        /* shadow tebal */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background-color: #ffffff;
     }
 
     .questionnaire-card:hover {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
-        /* shadow makin tebal saat hover */
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
         transform: translateY(-6px);
         background-color: #f9fafb;
     }
 </style>
+
 <div class="row">
     @include('backoffice.questionnaire.form')
     <div class="col-12">
@@ -22,17 +22,19 @@
                 <i class="fa fa-filter me-2"></i> Filter
             </button>
 
-            <button type="button" onclick="showForm()" class="btn btn-primary d-flex align-items-center">
-                <i data-feather="plus" class="me-2"></i> Tambah
-            </button>
+            @if ($is_super)
+                <button type="button" onclick="showForm()" class="btn btn-primary d-flex align-items-center">
+                    <i data-feather="plus" class="me-2"></i> Tambah
+                </button>
+            @endif
 
-            <button type="button" onclick="initTable()" class="btn btn-light d-flex align-items-center">
+            <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
+                style="border: 1px solid grey">
                 <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
             </button>
         </div>
 
         <div class="row" id="questionnaire-cards">
-            {{-- Cards akan dimuat lewat JS --}}
         </div>
         {{-- <div class="card">
 

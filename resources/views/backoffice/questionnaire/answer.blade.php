@@ -70,7 +70,9 @@
                                             <th>{{ $question->question }}</th>
                                         @endforeach
 
-                                        <th style="width: 100px">Aksi</th>
+                                        @if ($data['is_super'] == true)
+                                            <th style="width: 100px">Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
