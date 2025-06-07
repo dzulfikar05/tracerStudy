@@ -19,67 +19,65 @@ class AlumniSeeder extends Seeder
 
         $data = [
             [
-                [
-                    'study_program' => 'D4 Teknik Informatika',
-                    'nim' => '0000000001',
-                    'full_name' => 'Rizky Pratama',
-                ],
-                [
-                    'study_program' => 'D4 Sistem Informasi Bisnis',
-                    'nim' => '0000000002',
-                    'full_name' => 'Putri Ayu Lestari',
-                ],
-                [
-                    'study_program' => 'D2 PPLS',
-                    'nim' => '0000000003',
-                    'full_name' => 'Dimas Aditya',
-                ],
-                [
-                    'study_program' => 'S2 MRTI',
-                    'nim' => '0000000004',
-                    'full_name' => 'Siti Nurhaliza',
-                ],
-                [
-                    'study_program' => 'S2 MRTI',
-                    'nim' => '0000000005',
-                    'full_name' => 'Budi Santoso',
-                ],
-                [
-                    'study_program' => 'D4 Teknik Informatika',
-                    'nim' => '0000000006',
-                    'full_name' => 'Lina Marlina',
-                ],
-                [
-                    'study_program' => 'D4 Teknik Informatika',
-                    'nim' => '0000000007',
-                    'full_name' => 'Andi Firmansyah',
-                ],
-                [
-                    'study_program' => 'D4 Teknik Informatika',
-                    'nim' => '0000000008',
-                    'full_name' => 'Nadia Kusuma',
-                ],
-                [
-                    'study_program' => 'D4 Sistem Informasi Bisnis',
-                    'nim' => '0000000009',
-                    'full_name' => 'Fajar Nugroho',
-                ],
-                [
-                    'study_program' => 'D4 Sistem Informasi Bisnis',
-                    'nim' => '0000000010',
-                    'full_name' => 'Rina Oktaviani',
-                ],
-                [
-                    'study_program' => 'D4 Sistem Informasi Bisnis',
-                    'nim' => '0000000011',
-                    'full_name' => 'Teguh Rahman',
-                ],
-                [
-                    'study_program' => 'D2 PPLS',
-                    'nim' => '0000000012',
-                    'full_name' => 'Yulia Anggraini',
-                ],
-            ]
+                'study_program' => 'D4 Teknik Informatika',
+                'nim' => '0000000001',
+                'full_name' => 'Rizky Pratama',
+            ],
+            [
+                'study_program' => 'D4 Sistem Informasi Bisnis',
+                'nim' => '0000000002',
+                'full_name' => 'Putri Ayu Lestari',
+            ],
+            [
+                'study_program' => 'D2 PPLS',
+                'nim' => '0000000003',
+                'full_name' => 'Dimas Aditya',
+            ],
+            [
+                'study_program' => 'S2 MRTI',
+                'nim' => '0000000004',
+                'full_name' => 'Siti Nurhaliza',
+            ],
+            [
+                'study_program' => 'S2 MRTI',
+                'nim' => '0000000005',
+                'full_name' => 'Budi Santoso',
+            ],
+            [
+                'study_program' => 'D4 Teknik Informatika',
+                'nim' => '0000000006',
+                'full_name' => 'Lina Marlina',
+            ],
+            [
+                'study_program' => 'D4 Teknik Informatika',
+                'nim' => '0000000007',
+                'full_name' => 'Andi Firmansyah',
+            ],
+            [
+                'study_program' => 'D4 Teknik Informatika',
+                'nim' => '0000000008',
+                'full_name' => 'Nadia Kusuma',
+            ],
+            [
+                'study_program' => 'D4 Sistem Informasi Bisnis',
+                'nim' => '0000000009',
+                'full_name' => 'Fajar Nugroho',
+            ],
+            [
+                'study_program' => 'D4 Sistem Informasi Bisnis',
+                'nim' => '0000000010',
+                'full_name' => 'Rina Oktaviani',
+            ],
+            [
+                'study_program' => 'D4 Sistem Informasi Bisnis',
+                'nim' => '0000000011',
+                'full_name' => 'Teguh Rahman',
+            ],
+            [
+                'study_program' => 'D2 PPLS',
+                'nim' => '0000000012',
+                'full_name' => 'Yulia Anggraini',
+            ],
         ];
 
         foreach ($data as $i => &$row) {
