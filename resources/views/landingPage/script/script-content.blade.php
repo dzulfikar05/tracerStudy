@@ -257,9 +257,6 @@
         if (alumniStartWorkNowDate === '') addError(
             'Tanggal Mulai Kerja (Pada Perusahaan Sekarang) alumni tidak boleh kosong.');
 
-        const alumniProfessionCategoryId = formData.get('alumni[profession_category_id]') || '';
-        if (alumniProfessionCategoryId === '') addError('Kategori Profesi alumni tidak boleh kosong.');
-
         const alumniProfessionId = formData.get('alumni[profession_id]') || '';
         if (alumniProfessionId === '') addError('Profesi alumni tidak boleh kosong.');
 
@@ -267,7 +264,8 @@
         if (alumniCompanyId === '') addError('Perusahaan / Tempat Bekerja alumni tidak boleh kosong.');
 
 
-        if ($('#data-atasan').hasClass('show') && $('#data-atasan').hasClass('active')) {
+        if (!($('#data-atasan').hasClass('d-none'))) {
+
             const superiorFullName = formData.get('superior[full_name]') || '';
             if (superiorFullName === '') addError('Nama Lengkap atasan tidak boleh kosong.');
             else if (!nameRegex.test(superiorFullName)) addError(
