@@ -6,31 +6,66 @@
                 <div class="card-title">Job Category</div>
             </div> --}}
             <div class="card-body">
-                <div class="form-group d-flex justify-content-end mb-3">
-                    <a id="btnExportExcel" href="#" class="btn btn-success me-2">
-                        <i class="align-middle" data-feather="file-text"></i> Export Excel
-                    </a>
-                    @if ($is_super == true)
-                        <button type="button" onclick="showForm()" class="btn btn-primary"><i class="align-middle"
-                                data-feather="plus"> </i> Tambah</button>
-                    @endif
 
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="stat-card">
+                                    <div class="stat-row">
+                                        <i class="bi bi-people-fill text-primary stat-icon"></i>
+                                        <div id="count_superior" class="stat-number">0</div>
+                                    </div>
+                                    <div class="stat-label">Total Atasan Alumni</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="stat-card">
+                                    <div class="stat-row">
+                                        <i class="bi bi-check-circle-fill text-success stat-icon"></i>
+                                        <div id="count_superior_fill" class="stat-number">0</div>
+                                    </div>
+                                    <div class="stat-label">Sudah Mengisi</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <div class="stat-card">
+                                    <div class="stat-row">
+                                        <i class="bi bi-x-circle-fill text-danger stat-icon"></i>
+                                        <div id="count_superior_unfill" class="stat-number">0</div>
+                                    </div>
+                                    <div class="stat-label">Belum Mengisi</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group d-flex justify-content-end mb-3">
+                            <a id="btnExportExcel" href="#" class="btn btn-success me-2">
+                                <i class="align-middle" data-feather="file-text"></i> Export Excel
+                            </a>
+                            @if ($is_super == true)
+                                <button type="button" onclick="showForm()" class="btn btn-primary"><i
+                                        class="align-middle" data-feather="plus"> </i> Tambah</button>
+                            @endif
+                        </div>
+                        <div class="form-group d-flex justify-content-end mb-3">
+                            <button type="button" class="btn btn-outline-info me-2 position-relative"
+                                data-bs-toggle="modal" data-bs-target="#filterModal" style="float: left">
+                                <i class="fa fa-filter"></i> Filter
+                                <span id="filter-indicator"
+                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+                                    <span class="visually-hidden">Filter aktif</span>
+                                </span>
+                            </button>
+                            <button type="button" onclick="initTable()"
+                                class="btn btn-light d-flex  align-items-center" style="border: 1px solid grey">
+                                <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group d-flex justify-content-end mb-3">
-                    <button type="button" class="btn btn-outline-info me-2 position-relative"  data-bs-toggle="modal"
-                        data-bs-target="#filterModal" style="float: left">
-                        <i class="fa fa-filter"></i> Filter
-                        <span id="filter-indicator"
-                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
-                            <span class="visually-hidden">Filter aktif</span>
-                        </span>
-                    </button>
-                    <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
-                        style="border: 1px solid grey">
-                        <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
-                    </button>
 
-                </div>
                 <div class="table-responsive">
                     <table
                         class="table table-striped table-hover table-row-bordered border align-middle nowrap  rounded w-100 overflow-y-auto"
@@ -93,6 +128,63 @@
     </div>
 </div>
 <div id="myModal" class="modal fade" tabindex="-1" aria-hidden="true"></div>
+
+<style>
+    .stat-card {
+        border-radius: 8px;
+        background: #fff;
+        padding: 1.2rem 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s ease-in-out;
+        border: 1px solid #e0e0e0;
+        cursor: default;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .stat-label {
+        margin-top: 0.4rem;
+        text-align: center;
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    /* optional colors */
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .text-warning {
+        color: #ffc107 !important;
+    }
+</style>
 
 @include('backoffice.superiors.javascript')
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>

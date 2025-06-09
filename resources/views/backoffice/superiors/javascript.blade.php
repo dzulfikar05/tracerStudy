@@ -36,7 +36,29 @@
         $('.viewForm').modal('show');
     }
 
+    getStatsCard = () => {
+        $.ajax({
+            url: "{{ route('backoffice.superior.card-stats') }}",
+            type: "GET",
+            data: {
+                position: $('#filter_position').val(),
+                company_id: $('#filter_company_id').val(),
+                is_filled: $('#filter_filled').val(),
+            },
+            success: function(response) {
+                $('#count_superior').html(response.count_superior);
+                $('#count_superior_fill').html(response.count_superior_fill);
+                $('#count_superior_unfill').html(response.count_superior_unfill);
+            },
+            error: function(xhr, status, error) {
+                console.error('Gagal mengambil data statistik:', error);
+            }
+        });
+    }
+
     initTable = () => {
+        getStatsCard();
+
         var table = $('#table_superiors').DataTable({
             processing: true,
             serverSide: true,
@@ -130,86 +152,87 @@
         unblock();
     }
 
-  onSave = () => {
-    var formData = new FormData($(`[name="${form}"]`)[0]);
+    onSave = () => {
+        var formData = new FormData($(`[name="${form}"]`)[0]);
 
-    let fullName = $('#full_name').val().trim();
-    let phone = $('#phone').val().trim();
+        let fullName = $('#full_name').val().trim();
+        let phone = $('#phone').val().trim();
 
-    const nameRegex = /^[a-zA-Z\s]+$/;
-    const phoneRegex = /^[0-9]+$/;
+        const nameRegex = /^[a-zA-Z\s]+$/;
+        const phoneRegex = /^[0-9]+$/;
 
-    // Validasi Nama Lengkap
-    if (!nameRegex.test(fullName)) {
-        saMessage({
-            success: false,
-            title: 'Validasi Gagal',
-            message: 'Nama Lengkap hanya boleh berisi huruf dan spasi.',
-        });
-        return;
-    }
-
-    // Validasi Nomor Telepon
-    if (!phoneRegex.test(phone)) {
-        saMessage({
-            success: false,
-            title: 'Validasi Gagal',
-            message: 'Nomor Telepon hanya boleh berisi angka.',
-        });
-        return;
-    }
-
-    let id_superior = $('#id').val();
-    let urlSave = "";
-
-    if (!id_superior) {
-        urlSave = `{{ route('backoffice.superior.store') }}`;
-    } else {
-        urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__', id_superior);
-    }
-
-    saConfirm({
-        message: 'Apakah Anda yakin ingin menyimpan data?',
-        callback: function(res) {
-            if (res) {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: urlSave,
-                    method: 'post',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        $('.viewForm').modal('hide');
-                        onReset();
-                        saMessage({
-                            success: res['success'],
-                            title: res['title'],
-                            message: res['message'],
-                            callback: function() {
-                                initTable();
-                            }
-                        });
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 422) {
-                            const errors = xhr.responseJSON.errors;
-                            let messages = Object.values(errors).flat().join('<br>');
-
-                            saMessage({
-                                success: false,
-                                title: 'Validasi Gagal',
-                                message: messages,
-                            });
-                        }
-                    }
-                });
-            }
+        // Validasi Nama Lengkap
+        if (!nameRegex.test(fullName)) {
+            saMessage({
+                success: false,
+                title: 'Validasi Gagal',
+                message: 'Nama Lengkap hanya boleh berisi huruf dan spasi.',
+            });
+            return;
         }
-    });
-}
+
+        // Validasi Nomor Telepon
+        if (!phoneRegex.test(phone)) {
+            saMessage({
+                success: false,
+                title: 'Validasi Gagal',
+                message: 'Nomor Telepon hanya boleh berisi angka.',
+            });
+            return;
+        }
+
+        let id_superior = $('#id').val();
+        let urlSave = "";
+
+        if (!id_superior) {
+            urlSave = `{{ route('backoffice.superior.store') }}`;
+        } else {
+            urlSave = `{{ route('backoffice.superior.update', ['id' => '__ID__']) }}`.replace('__ID__',
+            id_superior);
+        }
+
+        saConfirm({
+            message: 'Apakah Anda yakin ingin menyimpan data?',
+            callback: function(res) {
+                if (res) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: urlSave,
+                        method: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(res) {
+                            $('.viewForm').modal('hide');
+                            onReset();
+                            saMessage({
+                                success: res['success'],
+                                title: res['title'],
+                                message: res['message'],
+                                callback: function() {
+                                    initTable();
+                                }
+                            });
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 422) {
+                                const errors = xhr.responseJSON.errors;
+                                let messages = Object.values(errors).flat().join('<br>');
+
+                                saMessage({
+                                    success: false,
+                                    title: 'Validasi Gagal',
+                                    message: messages,
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
 
 
     onFetchOptionForm = () => {

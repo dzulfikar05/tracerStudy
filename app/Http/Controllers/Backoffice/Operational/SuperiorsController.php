@@ -233,4 +233,83 @@ class SuperiorsController extends Controller
             ], 500);
         }
     }
+
+
+    public function cardStats(Request $request)
+    {
+        $result = [
+            'count_superior' => 0,
+            'count_superior_fill' => 0,
+            'count_superior_unfill' => 0,
+        ];
+
+        $baseQuery = Superior::query();
+
+        if ($request->filled('position')) {
+            $baseQuery->where('position', $request->position);
+        }
+
+        if ($request->filled('company_id')) {
+            $baseQuery->where('company_id', $request->company_id);
+        }
+
+        $superiors = $baseQuery->get();
+
+        $countTotalFiltered = 0;
+        $countFilled = 0;
+        $countUnfilled = 0;
+
+        foreach ($superiors as $superior) {
+            $getListAlumniSuperior = Alumni::where('superior_id', $superior->id)
+                ->select('id')
+                ->pluck('id')
+                ->toArray();
+
+            $isCurrentSuperiorUnfilled = false;
+            $isCurrentSuperiorFilled = false;
+
+            if (empty($getListAlumniSuperior)) {
+                $isCurrentSuperiorUnfilled = true;
+            } else {
+                foreach ($getListAlumniSuperior as $alumni_id) {
+                    $answer = Answer::where('filler_type', 'superior')
+                        ->where('filler_id', $superior->id)
+                        ->where('alumni_id', $alumni_id)
+                        ->first();
+
+                    if ($answer) {
+                        $isCurrentSuperiorFilled = true;
+                        break;
+                    }
+                }
+
+                if (!$isCurrentSuperiorFilled) {
+                    $isCurrentSuperiorUnfilled = true;
+                }
+            }
+
+            if ($request->filled('is_filled')) {
+                if ($request->is_filled === 'filled' && !$isCurrentSuperiorFilled) {
+                    continue;
+                }
+                if ($request->is_filled === 'unfilled' && !$isCurrentSuperiorUnfilled) {
+                    continue;
+                }
+            }
+
+            $countTotalFiltered++;
+
+            if ($isCurrentSuperiorFilled) {
+                $countFilled++;
+            } else {
+                $countUnfilled++;
+            }
+        }
+
+        $result['count_superior'] = $countTotalFiltered;
+        $result['count_superior_fill'] = $countFilled;
+        $result['count_superior_unfill'] = $countUnfilled;
+
+        return response()->json($result);
+    }
 }

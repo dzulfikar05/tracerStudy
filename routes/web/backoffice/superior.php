@@ -19,5 +19,8 @@ Route::prefix('backoffice/superior')->as('backoffice.superior.')
         Route::get('{id}/alumni', [SuperiorsController::class, 'showAlumni'])->name('superior.alumni');
 
         Route::post('send-reminder/{id}', [SuperiorsController::class, 'sendReminder'])->name('send-reminder');
+
+        Route::get('card-stats', [SuperiorsController::class, 'cardStats'])->name('card-stats');
+
     });
 

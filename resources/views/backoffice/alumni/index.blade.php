@@ -6,7 +6,6 @@
                 <div class="card-title">Job Category</div>
             </div> --}}
             <div class="card-body">
-
                 <div class="row">
                     <div class="col-md-9">
                         <div class="row">
@@ -41,7 +40,8 @@
                                 <div class="stat-card">
                                     <div class="stat-row">
                                         <i class="bi bi-clock-history text-warning stat-icon"></i>
-                                        <div id="count_alumni_avg_waiting_time" class="stat-number" style="font-size: 24px !important">0 Bulan</div>
+                                        <div id="count_alumni_avg_waiting_time" class="stat-number"
+                                            style="font-size: 24px !important">0 Bulan</div>
                                     </div>
                                     <div class="stat-label">Rata-rata Waktu Tunggu</div>
                                 </div>
