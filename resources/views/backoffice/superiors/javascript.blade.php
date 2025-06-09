@@ -126,7 +126,7 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return `<button class="btn btn-outline-info me-2" onclick="showAlumni(${full.id})">${full.alumni_count || 0} Alumni</button>`;
+                        return `<button class="btn btn-outline-info me-2" style="width: 100px;" onclick="showAlumni(${full.id})">${full.alumni_count || 0} Alumni</button>`;
                     }
                 },
                 {

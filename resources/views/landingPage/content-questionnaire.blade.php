@@ -7,7 +7,7 @@
     <div class="survey-cards">
         @if ($isTrue)
             @if ($data['type'] == 'alumni')
-                <form action="javascript:onSaveAlumni(this)" method="post" id="form_alumni" name="form_alumni"
+                <form action="javascript:onSaveAlumni(this)" method="post" id="form_alumni" name="form_alumni" novalidate
                     autocomplete="off">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
@@ -284,7 +284,7 @@
                 </div>
             @else
                 <form action="javascript:onSaveSuperior(this)" method="post" id="form_superior"
-                    name="form_superior" autocomplete="off">
+                    name="form_superior" autocomplete="off" novalidate>
                     <input name="questionnaire_id" type="hidden" value="{{ $data['questionnaire']['id'] }}">
                     <div class="form-label col-md-12 mb-3">
                         <label class="mb-2 required col-12" for="alumni">Alumni</label>

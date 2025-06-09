@@ -131,10 +131,54 @@
         }
     });
 
+    onValidateSuperior = (formData) => {
+        const errors = [];
+        const addError = (message) => errors.push(message);
 
+        const nameRegex = /^[a-zA-Z\s.,'-]+$/;
+        const phoneRegex = /^[0-9+]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        const alumniId = formData.get('alumni_id') || '';
+        if (alumniId === '') {
+            addError('Alumni tidak boleh kosong.');
+        }
+
+
+        let allQuestionsAnswered = true;
+        $('.question-card').each(function() {
+            const questionId = $(this).data('id');
+            const answerValue = formData.get(`answers[${questionId}]`);
+
+            if (String(answerValue || '').trim() === '') {
+                allQuestionsAnswered = false;
+            }
+        });
+
+        if (!allQuestionsAnswered) {
+            addError('Semua pertanyaan kuesioner harus dijawab.');
+        }
+
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: errors.join('<br>'),
+                showConfirmButton: true,
+                confirmButtonColor: '#3051d3'
+            });
+            return false;
+        }
+        return true;
+    };
 
     onSaveSuperior = () => {
         var formData = new FormData($(`[name="form_superior"]`)[0]);
+
+        if (!onValidateSuperior(formData)) {
+            return;
+        }
+
         saConfirm({
             message: 'Are you sure you want to save the data?',
             callback: function(res) {
@@ -182,8 +226,101 @@
             }
         })
     }
+
+    onValidateAlumni = (formData) => {
+        const errors = [];
+        const addError = (message) => errors.push(message);
+
+        const nameRegex = /^[a-zA-Z\s.,'-]+$/;
+        const phoneRegex = /^[0-9+]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const yearRegex = /^\d{4}$/;
+
+        const alumniPhone = formData.get('alumni[phone]') || '';
+        if (alumniPhone === '') addError('Nomor Telepon alumni tidak boleh kosong.');
+        else if (!phoneRegex.test(alumniPhone)) addError(
+            'Nomor Telepon alumni hanya boleh berisi angka dan tanda plus (+).');
+
+        const alumniEmail = formData.get('alumni[email]') || '';
+        if (alumniEmail === '') addError('Email alumni tidak boleh kosong.');
+        else if (!emailRegex.test(alumniEmail)) addError('Format Email alumni tidak valid.');
+
+        const alumniStudyStartYear = formData.get('alumni[study_start_year]') || '';
+        if (alumniStudyStartYear === '') addError('Tahun Angkatan alumni tidak boleh kosong.');
+        else if (!yearRegex.test(alumniStudyStartYear)) addError(
+            'Tahun Angkatan alumni harus berupa 4 digit angka.');
+
+        const alumniStartWorkDate = formData.get('alumni[start_work_date]') || '';
+        if (alumniStartWorkDate === '') addError('Tanggal Mulai Kerja alumni tidak boleh kosong.');
+
+        const alumniStartWorkNowDate = formData.get('alumni[start_work_now_date]') || '';
+        if (alumniStartWorkNowDate === '') addError(
+            'Tanggal Mulai Kerja (Pada Perusahaan Sekarang) alumni tidak boleh kosong.');
+
+        const alumniProfessionCategoryId = formData.get('alumni[profession_category_id]') || '';
+        if (alumniProfessionCategoryId === '') addError('Kategori Profesi alumni tidak boleh kosong.');
+
+        const alumniProfessionId = formData.get('alumni[profession_id]') || '';
+        if (alumniProfessionId === '') addError('Profesi alumni tidak boleh kosong.');
+
+        const alumniCompanyId = formData.get('alumni[company_id]') || '';
+        if (alumniCompanyId === '') addError('Perusahaan / Tempat Bekerja alumni tidak boleh kosong.');
+
+
+        if ($('#data-atasan').hasClass('show') && $('#data-atasan').hasClass('active')) {
+            const superiorFullName = formData.get('superior[full_name]') || '';
+            if (superiorFullName === '') addError('Nama Lengkap atasan tidak boleh kosong.');
+            else if (!nameRegex.test(superiorFullName)) addError(
+                'Nama Lengkap atasan hanya boleh berisi huruf, spasi, koma, titik, tanda hubung, dan apostrof.');
+
+            const superiorPosition = formData.get('superior[position]') || '';
+            if (superiorPosition === '') addError('Posisi atasan tidak boleh kosong.');
+
+            const superiorPhone = formData.get('superior[phone]') || '';
+            if (superiorPhone === '') addError('Nomor Telepon atasan tidak boleh kosong.');
+            else if (!phoneRegex.test(superiorPhone)) addError(
+                'Nomor Telepon atasan hanya boleh berisi angka dan tanda plus (+).');
+
+            const superiorEmail = formData.get('superior[email]') || '';
+            if (superiorEmail === '') addError('Email atasan tidak boleh kosong.');
+            else if (!emailRegex.test(superiorEmail)) addError('Format Email atasan tidak valid.');
+        }
+
+
+        if ($('#data-kuisioner').hasClass('show') && $('#data-kuisioner').hasClass('active')) {
+            let allQuestionsAnswered = true;
+            $('.question-card').each(function() {
+                const questionId = $(this).data('id');
+                const answerValue = formData.get(`answers[${questionId}]`);
+
+                if (String(answerValue || '').trim() === '') {
+                    allQuestionsAnswered = false;
+                }
+            });
+
+            if (!allQuestionsAnswered) addError('Semua pertanyaan kuesioner harus dijawab.');
+        }
+
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: errors.join('<br>'),
+                showConfirmButton: true,
+                confirmButtonColor: '#3051d3'
+            });
+            return false;
+        }
+        return true;
+    };
+
     onSaveAlumni = () => {
         var formData = new FormData($(`[name="form_alumni"]`)[0]);
+
+        if (!onValidateAlumni(formData)) {
+            return;
+        }
+
         saConfirm({
             message: 'Are you sure you want to save the data?',
             callback: function(res) {
@@ -207,7 +344,8 @@
                                         if (res['data'] != null) {
                                             sendEmail({
                                                 name: res['data'][
-                                                    'name'],
+                                                    'name'
+                                                ],
                                                 email: res['data'][
                                                     'email'
                                                 ],
@@ -376,4 +514,3 @@
 
     });
 </script>
-
