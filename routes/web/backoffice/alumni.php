@@ -17,4 +17,6 @@ Route::prefix('backoffice/alumni')->as('backoffice.alumni.')
         Route::get('/alumni/import', [AlumniController::class, 'import'])->name('alumni.import');
         Route::post('/alumni/import_ajax', [AlumniController::class, 'import_ajax'])->name('alumni.import_ajax');
         Route::get('fetch-option', [AlumniController::class, 'fetchOption'])->name('fetch-option');
+
+        Route::get('card-stats', [AlumniController::class, 'cardStats'])->name('card-stats');
     });

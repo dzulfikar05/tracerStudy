@@ -343,4 +343,45 @@ class AlumniController extends Controller
             ]);
         }
     }
+
+    public function cardStats(Request $request)
+    {
+        $result = [
+            'count_alumni' => 0,
+            'count_alumni_fill' => 0,
+            'count_alumni_unfill' => 0,
+            'count_alumni_avg_waiting_time' => '0 Bulan',
+        ];
+
+        $query = Alumni::query();
+
+        if ($request->filled('nim')) {
+            $query->where('nim', $request->nim);
+        }
+        if ($request->filled('study_program')) {
+            $query->where('study_program', $request->study_program);
+        }
+        if ($request->filled('study_start_year')) {
+            $query->whereYear('study_start_date', $request->study_start_year);
+        }
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
+        if ($request->filled('is_filled')) {
+            if ($request->is_filled == '1') {
+                $query->whereNotNull('start_work_now_date');
+            } elseif ($request->is_filled == '0') {
+                $query->whereNull('start_work_now_date');
+            }
+        }
+
+        $result['count_alumni'] = $query->count();
+        $result['count_alumni_fill'] = (clone $query)->whereNotNull('start_work_now_date')->count();
+        $result['count_alumni_unfill'] = (clone $query)->whereNull('start_work_now_date')->count();
+
+        $avgWaiting = (clone $query)->whereNotNull('start_work_now_date')->avg('waiting_time');
+        $result['count_alumni_avg_waiting_time'] = $avgWaiting ? round($avgWaiting, 2) . ' Bulan' : '0 Bulan';
+
+        return response()->json($result);
+    }
 }

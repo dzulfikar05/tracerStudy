@@ -44,8 +44,8 @@ class SuperiorsController extends Controller
 
             $data = $query->get();
 
-            if ($request->filled('is_filled') && $request->is_filled == "filled") {
-                $data = $data->filter(function ($item) {
+            if ($request->filled('is_filled')) {
+                $data = $data->filter(function ($item) use ($request) {
                     $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
                         ->select('id')
                         ->pluck('id')
@@ -57,9 +57,16 @@ class SuperiorsController extends Controller
                             ->where('alumni_id', $alumni_id)
                             ->first();
 
-                        if ($answer == null) {
-                            return false;
+                        if($request->is_filled == "filled") {
+                            if (!$answer) {
+                                return false;
+                            }
+                        }else if($request->is_filled == "unfilled") {
+                            if ($answer) {
+                                return false;
+                            }
                         }
+
                     }
 
                     return true;

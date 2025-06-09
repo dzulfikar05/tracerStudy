@@ -316,6 +316,7 @@
     function applyFilter() {
         $('#filterModal').modal('hide');
         initTable();
+        checkFilterStatus();
     }
 
     function resetFilter() {
@@ -323,6 +324,7 @@
         $('#filter_company_id').val(null).trigger('change');
         $('#filter_filled').val('').change();
         initTable();
+        checkFilterStatus();
     }
 
     $('#btnExportExcel').on('click', function(e) {
@@ -355,5 +357,19 @@
                 alert('Gagal mengambil data alumni.'); // MODIFIKASI
             }
         });
+    }
+
+    checkFilterStatus = () => {
+        const position = $('#filter_position').val();
+        const company = $('#filter_company_id').val();
+        const filled = $('#filter_filled').val();
+
+        const isFiltered = position || company || filled;
+
+        if (isFiltered) {
+            $('#filter-indicator').removeClass('d-none');
+        } else {
+            $('#filter-indicator').addClass('d-none');
+        }
     }
 </script>

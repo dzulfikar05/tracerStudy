@@ -62,8 +62,32 @@
         $('.viewForm').modal('show')
     }
 
+    getStatsCard = () => {
+        $.ajax({
+            url: "{{ route('backoffice.alumni.card-stats') }}",
+            type: "GET",
+            data: {
+                nim: $('#filter_nim').val(),
+                study_program: $('#filter_study_program').val(),
+                study_start_year: $('#filter_study_start_year').val(),
+                company_id: $('#filter_company_id').val(),
+                is_filled: $('#filter_filled').val(),
+            },
+            success: function(response) {
+                $('#count_alumni').html(response.count_alumni);
+                $('#count_alumni_fill').html(response.count_alumni_fill);
+                $('#count_alumni_unfill').html(response.count_alumni_unfill);
+                $('#count_alumni_avg_waiting_time').html(response.count_alumni_avg_waiting_time);
+            },
+            error: function(xhr, status, error) {
+                console.error('Gagal mengambil data statistik:', error);
+            }
+        });
+    }
+
 
     initTable = () => {
+        getStatsCard();
         var table = $('#table_alumni').DataTable({
             processing: true,
             serverSide: true,
