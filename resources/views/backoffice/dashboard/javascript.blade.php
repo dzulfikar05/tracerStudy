@@ -37,6 +37,15 @@
             return;
         }
 
+        if (parseInt(year_start) > parseInt(year_end)) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Tahun mulai tidak boleh lebih dari tahun sampai.',
+            });
+            return;
+        }
+
         onFetchDashboard();
     }
 

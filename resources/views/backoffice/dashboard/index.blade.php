@@ -41,7 +41,7 @@
                     <label for="filter_year_start" class="form-label">Filter Range Tahun:</label>
                     <select name="filter_year_start" id="filter_year_start" class="form-control form-select">
                         <option value="">- Mulai Tahun -</option>
-                        @for ($i = date('Y'); $i >= date('Y') - 10; $i--)
+                        @for ($i = date('Y'); $i >= date('Y') - 15; $i--)
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor
                     </select>
@@ -50,7 +50,7 @@
                     <label for="filter_year_end" class="form-label">&nbsp;</label>
                     <select name="filter_year_end" id="filter_year_end" class="form-control form-select">
                         <option value="">- Sampai Tahun -</option>
-                        @for ($i = date('Y'); $i <= date('Y') + 10; $i++)
+                        @for ($i = date('Y'); $i >= date('Y') - 15; $i--)
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor
                     </select>
@@ -80,10 +80,12 @@
     <div class="col-12 mt-4">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="general-tab" data-toggle="tab" href="#dashboard-general" role="tab">Dashboard Umum</a>
+                <a class="nav-link active" id="general-tab" data-toggle="tab" href="#dashboard-general"
+                    role="tab">Dashboard Umum</a>
             </li>
             <li class="nav-item" id="assessment-tab">
-                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#dashboard-assessment" role="tab">Dashboard Penilaian</a>
+                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#dashboard-assessment"
+                    role="tab">Dashboard Penilaian</a>
             </li>
         </ul>
 
@@ -100,9 +102,11 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card p-3 mb-3">
-                            <div class="card-title fs-4">Tabel Sebaran Lingkup Tempat Kerja dan Kesesuaian Profesi dengan Infokom</div>
+                            <div class="card-title fs-4">Tabel Sebaran Lingkup Tempat Kerja dan Kesesuaian Profesi
+                                dengan Infokom</div>
                             <div class="table-responsive">
-                                <table id="table_profession" class="table table-striped table-hover border rounded w-100 text-center">
+                                <table id="table_profession"
+                                    class="table table-striped table-hover border rounded w-100 text-center">
                                     <thead class="bg-primary text-white">
                                         <tr>
                                             <th rowspan="2">Tahun Lulus</th>
@@ -139,7 +143,8 @@
                         <div class="card p-3">
                             <div class="card-title fs-4">Tabel Rata-rata Masa Tunggu</div>
                             <div class="table-responsive">
-                                <table id="table_waiting_time" class="table table-striped table-hover border rounded w-100 text-center">
+                                <table id="table_waiting_time"
+                                    class="table table-striped table-hover border rounded w-100 text-center">
                                     <thead class="bg-primary text-white">
                                         <tr>
                                             <th>Tahun Lulus</th>
@@ -161,7 +166,8 @@
                 <div class="card p-3 mt-3">
                     <div class="card-title fs-4">Tabel Penilaian</div>
                     <div class="table-responsive">
-                        <table id="table_assessment" class="table table-bordered table-hover table-striped border rounded w-100"></table>
+                        <table id="table_assessment"
+                            class="table table-bordered table-hover table-striped border rounded w-100"></table>
                     </div>
                     <div id="chart-assessment" class="row mt-3"></div>
                 </div>

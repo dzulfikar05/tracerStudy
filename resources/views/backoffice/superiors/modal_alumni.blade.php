@@ -53,7 +53,7 @@
             </table>
             <div class="d-flex justify-content-end mt-3 @if ($alumnis->isEmpty()) d-none @endif"
                 onclick="sendReminderAll()">
-                <button class="btn btn-warning" onclick="sendReminderAll()"> Kirim Reminder </button>
+                <button class="btn btn-primary" onclick="sendReminderAll()"><i class="fa fa-paper-plane"></i> Kirim Reminder </button>
             </div>
         </div>
     </div>

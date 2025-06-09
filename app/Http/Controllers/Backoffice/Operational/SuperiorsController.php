@@ -33,6 +33,7 @@ class SuperiorsController extends Controller
     {
         if ($request->ajax()) {
             $query = Superior::with('company');
+            $query->withCount('alumni');
 
             if ($request->filled('position')) {
                 $query->where('position', $request->position);
@@ -57,16 +58,15 @@ class SuperiorsController extends Controller
                             ->where('alumni_id', $alumni_id)
                             ->first();
 
-                        if($request->is_filled == "filled") {
+                        if ($request->is_filled == "filled") {
                             if (!$answer) {
                                 return false;
                             }
-                        }else if($request->is_filled == "unfilled") {
+                        } else if ($request->is_filled == "unfilled") {
                             if ($answer) {
                                 return false;
                             }
                         }
-
                     }
 
                     return true;
@@ -160,6 +160,34 @@ class SuperiorsController extends Controller
         }
 
         $superiors = $query->get();
+
+        if ($request->filled('is_filled')) {
+            $data = $data->filter(function ($item) use ($request) {
+                $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
+                    ->select('id')
+                    ->pluck('id')
+                    ->toArray();
+
+                foreach ($getListAlumniSuperior as $alumni_id) {
+                    $answer = Answer::where('filler_type', 'superior')
+                        ->where('filler_id', $item->id)
+                        ->where('alumni_id', $alumni_id)
+                        ->first();
+
+                    if ($request->is_filled == "filled") {
+                        if (!$answer) {
+                            return false;
+                        }
+                    } else if ($request->is_filled == "unfilled") {
+                        if ($answer) {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            })->values();
+        }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
