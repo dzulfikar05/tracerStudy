@@ -144,90 +144,148 @@ class SuperiorsController extends Controller
         ]);
     }
 
-    public function exportExcel(Request $request)
-    {
-        \Log::info('Export filter position: ' . $request->position);
-        \Log::info('Export filter company: ' . $request->company);
+public function exportExcel(Request $request)
+{
+    $query = Superior::with('company');
 
-        $query = Superior::with('company');
-
-        if (!empty($request->position)) {
-            $query->where('position', $request->position);
-        }
-
-        if (!empty($request->company)) {
-            $query->where('company_id', $request->company);
-        }
-
-        $superiors = $query->get();
-
-        if ($request->filled('is_filled')) {
-            $query = $query->filter(function ($item) use ($request) {
-                $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
-                    ->select('id')
-                    ->pluck('id')
-                    ->toArray();
-
-                foreach ($getListAlumniSuperior as $alumni_id) {
-                    $answer = Answer::where('filler_type', 'superior')
-                        ->where('filler_id', $item->id)
-                        ->where('alumni_id', $alumni_id)
-                        ->first();
-
-                    if ($request->is_filled == "filled") {
-                        if (!$answer) {
-                            return false;
-                        }
-                    } else if ($request->is_filled == "unfilled") {
-                        if ($answer) {
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
-            })->values();
-        }
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // Header
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nama Lengkap');
-        $sheet->setCellValue('C1', 'Posisi');
-        $sheet->setCellValue('D1', 'Telepon');
-        $sheet->setCellValue('E1', 'Email');
-        $sheet->setCellValue('F1', 'Perusahaan');
-
-        // Data
-        $row = 2;
-        foreach ($superiors as $index => $superior) {
-            $sheet->setCellValue('A' . $row, $index + 1);
-            $sheet->setCellValue('B' . $row, $superior->full_name);
-            $sheet->setCellValue('C' . $row, $superior->position);
-            $sheet->setCellValue('D' . $row, $superior->phone);
-            $sheet->setCellValue('E' . $row, $superior->email);
-            $sheet->setCellValue('F' . $row, $superior->company?->name ?? '-');
-            $row++;
-        }
-
-        foreach (range('A', 'F') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        $sheet->setTitle('Data Superior');
-
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'Data_Superior_' . date('Y-m-d_His') . '.xlsx';
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-
-        $writer->save('php://output');
-        exit;
+    if (!empty($request->position)) {
+        $query->where('position', $request->position);
     }
+
+    if (!empty($request->company)) {
+        $query->where('company_id', $request->company);
+    }
+
+    $superiors = $query->get();
+
+    if ($request->filled('is_filled')) {
+        $superiors = $superiors->filter(function ($item) use ($request) {
+            $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
+                ->pluck('id')
+                ->toArray();
+
+            foreach ($getListAlumniSuperior as $alumni_id) {
+                $answer = Answer::where('filler_type', 'superior')
+                    ->where('filler_id', $item->id)
+                    ->where('alumni_id', $alumni_id)
+                    ->first();
+
+                if ($request->is_filled === "filled" && !$answer) {
+                    return false;
+                } else if ($request->is_filled === "unfilled" && $answer) {
+                    return false;
+                }
+            }
+
+            return true;
+        })->values();
+    }
+
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // === HEADER INFORMASI (Baris 1-5) ===
+    $sheet->setCellValue('A1', 'DATA SUPERIOR');
+    $sheet->mergeCells('A1:F1');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font' => ['bold' => true, 'size' => 16],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ]
+    ]);
+
+    $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
+    $sheet->mergeCells('A2:F2');
+    $sheet->getStyle('A2')->applyFromArray([
+        'font' => ['italic' => true, 'size' => 10]
+    ]);
+
+    $sheet->setCellValue('A3', 'Total Data: ' . $superiors->count() . ' perusahaan');
+    $sheet->mergeCells('A3:F3');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font' => ['size' => 10]
+    ]);
+
+    $sheet->setCellValue('A4', '');
+    $sheet->setCellValue('A5', '');
+
+    // === HEADER TABEL (Baris 6) ===
+    $headerRow = 6;
+    $sheet->setCellValue('A' . $headerRow, 'No');
+    $sheet->setCellValue('B' . $headerRow, 'Nama Lengkap');
+    $sheet->setCellValue('C' . $headerRow, 'Posisi');
+    $sheet->setCellValue('D' . $headerRow, 'Telepon');
+    $sheet->setCellValue('E' . $headerRow, 'Email');
+    $sheet->setCellValue('F' . $headerRow, 'Perusahaan');
+
+    $sheet->getStyle('A' . $headerRow . ':F' . $headerRow)->applyFromArray([
+        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+        'fill' => [
+            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '4472C4']
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ]);
+
+    // === ISI DATA (Mulai baris 7) ===
+    $dataRow = $headerRow + 1;
+
+    foreach ($superiors as $index => $superior) {
+        $sheet->setCellValue('A' . $dataRow, $index + 1);
+        $sheet->setCellValue('B' . $dataRow, $superior->full_name);
+        $sheet->setCellValue('C' . $dataRow, $superior->position);
+        $sheet->setCellValue('D' . $dataRow, $superior->phone);
+        $sheet->setCellValue('E' . $dataRow, $superior->email);
+        $sheet->setCellValue('F' . $dataRow, $superior->company?->name ?? '-');
+
+        $sheet->getStyle('A' . $dataRow . ':F' . $dataRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ],
+            'alignment' => [
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
+        ]);
+
+        $sheet->getStyle('A' . $dataRow)->getAlignment()->setHorizontal(
+            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+        );
+
+        $dataRow++;
+    }
+
+    // Lebar kolom
+    foreach (range('A', 'F') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    $sheet->getRowDimension(1)->setRowHeight(30);
+    $sheet->getRowDimension($headerRow)->setRowHeight(25);
+
+    $sheet->setTitle('Data Superior');
+    $filename = 'Data_Superior_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, $filename, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+}
+
 
     public function showAlumni($id)
     {

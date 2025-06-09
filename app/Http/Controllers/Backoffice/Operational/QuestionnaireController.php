@@ -16,6 +16,8 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Yajra\DataTables\DataTables;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 
 class QuestionnaireController extends Controller
@@ -408,230 +410,223 @@ class QuestionnaireController extends Controller
     }
 
 
-    public function exportAnswer($id, Request $request)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+public function exportAnswer($id, Request $request)
+{
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        $questionnaire = Questionnaire::with('questions')->findOrFail($id);
-        $questions = $questionnaire->questions;
+    $questionnaire = Questionnaire::with('questions')->findOrFail($id);
+    $questions = $questionnaire->questions;
 
-        $allAnswers = Answer::where('questionnaire_id', $id)
-            ->with([
-                'filler_superior',
-                'filler_alumni.superior',
-                'filler_alumni.company',
-                'filler_alumni.profession.profession_category',
-                'alumni.superior'
-            ])
-            ->orderBy('created_at', 'desc')
-            ->get();
+    $allAnswers = Answer::where('questionnaire_id', $id)
+        ->with([
+            'filler_superior',
+            'filler_alumni.superior',
+            'filler_alumni.company',
+            'filler_alumni.profession.profession_category',
+            'alumni.superior'
+        ])
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $filteredAnswers = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
-            $relevantAlumniRelation = null;
+    $filteredAnswers = $allAnswers->filter(function ($answer) use ($request, $questionnaire) {
+        $relevantAlumniRelation = $questionnaire->type === 'alumni' ? $answer->filler_alumni : $answer->alumni;
+
+        $matches = true;
+
+        if ($request->filled('study_program') && ($relevantAlumniRelation->study_program ?? '-') !== $request->study_program) {
+            $matches = false;
+        }
+        if ($request->filled('nim') && !str_contains(strtolower($relevantAlumniRelation->nim ?? '-'), strtolower($request->nim))) {
+            $matches = false;
+        }
+        if ($request->filled('study_start_year') && ($relevantAlumniRelation->study_start_year ?? '-') != $request->study_start_year) {
+            $matches = false;
+        }
+        if ($request->filled('graduation_year')) {
+            $graduationYear = $relevantAlumniRelation->graduation_date ? date('Y', strtotime($relevantAlumniRelation->graduation_date)) : '-';
+            if ($graduationYear != $request->graduation_year) {
+                $matches = false;
+            }
+        }
+        if ($request->filled('company_id') && ($relevantAlumniRelation->company->id ?? '-') != $request->company_id) {
+            $matches = false;
+        }
+        if ($request->filled('profession_category_id') && ($relevantAlumniRelation->profession->profession_category->id ?? '-') != $request->profession_category_id) {
+            $matches = false;
+        }
+        if ($request->filled('profession_id') && ($relevantAlumniRelation->profession->id ?? '-') != $request->profession_id) {
+            $matches = false;
+        }
+        if ($request->filled('superior')) {
             if ($questionnaire->type === 'alumni') {
-                $relevantAlumniRelation = $answer->filler_alumni;
-            } elseif ($questionnaire->type === 'superior') {
-                $relevantAlumniRelation = $answer->alumni;
-            }
-
-
-            $matches = true;
-
-            if ($request->filled('study_program') && ($relevantAlumniRelation->study_program ?? '-') !== $request->study_program) {
-                $matches = false;
-            }
-            if ($request->filled('nim') && !str_contains(strtolower($relevantAlumniRelation->nim ?? '-'), strtolower($request->nim))) {
-                $matches = false;
-            }
-            if ($request->filled('study_start_year') && ($relevantAlumniRelation->study_start_year ?? '-') != $request->study_start_year) {
-                $matches = false;
-            }
-            if ($request->filled('graduation_year')) {
-                $graduationYear = $relevantAlumniRelation->graduation_date ? date('Y', strtotime($relevantAlumniRelation->graduation_date)) : '-';
-                if ($graduationYear != $request->graduation_year) {
+                if (($relevantAlumniRelation->superior->id ?? '-') != $request->superior) {
+                    $matches = false;
+                }
+            } else {
+                if (($answer->filler_superior->id ?? '-') != $request->superior) {
                     $matches = false;
                 }
             }
-            if ($request->filled('company_id') && ($relevantAlumniRelation->company->id ?? '-') != $request->company_id) {
-                $matches = false;
-            }
-            if ($request->filled('profession_category_id') && ($relevantAlumniRelation->profession->profession_category->id ?? '-') != $request->profession_category_id) {
-                $matches = false;
-            }
-            if ($request->filled('profession_id') && ($relevantAlumniRelation->profession->id ?? '-') != $request->profession_id) {
-                $matches = false;
-            }
-
-            if ($request->filled('superior')) {
-                if ($questionnaire->type === 'alumni') {
-                    if (($relevantAlumniRelation->superior->id ?? '-') != $request->superior) {
-                        $matches = false;
-                    }
-                } elseif ($questionnaire->type === 'superior') {
-                    if (($answer->filler_superior->id ?? '-') != $request->superior) {
-                        $matches = false;
-                    }
-                }
-            }
-
-            return $matches;
-        });
-
-        $respondents = $filteredAnswers->unique(function ($item) use ($questionnaire) {
-            if ($item->filler_type === 'superior') {
-                return $item->questionnaire_id . '-' . $item->filler_id . '-' . $item->alumni_id;
-            } else {
-                return $item->questionnaire_id . '-' . $item->filler_id;
-            }
-        });
-
-        $answersGrouped = $filteredAnswers->groupBy(function ($item) {
-            if ($item->filler_type === 'superior') {
-                return $item->filler_type . '-' . $item->filler_id . '-' . $item->alumni_id;
-            } else {
-                return $item->filler_type . '-' . $item->filler_id;
-            }
-        });
-
-        $row = 1;
-        $colIndex = 1;
-
-        $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, 'No');
-        $colIndex++;
-
-        $type = $questionnaire->type;
-
-        $alumniHeaders = [
-            'Program Studi',
-            'NIM',
-            'Nama',
-            'No. HP',
-            'Email',
-            'Angkatan',
-            'Tanggal Lulus',
-            'Tahun Lulus',
-            'Tanggal Pertama Kerja',
-            'Masa Tunggu',
-            'Tanggal Kerja Instansi',
-            'Jenis Instansi',
-            'Nama Instansi',
-            'Skala',
-            'Lokasi',
-            'Kategori Profesi',
-            'Profesi',
-            'Nama Atasan Langsung',
-            'Jabatan Atasan Langsung',
-            'No. HP Atasan Langsung',
-            'Email Atasan'
-        ];
-
-        $superiorHeaders = [
-            'Nama',
-            'Instansi',
-            'Jabatan',
-            'Email',
-            'Nama Alumni',
-            'Program Studi Alumni',
-            'Angkatan Alumni',
-            'Tahun Lulus Alumni'
-        ];
-
-        if ($type == 'alumni') {
-            foreach ($alumniHeaders as $header) {
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $header);
-                $colIndex++;
-            }
-        } elseif ($type == 'superior') {
-            foreach ($superiorHeaders as $header) {
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $header);
-                $colIndex++;
-            }
         }
 
-        foreach ($questions as $question) {
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $question->question);
-            $colIndex++;
-        }
+        return $matches;
+    });
 
-        $row = 2;
+    $respondents = $filteredAnswers->unique(function ($item) use ($questionnaire) {
+        return $item->filler_type === 'superior'
+            ? $item->questionnaire_id . '-' . $item->filler_id . '-' . $item->alumni_id
+            : $item->questionnaire_id . '-' . $item->filler_id;
+    });
 
-        foreach ($respondents as $i => $res) {
-            $colIndex = 1;
+    $answersGrouped = $filteredAnswers->groupBy(function ($item) {
+        return $item->filler_type === 'superior'
+            ? $item->filler_type . '-' . $item->filler_id . '-' . $item->alumni_id
+            : $item->filler_type . '-' . $item->filler_id;
+    });
 
-            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $row - 1);
-            $colIndex++;
+    // HEADER ATAS
+    $sheet->setCellValue('A1', 'DATA JAWABAN KUISIONER');
+    $sheet->mergeCells('A1:Z1');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font' => ['bold' => true, 'size' => 16],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center']
+    ]);
 
-            if ($res->filler_type == 'alumni') {
-                $filler = $res->filler_alumni;
+    $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
+    $sheet->mergeCells('A2:Z2');
+    $sheet->getStyle('A2')->applyFromArray([
+        'font' => ['italic' => true, 'size' => 10]
+    ]);
 
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->study_program ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->nim ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->full_name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->phone ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->email ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->study_start_year ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->graduation_date ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->graduation_date ? date('Y', strtotime($filler->graduation_date)) : '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->start_work_date ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->waiting_time ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->start_work_now_date ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->company_type ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->scope ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->address ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->profession?->profession_category?->name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->profession?->name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->full_name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->position ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->phone ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->superior?->email ?? '-');
-            } elseif ($res->filler_type == 'superior') {
-                $filler = $res->filler_superior;
-                $alumni = $res->alumni;
+    $sheet->setCellValue('A3', 'Total Data: ' . $respondents->count() . ' responden');
+    $sheet->mergeCells('A3:Z3');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font' => ['size' => 10]
+    ]);
 
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->full_name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->company?->name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->position ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $filler->email ?? '-');
+    $sheet->setCellValue('A4', '');
+    $sheet->setCellValue('A5', '');
 
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->full_name ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->study_program ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->study_start_year ?? '-');
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $alumni->graduation_date ? date('Y', strtotime($alumni->graduation_date)) : '-');
-            }
+    // HEADER TABEL
+    $row = 6;
+    $colIndex = 1;
+    $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, 'No');
 
-            $compositeKey = '';
-            if ($res->filler_type === 'superior') {
-                $compositeKey = $res->filler_type . '-' . $res->filler_id . '-' . $res->alumni_id;
-            } else {
-                $compositeKey = $res->filler_type . '-' . $res->filler_id;
-            }
-            $answerList = $answersGrouped[$compositeKey] ?? collect();
-            foreach ($questions as $question) {
-                $answerText = $answerList->firstWhere('question_id', $question->id)->answer ?? '-';
-                $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $answerText);
-            }
+    $type = $questionnaire->type;
 
-            $row++;
-        }
+    $alumniHeaders = [
+        'Program Studi', 'NIM', 'Nama', 'No. HP', 'Email', 'Angkatan',
+        'Tanggal Lulus', 'Tahun Lulus', 'Tanggal Pertama Kerja', 'Masa Tunggu',
+        'Tanggal Kerja Instansi', 'Jenis Instansi', 'Nama Instansi', 'Skala',
+        'Lokasi', 'Kategori Profesi', 'Profesi', 'Nama Atasan Langsung',
+        'Jabatan Atasan Langsung', 'No. HP Atasan Langsung', 'Email Atasan'
+    ];
 
-        $highestColumn = $sheet->getHighestColumn(); // misalnya: 'Z'
-        $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // jadi: 26
+    $superiorHeaders = [
+        'Nama', 'Instansi', 'Jabatan', 'Email',
+        'Nama Alumni', 'Program Studi Alumni', 'Angkatan Alumni', 'Tahun Lulus Alumni'
+    ];
 
-        for ($i = 1; $i <= $highestColumnIndex; $i++) {
-            $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i))->setAutoSize(true);
-        }
-
-
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'Jawaban_Questionnaire_' . date('Ymd_His') . '.xlsx';
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header("Content-Disposition: attachment; filename=\"$filename\"");
-        header('Cache-Control: max-age=0');
-
-        $writer->save('php://output');
-        exit;
+    $headers = $type === 'alumni' ? $alumniHeaders : $superiorHeaders;
+    foreach ($headers as $header) {
+        $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $header);
     }
+
+    foreach ($questions as $question) {
+        $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $question->question);
+    }
+
+    // STYLING HEADER TABEL
+    $lastCol = Coordinate::stringFromColumnIndex($colIndex - 1);
+    $sheet->getStyle("A{$row}:{$lastCol}{$row}")->applyFromArray([
+        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '4472C4']
+        ],
+        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ]);
+
+    // DATA
+    $row = 7;
+    foreach ($respondents as $index => $res) {
+        $colIndex = 1;
+        $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $index + 1);
+
+        if ($res->filler_type == 'alumni') {
+            $f = $res->filler_alumni;
+            $s = $f->superior;
+            $c = $f->company;
+            $p = $f->profession;
+
+            $data = [
+                $f->study_program, $f->nim, $f->full_name, $f->phone, $f->email,
+                $f->study_start_year, $f->graduation_date, $f->graduation_date ? date('Y', strtotime($f->graduation_date)) : '-',
+                $f->start_work_date, $f->waiting_time, $f->start_work_now_date,
+                $c?->company_type, $c?->name, $c?->scope, $c?->address,
+                $p?->profession_category?->name, $p?->name,
+                $s?->full_name, $s?->position, $s?->phone, $s?->email
+            ];
+        } else {
+            $f = $res->filler_superior;
+            $a = $res->alumni;
+
+            $data = [
+                $f->full_name, $f->company?->name, $f->position, $f->email,
+                $a->full_name, $a->study_program, $a->study_start_year,
+                $a->graduation_date ? date('Y', strtotime($a->graduation_date)) : '-'
+            ];
+        }
+
+        foreach ($data as $val) {
+            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $val ?? '-');
+        }
+
+        $compositeKey = $res->filler_type . '-' . $res->filler_id . ($res->filler_type === 'superior' ? '-' . $res->alumni_id : '');
+        $answerList = $answersGrouped[$compositeKey] ?? collect();
+
+        foreach ($questions as $q) {
+            $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $answerList->firstWhere('question_id', $q->id)->answer ?? '-');
+        }
+
+        // Style baris data
+        $lastDataCol = Coordinate::stringFromColumnIndex($colIndex - 1);
+        $sheet->getStyle("A{$row}:{$lastDataCol}{$row}")->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ],
+            'alignment' => ['vertical' => 'center']
+        ]);
+        $sheet->getStyle("A{$row}")->getAlignment()->setHorizontal('center');
+
+        $row++;
+    }
+
+    // Autosize kolom
+    $highestCol = Coordinate::columnIndexFromString($sheet->getHighestColumn());
+    for ($i = 1; $i <= $highestCol; $i++) {
+        $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($i))->setAutoSize(true);
+    }
+
+    // Output file
+    $filename = 'Jawaban_Questionnaire_' . date('Ymd_His') . '.xlsx';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, $filename, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+}
+
 }

@@ -85,40 +85,130 @@ class ProfessionCategoryController extends Controller
         $operation = ProfessionCategory::where('id', $id)->delete();
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
     }
-    public function export_excel()
-    {
-        $categories = ProfessionCategory::select('id', 'name')->orderBy('id')->get();
-    
-        // Buat Spreadsheet baru
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-    
-        // Buat header kolom
-        $sheet->setCellValue('A1', 'No'); 
-        $sheet->setCellValue('B1', 'Nama');
-    
-        // Isi data mulai dari baris ke-2
-        $row = 2;
-        foreach ($categories as $index => $category) {
-            $sheet->setCellValue('A' . $row, $index + 1);
-            $sheet->setCellValue('B' . $row, $category->name);
-            $row++;
-        }
+public function export_excel()
+{
+    // Ambil data kategori profesi
+    $categories = ProfessionCategory::select('id', 'name')->orderBy('id')->get();
 
-        foreach (range('A', 'B') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+    // Buat Spreadsheet baru
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // === BAGIAN HEADER INFORMASI (5 BARIS TERATAS) ===
     
-        // Siapkan response untuk download
-        $filename = 'Data_Kategori_Profesi_' . date('Y-m-d_H-i-s') . '.xlsx';
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-    
-        // Output file Excel sebagai response
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // Baris 1: Judul utama
+    $sheet->setCellValue('A1', 'DATA KATEGORI PROFESI');
+    $sheet->mergeCells('A1:B1');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 16
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ]
+    ]);
+
+    // Baris 2: Tanggal export
+    $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
+    $sheet->mergeCells('A2:B2');
+    $sheet->getStyle('A2')->applyFromArray([
+        'font' => [
+            'italic' => true,
+            'size' => 10
+        ]
+    ]);
+
+    // Baris 3: Total data
+    $sheet->setCellValue('A3', 'Total Data: ' . $categories->count() . ' kategori');
+    $sheet->mergeCells('A3:B3');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font' => [
+            'size' => 10
+        ]
+    ]);
+
+    // Baris 4: Informasi filter (jika ada, sekarang kosong)
+    $sheet->setCellValue('A4', ''); // Kosong untuk spacing
+
+    // Baris 5: Kosong untuk spacing
+    $sheet->setCellValue('A5', ''); // Kosong untuk spacing
+
+    // === BAGIAN HEADER TABEL (BARIS 6) ===
+    $headerRow = 6;
+    $sheet->setCellValue('A' . $headerRow, 'No');
+    $sheet->setCellValue('B' . $headerRow, 'Nama Kategori');
+
+    // Style untuk header dengan background color
+    $sheet->getStyle('A' . $headerRow . ':B' . $headerRow)->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'color' => ['rgb' => 'FFFFFF']
+        ],
+        'fill' => [
+            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '4472C4'] // Biru
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ]);
+
+    // === BAGIAN DATA (MULAI BARIS 7) ===
+    $dataStartRow = $headerRow + 1; // Baris 7
+    $currentRow = $dataStartRow;
+
+    foreach ($categories as $index => $category) {
+        $sheet->setCellValue('A' . $currentRow, $index + 1);
+        $sheet->setCellValue('B' . $currentRow, $category->name);
+        
+        // Style untuk baris data
+        $sheet->getStyle('A' . $currentRow . ':B' . $currentRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ],
+            'alignment' => [
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
         ]);
+        
+        // Center alignment untuk kolom No
+        $sheet->getStyle('A' . $currentRow)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+        $currentRow++;
     }
+
+    // === PENGATURAN KOLOM DAN BARIS ===
+    
+    // Auto size untuk kolom
+    $sheet->getColumnDimension('A')->setWidth(8);  // Kolom No
+    $sheet->getColumnDimension('B')->setWidth(30); // Kolom Nama
+
+    // Set tinggi baris
+    $sheet->getRowDimension(1)->setRowHeight(30);        // Baris judul
+    $sheet->getRowDimension($headerRow)->setRowHeight(25); // Baris header
+
+    // === DOWNLOAD FILE ===
+    $filename = 'Data_Kategori_Profesi_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, $filename, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+}
     
 }
