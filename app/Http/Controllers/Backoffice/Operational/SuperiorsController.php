@@ -162,7 +162,7 @@ class SuperiorsController extends Controller
         $superiors = $query->get();
 
         if ($request->filled('is_filled')) {
-            $data = $data->filter(function ($item) use ($request) {
+            $query = $query->filter(function ($item) use ($request) {
                 $getListAlumniSuperior = Alumni::where('superior_id', $item->id)
                     ->select('id')
                     ->pluck('id')
