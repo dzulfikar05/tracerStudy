@@ -167,7 +167,7 @@
 
                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
 
-                    <span class="text-dark me-3 fs-5" id="nama_user">Admin</span>
+                    <span class="text-dark me-3 fs-5" id="nama_user">{{ Auth::user()->name }}</span>
                     <img src="" style="object-fit: cover" id="pp_user" class="avatar img-fluid rounded me-1"
                         alt="Photo Profile" />
 

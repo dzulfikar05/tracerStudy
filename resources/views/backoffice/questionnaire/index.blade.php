@@ -16,11 +16,8 @@
 <div class="row">
     @include('backoffice.questionnaire.form')
     <div class="col-12">
-        <div class="d-flex justify-content-end align-items-center gap-2 mb-4 flex-wrap">
-            <button type="button" class="btn btn-outline-info d-flex align-items-center" data-bs-toggle="modal"
-                data-bs-target="#filterModal">
-                <i class="fa fa-filter me-2"></i> Filter
-            </button>
+        <div class="d-flex justify-content-end align-items-center gap-2 mb-2 flex-wrap">
+
 
             @if ($is_super)
                 <button type="button" onclick="showForm()" class="btn btn-primary d-flex align-items-center">
@@ -28,6 +25,13 @@
                 </button>
             @endif
 
+
+        </div>
+        <div class="d-flex justify-content-end align-items-center gap-2 mb-4 flex-wrap">
+            <button type="button" class="btn btn-outline-info d-flex align-items-center" data-bs-toggle="modal"
+                data-bs-target="#filterModal">
+                <i class="fa fa-filter me-2"></i> Filter
+            </button>
             <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
                 style="border: 1px solid grey">
                 <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
@@ -46,8 +50,10 @@
                     </button>
                     <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle"
                             data-feather="plus"> </i> Tambah</button>
-                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
-                            data-feather="rotate-ccw"> </i> Muat Ulang</button>
+                    <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
+                style="border: 1px solid grey">
+                <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
+            </button>
                 </div>
                 <div class="table-responsive">
                     <table

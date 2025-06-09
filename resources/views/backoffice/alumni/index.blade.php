@@ -7,20 +7,29 @@
             </div> --}}
             <div class="card-body">
                 <div class="form-group d-flex justify-content-end mb-3">
-                    <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#filterModal"
-                        style="float: left">
-                        <i class="fa fa-filter"></i> Filter
-                    </button>
 
                     <button onclick="modalAction('{{ route('backoffice.alumni.alumni.import') }}')"
                         class="btn btn-success me-2">
-                        <i class="fa fa-upload"></i> Import Excel</button>
+                        <i data-feather="upload"></i> Import Excel</button>
                     <button type="button" id="btnExportExcel" class="btn btn-primary me-2"><i class="align-middle"
                             data-feather="download"></i> Export Excel</button>
-                    <button type="button" onclick="showForm()" class="btn btn-primary me-3"><i class="align-middle"
+                    <button type="button" onclick="showForm()" class="btn btn-primary"><i class="align-middle"
                             data-feather="plus"> </i> Tambah</button>
-                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
-                            data-feather="rotate-ccw"> </i> Muat Ulang</button>
+
+                </div>
+                <div class="form-group d-flex justify-content-end mb-3">
+                    <button type="button" class="btn btn-outline-info me-2 position-relative" data-bs-toggle="modal"
+                        data-bs-target="#filterModal" id="btnFilter">
+                        <i class="fa fa-filter"></i> Filter
+                        <span id="filter-indicator"
+                            class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+                            <span class="visually-hidden">Filter aktif</span>
+                        </span>
+                    </button>
+                    <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
+                        style="border: 1px solid grey">
+                        <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
+                    </button>
                 </div>
                 <div class="table-responsive">
                     <table

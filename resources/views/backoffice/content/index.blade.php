@@ -20,8 +20,9 @@
                             <button type="button" onclick="showForm()" class="btn btn-primary me-2">
                                 <i class="align-middle" data-feather="plus"></i> Tambah
                             </button>
-                            <button type="button" onclick="initTable()" class="btn btn-light">
-                                <i class="align-middle" data-feather="rotate-ccw"></i> Muat Ulang
+                            <button type="button" onclick="initTable()"
+                                class="btn btn-light d-flex  align-items-center" style="border: 1px solid grey">
+                                <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
                             </button>
                         </div>
                     </div>

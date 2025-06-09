@@ -24,7 +24,7 @@ class SuperiorsController extends Controller
         $is_super = Auth::user()->is_super;
 
         return view('layouts.index', [
-            'title' => 'Atasan',
+            'title' => 'Atasan Alumni',
             'content' => view('backoffice.superiors.index', compact('is_super'))
         ]);
     }

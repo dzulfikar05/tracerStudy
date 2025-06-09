@@ -7,21 +7,26 @@
             </div> --}}
             <div class="card-body">
                 <div class="form-group d-flex justify-content-end mb-3">
+
+
+                    <a id="btnExportExcel" href="#" class="btn btn-success me-2">
+                        <i class="align-middle" data-feather="file-text"></i> Export Excel
+                    </a>
+                    @if ($is_super == true)
+                        <button type="button" onclick="showForm()" class="btn btn-primary"><i class="align-middle"
+                                data-feather="plus"> </i> Tambah</button>
+                    @endif
+
+                </div>
+                <div class="form-group d-flex justify-content-end mb-3">
                     <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
                         data-bs-target="#filterModal" style="float: left">
                         <i class="fa fa-filter"></i> Filter
                     </button>
-
-                    <a id="btnExportExcel" href="#" class="btn btn-success me-3">
-                        <i class="align-middle" data-feather="file-text"></i> Export Excel
-                    </a>
-
-                    @if ($is_super == true)
-                        <button type="button" onclick="showForm()" class="btn btn-primary me-2"><i class="align-middle"
-                                data-feather="plus"> </i> Tambah</button>
-                    @endif
-                    <button type="button" onclick="initTable()" class="btn btn-light "><i class="align-middle"
-                            data-feather="rotate-ccw"> </i> Muat Ulang</button>
+                    <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
+                        style="border: 1px solid grey">
+                        <i data-feather="rotate-ccw" class="me-2"></i> Muat Ulang
+                    </button>
 
                 </div>
                 <div class="table-responsive">
@@ -36,7 +41,7 @@
                                 <th>Telepon</th>
                                 <th>Email</th>
                                 <th>Perusahaan</th>
-                                <th>List Alumni</th>
+                                <th>Alumni</th>
                                 <th style="width: 100px">Aksi</th>
                             </tr>
                         </thead>
