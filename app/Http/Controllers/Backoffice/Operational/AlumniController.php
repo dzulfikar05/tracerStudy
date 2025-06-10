@@ -175,92 +175,205 @@ class AlumniController extends Controller
         ]);
     }
 
-    public function export_excel(Request $request)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+public function export_excel(Request $request)
+{
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        // Header kolom
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nama Lengkap');
-        $sheet->setCellValue('C1', 'NIM');
-        $sheet->setCellValue('D1', 'Program Studi');
-        $sheet->setCellValue('E1', 'Tahun Mulai Studi');
-        $sheet->setCellValue('F1', 'Tanggal Lulus');
-        $sheet->setCellValue('G1', 'Telepon');
-        $sheet->setCellValue('H1', 'Email');
-        $sheet->setCellValue('I1', 'Tanggal Mulai Kerja');
-        $sheet->setCellValue('J1', 'Tanggal Mulai Pekerjaan Sekarang');
-        $sheet->setCellValue('K1', 'Perusahaan');
-        $sheet->setCellValue('L1', 'Kategori Profesi');
-        $sheet->setCellValue('M1', 'Profesi');
-        $sheet->setCellValue('N1', 'Atasan');
+    // Ambil data alumni dengan menerapkan filter yang sama seperti di tabel
+    $query = Alumni::with(['company', 'profession.profession_category', 'superior']);
 
-        // Ambil data alumni dengan menerapkan filter yang sama seperti di tabel
-        $query = Alumni::with(['company', 'profession.profession_category', 'superior']);
+    // Apply filters based on request parameters
+    if ($request->filled('nim')) {
+        $query->where('nim', 'like', '%' . $request->nim . '%');
+    }
 
-        // Apply filters based on request parameters
-        if ($request->filled('nim')) {
-            $query->where('nim', 'like', '%' . $request->nim . '%');
-        }
+    if ($request->filled('study_program')) {
+        $query->where('study_program', $request->study_program);
+    }
 
-        if ($request->filled('study_program')) {
-            $query->where('study_program', $request->study_program);
-        }
+    if ($request->filled('study_start_year')) {
+        $query->where('study_start_year', $request->study_start_year);
+    }
 
-        if ($request->filled('study_start_year')) {
-            $query->where('study_start_year', $request->study_start_year);
-        }
+    if ($request->filled('company_id')) {
+        $query->where('company_id', $request->company_id);
+    }
 
-        if ($request->filled('company_id')) {
-            $query->where('company_id', $request->company_id);
-        }
+    if ($request->filled('is_filled') && $request->is_filled == "filled") {
+        $query->where('company_id', '!=', null);
+        $query->where('start_work_date', '!=', null);
+        $query->where('start_work_now_date', '!=', null);
+        $query->where('waiting_time', '!=', null);
+        $query->where('profession_id', '!=', null);
+    }
 
-        if ($request->filled('is_filled') && $request->is_filled == "filled") {
-            $query->where('company_id', '!=', null);
-            $query->where('start_work_date', '!=', null);
-            $query->where('start_work_now_date', '!=', null);
-            $query->where('waiting_time', '!=', null);
-            $query->where('profession_id', '!=', null);
-            $query->where('profession_id', '!=', null);
-        }
+    $alumni = $query->get();
 
-        // Get data after applying filters
-        $alumni = $query->get();
+    // === BAGIAN HEADER INFORMASI (5 BARIS TERATAS) ===
+    
+    // Baris 1: Judul utama
+    $sheet->setCellValue('A1', 'DATA ALUMNI');
+    $sheet->mergeCells('A1:N1');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 16
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ]
+    ]);
 
-        $row = 2;
-        foreach ($alumni as $index => $data) {
-            $sheet->setCellValue('A' . $row, $index + 1);
-            $sheet->setCellValue('B' . $row, $data->full_name);
-            $sheet->setCellValue('C' . $row, $data->nim);
-            $sheet->setCellValue('D' . $row, $data->study_program);
-            $sheet->setCellValue('E' . $row, $data->study_start_year);
-            $sheet->setCellValue('F' . $row, $data->graduation_date);
-            $sheet->setCellValue('G' . $row, $data->phone);
-            $sheet->setCellValue('H' . $row, $data->email);
-            $sheet->setCellValue('I' . $row, $data->start_work_date);
-            $sheet->setCellValue('J' . $row, $data->start_work_now_date);
-            $sheet->setCellValue('K' . $row, $data->company?->name ?? '');
-            $sheet->setCellValue('L' . $row, $data->profession?->profession_category?->name ?? '');
-            $sheet->setCellValue('M' . $row, $data->profession?->name ?? '');
-            $sheet->setCellValue('N' . $row, $data->superior?->full_name ?? '');
-            $row++;
-        }
+    // Baris 2: Tanggal export
+    $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
+    $sheet->mergeCells('A2:N2');
+    $sheet->getStyle('A2')->applyFromArray([
+        'font' => [
+            'italic' => true,
+            'size' => 10
+        ]
+    ]);
 
-        foreach (range('A', 'N') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+    // Baris 3: Total data dan filter info
+    $filterInfo = 'Total Data: ' . $alumni->count() . ' alumni';
+    if ($request->filled('nim') || $request->filled('study_program') || $request->filled('study_start_year') || $request->filled('company_id') || $request->filled('is_filled')) {
+        $filterInfo .= ' (Terfilter)';
+    }
+    $sheet->setCellValue('A3', $filterInfo);
+    $sheet->mergeCells('A3:N3');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font' => [
+            'size' => 10
+        ]
+    ]);
 
-        // Siapkan file untuk diunduh
-        $writer = new Xlsx($spreadsheet);
-        $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
-
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // Baris 4: Informasi filter yang digunakan
+    $filterDetails = [];
+    if ($request->filled('nim')) {
+        $filterDetails[] = 'NIM: ' . $request->nim;
+    }
+    if ($request->filled('study_program')) {
+        $filterDetails[] = 'Program Studi: ' . $request->study_program;
+    }
+    if ($request->filled('study_start_year')) {
+        $filterDetails[] = 'Tahun Mulai: ' . $request->study_start_year;
+    }
+    if ($request->filled('is_filled') && $request->is_filled == "filled") {
+        $filterDetails[] = 'Status: Data Lengkap';
+    }
+    
+    if (!empty($filterDetails)) {
+        $sheet->setCellValue('A4', 'Filter: ' . implode(', ', $filterDetails));
+        $sheet->mergeCells('A4:N4');
+        $sheet->getStyle('A4')->applyFromArray([
+            'font' => [
+                'size' => 9,
+                'italic' => true
+            ]
         ]);
     }
+
+    // Baris 5: Kosong untuk spacing
+    $sheet->setCellValue('A5', '');
+
+    // === BAGIAN HEADER TABEL (BARIS 6) ===
+    $headerRow = 6;
+    $sheet->setCellValue('A' . $headerRow, 'No');
+    $sheet->setCellValue('B' . $headerRow, 'Nama Lengkap');
+    $sheet->setCellValue('C' . $headerRow, 'NIM');
+    $sheet->setCellValue('D' . $headerRow, 'Program Studi');
+    $sheet->setCellValue('E' . $headerRow, 'Tahun Mulai Studi');
+    $sheet->setCellValue('F' . $headerRow, 'Tanggal Lulus');
+    $sheet->setCellValue('G' . $headerRow, 'Telepon');
+    $sheet->setCellValue('H' . $headerRow, 'Email');
+    $sheet->setCellValue('I' . $headerRow, 'Tanggal Mulai Kerja');
+    $sheet->setCellValue('J' . $headerRow, 'Tanggal Mulai Pekerjaan Sekarang');
+    $sheet->setCellValue('K' . $headerRow, 'Perusahaan');
+    $sheet->setCellValue('L' . $headerRow, 'Kategori Profesi');
+    $sheet->setCellValue('M' . $headerRow, 'Profesi');
+    $sheet->setCellValue('N' . $headerRow, 'Atasan');
+
+    // Style untuk header dengan background color
+    $sheet->getStyle('A' . $headerRow . ':N' . $headerRow)->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'color' => ['rgb' => 'FFFFFF']
+        ],
+        'fill' => [
+            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '4472C4']
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ]);
+
+    // === BAGIAN DATA (MULAI BARIS 7) ===
+    $dataStartRow = $headerRow + 1;
+    $currentRow = $dataStartRow;
+
+    foreach ($alumni as $index => $data) {
+        $sheet->setCellValue('A' . $currentRow, $index + 1);
+        $sheet->setCellValue('B' . $currentRow, $data->full_name);
+        $sheet->setCellValue('C' . $currentRow, $data->nim);
+        $sheet->setCellValue('D' . $currentRow, $data->study_program);
+        $sheet->setCellValue('E' . $currentRow, $data->study_start_year);
+        $sheet->setCellValue('F' . $currentRow, $data->graduation_date);
+        $sheet->setCellValue('G' . $currentRow, $data->phone);
+        $sheet->setCellValue('H' . $currentRow, $data->email);
+        $sheet->setCellValue('I' . $currentRow, $data->start_work_date);
+        $sheet->setCellValue('J' . $currentRow, $data->start_work_now_date);
+        $sheet->setCellValue('K' . $currentRow, $data->company?->name ?? '');
+        $sheet->setCellValue('L' . $currentRow, $data->profession?->profession_category?->name ?? '');
+        $sheet->setCellValue('M' . $currentRow, $data->profession?->name ?? '');
+        $sheet->setCellValue('N' . $currentRow, $data->superior?->full_name ?? '');
+        
+        // Style untuk baris data
+        $sheet->getStyle('A' . $currentRow . ':N' . $currentRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ],
+            'alignment' => [
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
+        ]);
+        
+        $sheet->getStyle('A' . $currentRow)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+        $currentRow++;
+    }
+
+    // Pengaturan kolom
+    foreach (range('A', 'N') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    // Set tinggi baris
+    $sheet->getRowDimension(1)->setRowHeight(30);
+    $sheet->getRowDimension($headerRow)->setRowHeight(25);
+
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+    $filename = 'Data_Alumni_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, $filename, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+}
 
     public function import()
     {
