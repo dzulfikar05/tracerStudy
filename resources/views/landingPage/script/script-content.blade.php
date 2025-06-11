@@ -180,7 +180,7 @@
         }
 
         saConfirm({
-            message: 'Are you sure you want to save the data?',
+            message: 'Apakah anda yakin menyimpan data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({
@@ -320,7 +320,7 @@
         }
 
         saConfirm({
-            message: 'Are you sure you want to save the data?',
+            message: 'Apakah anda yakin menyimpan data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({

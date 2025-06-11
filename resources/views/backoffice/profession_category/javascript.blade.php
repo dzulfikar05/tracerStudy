@@ -95,7 +95,7 @@
         }
 
         saConfirm({
-            message: 'Apakah anda yakin ingin mengubah data?',
+            message: 'Apakah anda yakin menyimpan data?',
             callback: function(res) {
                 if (res) {
                     $.ajax({

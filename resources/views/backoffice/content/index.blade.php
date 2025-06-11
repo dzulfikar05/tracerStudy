@@ -3,7 +3,7 @@
     <div class="col-12">
         <div class="card">
             {{-- <div class="card-header">
-                <div class="card-title">Job Category</div>
+                <div class="card-title">Kategori Profesi</div>
             </div> --}}
             <div class="card-body">
                 <div class="row align-items-center mb-3">
