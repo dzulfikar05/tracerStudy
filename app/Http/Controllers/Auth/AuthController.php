@@ -44,7 +44,7 @@ class AuthController extends Controller
             return $response;
         }
         $response['success'] = false;
-        $response['message'] = 'Please contact administrator !';
+        $response['message'] = 'Silahkan hubungi admin !';
         return $response;
     }
 
