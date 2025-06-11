@@ -279,7 +279,7 @@
     }
 
     $('#drop-area').on('click', function() {
-        $('#image').click();
+        $('#image')[0].click();
     });
 
     $('#image').on('change', function() {

@@ -15,9 +15,27 @@ class SuperiorSeeder extends Seeder
     {
         $companies = Company::all();
 
+      $full_names = [
+            'Prasetyo Budiatma',
+            'Ridho Pratama',
+            'Rahmat Hidayat',
+            'Rizky Maulana Putra',
+            'Aditya Nugraha',
+            'Ramadhan Jaya',
+            'Setiawan Putra',
+            'Akbar Sanjaya',
+            'Ananda Putri',
+            'Permana Sidiq',
+            'Nur Cahyo',
+            'Adi Saputra',
+            'Fahreza Aulia',
+            'Dwi Santoso',
+            'Wahyu Utomo',
+            'Bayu Prakoso',
+        ];
         foreach ($companies as $index => $company) {
             Superior::create([
-                'full_name' => 'Atasan ' . ($index + 1),
+                'full_name' => $full_names[$index],
                 'position' => 'Manager Divisi ' . ($index + 1),
                 'phone' => '0812345678' . str_pad($index, 2, '0', STR_PAD_LEFT),
                 'email' => 'dzulfikar0456@gmail.com',
