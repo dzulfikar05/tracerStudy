@@ -598,9 +598,12 @@ $sheet->setCellValue('A5', '');
 
     // DATA
     $row = 7;
-    foreach ($respondents as $index => $res) {
-        $colIndex = 1;
-        $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $index + 1);
+$rowNumber = 1; // buat nomor urut sendiri
+
+foreach ($respondents as $res) {
+    $colIndex = 1;
+    $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex++) . $row, $rowNumber++);
+
 
         if ($res->filler_type == 'alumni') {
             $f = $res->filler_alumni;
