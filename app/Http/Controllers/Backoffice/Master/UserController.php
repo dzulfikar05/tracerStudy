@@ -109,45 +109,129 @@ class UserController extends Controller
         return $this->sendResponse($operation, 'Berhasil Menghapus Data', 'Gagal Menghapus Data');
     }
 
-    public function export_excel()
-    {
-        $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at')
-            ->orderBy('id')
-            ->get();
+public function export_excel()
+{
+    $users = User::select('id', 'name', 'email', 'email_verified_at', 'created_at')
+        ->orderBy('id')
+        ->get();
 
-        // Buat Spreadsheet baru
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+    $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-        // Header kolom
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nama');
-        $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Tanggal Dibuat');
+    // === BAGIAN HEADER INFORMASI (5 BARIS TERATAS) ===
+    
+    // Baris 1: Judul utama
+    $sheet->setCellValue('A1', 'DATA USER');
+    $sheet->mergeCells('A1:D1');
+    $sheet->getStyle('A1')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 16
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ]
+    ]);
 
-        // Isi data mulai dari baris ke-2
-        $row = 2;
-        foreach ($users as  $index => $user) {
-            $sheet->setCellValue('A' . $row, $index + 1);
-            $sheet->setCellValue('B' . $row, $user->name);
-            $sheet->setCellValue('C' . $row, $user->email);
-            $sheet->setCellValue('D' . $row, $user->created_at);
-            $row++;
-        }
+    // Baris 2: Tanggal export
+    $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
+    $sheet->mergeCells('A2:D2');
+    $sheet->getStyle('A2')->applyFromArray([
+        'font' => [
+            'italic' => true,
+            'size' => 10
+        ]
+    ]);
 
-         foreach (range('A', 'D') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
+    // Baris 3: Total data
+    $sheet->setCellValue('A3', 'Total Data: ' . $users->count() . ' user');
+    $sheet->mergeCells('A3:D3');
+    $sheet->getStyle('A3')->applyFromArray([
+        'font' => [
+            'size' => 10
+        ]
+    ]);
 
-        // Siapkan nama file
-        $filename = 'Data_User_' . date('Y-m-d_H-i-s') . '.xlsx';
-        $writer = new Xlsx($spreadsheet);
+    // Baris 4-5: Kosong untuk spacing
+    $sheet->setCellValue('A4', '');
+    $sheet->setCellValue('A5', '');
 
-        // Output file Excel sebagai response
-        return response()->streamDownload(function () use ($writer) {
-            $writer->save('php://output');
-        }, $filename, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    // === BAGIAN HEADER TABEL (BARIS 6) ===
+    $headerRow = 6;
+    $sheet->setCellValue('A' . $headerRow, 'No');
+    $sheet->setCellValue('B' . $headerRow, 'Nama');
+    $sheet->setCellValue('C' . $headerRow, 'Email');
+    $sheet->setCellValue('D' . $headerRow, 'Tanggal Dibuat');
+
+    // Style untuk header dengan background color
+    $sheet->getStyle('A' . $headerRow . ':D' . $headerRow)->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'color' => ['rgb' => 'FFFFFF']
+        ],
+        'fill' => [
+            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+            'startColor' => ['rgb' => '4472C4']
+        ],
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ]);
+
+    // === BAGIAN DATA (MULAI BARIS 7) ===
+    $dataStartRow = $headerRow + 1;
+    $currentRow = $dataStartRow;
+
+    foreach ($users as $index => $user) {
+        $sheet->setCellValue('A' . $currentRow, $index + 1);
+        $sheet->setCellValue('B' . $currentRow, $user->name);
+        $sheet->setCellValue('C' . $currentRow, $user->email);
+        $sheet->setCellValue('D' . $currentRow, $user->created_at ? $user->created_at->format('d-m-Y H:i:s') : '-');
+        
+        // Style untuk baris data
+        $sheet->getStyle('A' . $currentRow . ':D' . $currentRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000']
+                ]
+            ],
+            'alignment' => [
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
         ]);
+        
+        $sheet->getStyle('A' . $currentRow)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+        $currentRow++;
     }
+
+    // Pengaturan kolom
+    $sheet->getColumnDimension('A')->setWidth(8);
+    $sheet->getColumnDimension('B')->setWidth(25);
+    $sheet->getColumnDimension('C')->setWidth(30);
+    $sheet->getColumnDimension('D')->setWidth(20);
+
+    // Set tinggi baris
+    $sheet->getRowDimension(1)->setRowHeight(30);
+    $sheet->getRowDimension($headerRow)->setRowHeight(25);
+
+    $filename = 'Data_User_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+    return response()->streamDownload(function () use ($writer) {
+        $writer->save('php://output');
+    }, $filename, [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ]);
+}
 }
