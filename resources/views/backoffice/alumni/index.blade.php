@@ -50,13 +50,16 @@
 
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group d-flex justify-content-end mb-3">
+                        <div class="form-group d-flex justify-content-end mb-2">
 
                             <button onclick="modalAction('{{ route('backoffice.alumni.alumni.import') }}')"
                                 class="btn btn-success me-2">
                                 <i data-feather="upload"></i> Import Excel</button>
-                            <button type="button" id="btnExportExcel" class="btn btn-primary me-2"><i
+                            <button type="button" id="btnExportExcel" class="btn btn-primary"><i
                                     class="align-middle" data-feather="download"></i> Export Excel</button>
+                        </div>
+                        <div class="form-group d-flex justify-content-end mb-3">
+
                             <button type="button" onclick="showForm()" class="btn btn-primary"><i class="align-middle"
                                     data-feather="plus"> </i> Tambah</button>
 
