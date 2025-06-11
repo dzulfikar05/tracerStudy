@@ -184,33 +184,75 @@ public function exportExcel(Request $request)
     $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
 
-    // === HEADER INFORMASI (Baris 1-5) ===
+    // === BAGIAN HEADER INFORMASI (5 BARIS TERATAS) ===
+    
+    // Baris 1: Judul utama
     $sheet->setCellValue('A1', 'DATA SUPERIOR');
     $sheet->mergeCells('A1:F1');
     $sheet->getStyle('A1')->applyFromArray([
-        'font' => ['bold' => true, 'size' => 16],
+        'font' => [
+            'bold' => true,
+            'size' => 16
+        ],
         'alignment' => [
             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
         ]
     ]);
 
+    // Baris 2: Tanggal export
     $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d-m-Y H:i:s'));
     $sheet->mergeCells('A2:F2');
     $sheet->getStyle('A2')->applyFromArray([
-        'font' => ['italic' => true, 'size' => 10]
+        'font' => [
+            'italic' => true,
+            'size' => 10
+        ]
     ]);
 
-    $sheet->setCellValue('A3', 'Total Data: ' . $superiors->count() . ' perusahaan');
+    // Baris 3: Total data dan filter info
+    $filterInfo = 'Total Data: ' . $superiors->count() . ' superior';
+    if ($request->filled('position') || $request->filled('company') || $request->filled('is_filled')) {
+        $filterInfo .= ' (Terfilter)';
+    }
+    $sheet->setCellValue('A3', $filterInfo);
     $sheet->mergeCells('A3:F3');
     $sheet->getStyle('A3')->applyFromArray([
-        'font' => ['size' => 10]
+        'font' => [
+            'size' => 10
+        ]
     ]);
 
-    $sheet->setCellValue('A4', '');
+    // Baris 4: Informasi filter yang digunakan
+    $filterDetails = [];
+    if ($request->filled('position')) {
+        $filterDetails[] = 'Posisi: ' . $request->position;
+    }
+    if ($request->filled('company')) {
+        // Ambil nama perusahaan berdasarkan ID
+        $companyName = \App\Models\Company::find($request->company)?->name ?? 'ID: ' . $request->company;
+        $filterDetails[] = 'Perusahaan: ' . $companyName;
+    }
+    if ($request->filled('is_filled')) {
+        $statusText = $request->is_filled === 'filled' ? 'Sudah Mengisi' : 'Belum Mengisi';
+        $filterDetails[] = 'Status Pengisian: ' . $statusText;
+    }
+
+    if (!empty($filterDetails)) {
+        $sheet->setCellValue('A4', 'Filter: ' . implode(', ', $filterDetails));
+        $sheet->mergeCells('A4:F4');
+        $sheet->getStyle('A4')->applyFromArray([
+            'font' => [
+                'size' => 9,
+                'italic' => true
+            ]
+        ]);
+    }
+
+    // Baris 5: Kosong untuk spacing
     $sheet->setCellValue('A5', '');
 
-    // === HEADER TABEL (Baris 6) ===
+    // === BAGIAN HEADER TABEL (BARIS 6) ===
     $headerRow = 6;
     $sheet->setCellValue('A' . $headerRow, 'No');
     $sheet->setCellValue('B' . $headerRow, 'Nama Lengkap');
@@ -219,8 +261,12 @@ public function exportExcel(Request $request)
     $sheet->setCellValue('E' . $headerRow, 'Email');
     $sheet->setCellValue('F' . $headerRow, 'Perusahaan');
 
+    // Style untuk header dengan background color
     $sheet->getStyle('A' . $headerRow . ':F' . $headerRow)->applyFromArray([
-        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+        'font' => [
+            'bold' => true,
+            'color' => ['rgb' => 'FFFFFF']
+        ],
         'fill' => [
             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
             'startColor' => ['rgb' => '4472C4']
@@ -237,18 +283,20 @@ public function exportExcel(Request $request)
         ]
     ]);
 
-    // === ISI DATA (Mulai baris 7) ===
-    $dataRow = $headerRow + 1;
+    // === BAGIAN DATA (MULAI BARIS 7) ===
+    $dataStartRow = $headerRow + 1;
+    $currentRow = $dataStartRow;
 
     foreach ($superiors as $index => $superior) {
-        $sheet->setCellValue('A' . $dataRow, $index + 1);
-        $sheet->setCellValue('B' . $dataRow, $superior->full_name);
-        $sheet->setCellValue('C' . $dataRow, $superior->position);
-        $sheet->setCellValue('D' . $dataRow, $superior->phone);
-        $sheet->setCellValue('E' . $dataRow, $superior->email);
-        $sheet->setCellValue('F' . $dataRow, $superior->company?->name ?? '-');
+        $sheet->setCellValue('A' . $currentRow, $index + 1);
+        $sheet->setCellValue('B' . $currentRow, $superior->full_name);
+        $sheet->setCellValue('C' . $currentRow, $superior->position);
+        $sheet->setCellValue('D' . $currentRow, $superior->phone);
+        $sheet->setCellValue('E' . $currentRow, $superior->email);
+        $sheet->setCellValue('F' . $currentRow, $superior->company?->name ?? '-');
 
-        $sheet->getStyle('A' . $dataRow . ':F' . $dataRow)->applyFromArray([
+        // Style untuk baris data
+        $sheet->getStyle('A' . $currentRow . ':F' . $currentRow)->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -260,18 +308,18 @@ public function exportExcel(Request $request)
             ]
         ]);
 
-        $sheet->getStyle('A' . $dataRow)->getAlignment()->setHorizontal(
-            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-        );
+        $sheet->getStyle('A' . $currentRow)->getAlignment()
+            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-        $dataRow++;
+        $currentRow++;
     }
 
-    // Lebar kolom
+    // Pengaturan kolom
     foreach (range('A', 'F') as $col) {
         $sheet->getColumnDimension($col)->setAutoSize(true);
     }
 
+    // Set tinggi baris
     $sheet->getRowDimension(1)->setRowHeight(30);
     $sheet->getRowDimension($headerRow)->setRowHeight(25);
 

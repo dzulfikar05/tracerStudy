@@ -505,8 +505,50 @@ public function exportAnswer($id, Request $request)
         'font' => ['size' => 10]
     ]);
 
+    // Baris 4: Informasi filter yang digunakan
+$filterDetails = [];
+
+if ($request->filled('study_program')) {
+    $filterDetails[] = 'Program Studi: ' . $request->study_program;
+}
+if ($request->filled('nim')) {
+    $filterDetails[] = 'NIM: ' . $request->nim;
+}
+if ($request->filled('study_start_year')) {
+    $filterDetails[] = 'Angkatan: ' . $request->study_start_year;
+}
+if ($request->filled('graduation_year')) {
+    $filterDetails[] = 'Tahun Lulus: ' . $request->graduation_year;
+}
+if ($request->filled('company_id')) {
+    $companyName = \App\Models\Company::find($request->company_id)?->name ?? 'ID: ' . $request->company_id;
+    $filterDetails[] = 'Perusahaan: ' . $companyName;
+}
+if ($request->filled('profession_category_id')) {
+    $categoryName = \App\Models\ProfessionCategory::find($request->profession_category_id)?->name ?? 'ID: ' . $request->profession_category_id;
+    $filterDetails[] = 'Kategori Profesi: ' . $categoryName;
+}
+if ($request->filled('profession_id')) {
+    $professionName = \App\Models\Profession::find($request->profession_id)?->name ?? 'ID: ' . $request->profession_id;
+    $filterDetails[] = 'Profesi: ' . $professionName;
+}
+if ($request->filled('superior')) {
+    $superiorName = \App\Models\Superior::find($request->superior)?->full_name ?? 'ID: ' . $request->superior;
+    $filterDetails[] = 'Atasan: ' . $superiorName;
+}
+
+if (!empty($filterDetails)) {
+    $sheet->setCellValue('A4', 'Filter: ' . implode(', ', $filterDetails));
+    $sheet->mergeCells('A4:Z4');
+    $sheet->getStyle('A4')->applyFromArray([
+        'font' => ['size' => 9, 'italic' => true]
+    ]);
+} else {
     $sheet->setCellValue('A4', '');
-    $sheet->setCellValue('A5', '');
+}
+
+$sheet->setCellValue('A5', '');
+
 
     // HEADER TABEL
     $row = 6;
