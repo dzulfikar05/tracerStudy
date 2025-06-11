@@ -3,7 +3,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-row-bordered border align-middle rounded w-100 nowrap"
+                    <table
+                        class="table table-striped table-hover table-row-bordered border align-middle rounded w-100 nowrap"
                         id="table_answer">
                         <div class="card-body">
                             <div class="form-group mb-3">
@@ -12,9 +13,13 @@
                                         <i class="fa fa-arrow-left"></i> Back
                                     </a>
                                     <div class="d-flex">
-                                        <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
-                                            data-bs-target="#filterModal">
+                                        <button type="button" class="btn btn-outline-info me-2 position-relative"
+                                            data-bs-toggle="modal" data-bs-target="#filterModal" id="btnFilter">
                                             <i class="fa fa-filter"></i> Filter
+                                            <span id="filter-indicator"
+                                                class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+                                                <span class="visually-hidden">Filter aktif</span>
+                                            </span>
                                         </button>
                                         <button type="button" class="btn btn-primary me-2 btn-export-excel">
                                             <i class="align-middle" data-feather="download"></i> Export Excel

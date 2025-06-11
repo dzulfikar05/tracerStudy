@@ -126,7 +126,7 @@
                     orderable: false,
                     searchable: false,
                     render: function(data, type, full, meta) {
-                        return `<button class="btn btn-outline-info me-2" style="width: 100px;" onclick="showAlumni(${full.id})">${full.alumni_count || 0} Alumni</button>`;
+                        return `<button class="btn btn-outline-info me-2 ${full.alumni_count == 0 ? 'disabled' : ''}" style="width: 100px;" onclick="showAlumni(${full.id})">${full.alumni_count || 0} Alumni</button>`;
                     }
                 },
                 {
@@ -257,7 +257,7 @@
             html += `<option value="${v.id}">${v.name}</option>`;
         });
         $('#company_id').append(html);
-        $('#filter_company_id').append(html);
+        $('#filter_company_id').html(html);
     }
 
     setOptionPosition = (positions) => {
@@ -326,9 +326,10 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
+            if(v == 'id') return;
             $('#' + v).val('').change();
         });
-    }
+    };
 
     function modalAction(url) {
         $('#myModal').load(url, function() {

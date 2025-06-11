@@ -231,9 +231,10 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            $('#' + v).val('').change()
-        })
-    }
+            if(v == 'id') return;
+            $('#' + v).val('').change();
+        });
+    };
 
     function modalAction(url = '') {
         $('#myModal').load(url, function() {

@@ -28,6 +28,24 @@
         }));
     };
 
+    checkFilterStatus = () => {
+        const study_program = $('#filter_study_program').val();
+        const nim = $('#filter_nim').val();
+        const study_start_year = $('#filter_study_start_year').val();
+        const graduation_year = $('#filter_graduation_year').val();
+        const company_id = $('#filter_company').val();
+        const profession_category_id = $('#filter_profession_category').val();
+        const profession_id = $('#filter_profession').val();
+
+        const isFiltered = study_program || nim || study_start_year || graduation_year || company_id || profession_category_id || profession_id;
+
+        if (isFiltered) {
+            $('#filter-indicator').removeClass('d-none');
+        } else {
+            $('#filter-indicator').addClass('d-none');
+        }
+    }
+
     const getDynamicColumns = () => {
         let columns = [{
             data: null,
@@ -159,7 +177,7 @@
 
     const getActionColumn = () => {
 
-        if(isSuper != true){
+        if (isSuper != true) {
             return [];
         }
 
@@ -331,6 +349,19 @@
         $('#filterModal').modal('hide');
 
         $('#table_answer').DataTable().ajax.reload();
+        checkFilterStatus();
+    }
+
+    function resetFilter() {
+        $('#filter_study_program').val('').change();
+        $('#filter_nim').val('').change();
+        $('#filter_study_start_year').val('').change();
+        $('#filter_graduation_year').val('').change();
+        $('#filter_company').val('').change();
+        $('#filter_profession_category').val('').change();
+        $('#filter_profession').val('').change();
+        initTable();
+        checkFilterStatus();
     }
 
 

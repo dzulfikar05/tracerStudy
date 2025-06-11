@@ -63,10 +63,12 @@ class AlumniController extends Controller
             if ($request->filled('is_filled') && $request->is_filled == "filled") {
                 $data->where('company_id', '!=', null);
                 $data->where('start_work_date', '!=', null);
-                $data->where('start_work_now_date', '!=', null);
                 $data->where('waiting_time', '!=', null);
-                $data->where('profession_id', '!=', null);
-                $data->where('profession_id', '!=', null);
+            }
+            if ($request->filled('is_filled') && $request->is_filled == "unfilled") {
+                $data->where('company_id', null);
+                $data->where('start_work_date', null);
+                $data->where('waiting_time', null);
             }
 
 
@@ -110,7 +112,7 @@ class AlumniController extends Controller
                     return $row->profession?->name ?? '';
                 })
                 ->addColumn('superior_name', function ($row) {
-                    return $row->superior?->name ?? '';
+                    return $row?->superior?->name ?? '';
                 })
                 ->addColumn('graduation_date', function ($row) {
                     return $row->graduation_date ? \Carbon\Carbon::parse($row->graduation_date)->format('d/m/Y') : '';
@@ -497,7 +499,7 @@ class AlumniController extends Controller
         $query = Alumni::query();
 
         if ($request->filled('nim')) {
-            $query->where('nim', $request->nim);
+            $query->where('nim', 'like', '%' . $request->nim. '%');
         }
         if ($request->filled('study_program')) {
             $query->where('study_program', $request->study_program);
