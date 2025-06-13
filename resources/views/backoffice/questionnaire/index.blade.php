@@ -28,9 +28,13 @@
 
         </div>
         <div class="d-flex justify-content-end align-items-center gap-2 mb-4 flex-wrap">
-            <button type="button" class="btn btn-outline-info d-flex align-items-center" data-bs-toggle="modal"
-                data-bs-target="#filterModal">
-                <i class="fa fa-filter me-2"></i> Filter
+            <button type="button" class="btn btn-outline-info me-2 position-relative" data-bs-toggle="modal"
+                data-bs-target="#filterModal" id="btnFilter">
+                <i class="fa fa-filter"></i> Filter
+                <span id="filter-indicator"
+                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none">
+                    <span class="visually-hidden">Filter aktif</span>
+                </span>
             </button>
             <button type="button" onclick="initTable()" class="btn btn-light d-flex  align-items-center"
                 style="border: 1px solid grey">

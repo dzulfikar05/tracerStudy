@@ -5,6 +5,12 @@
         }
     });
 
+    $(()=>{
+         $('.select_choice').select2({
+            dropdownParent: $('#question_container')
+        });
+    })
+
     function updateCardNumbers() {
         $('#question_container .question-card').each(function(i) {
             $(this).find('.question-title').text('Pertanyaan #' + (i + 1));
@@ -15,6 +21,9 @@
         let questions = @json($data->questions);
         questions.forEach(q => appendCard(q.id, q.question, q.type, q.options, q.is_assessment));
         updateCardNumbers();
+         $('.select_choice').select2({
+            dropdownParent: $('#question_container')
+        });
     }
 
     function appendCard(id, question = '', type = 'essay', options = [], is_assessment = false) {
@@ -43,7 +52,7 @@
 
                     <div class="form-group mt-2">
                         <label>Tipe</label>
-                        <select class="form-control" data-field="type" onchange="toggleOptionSection(this)">
+                        <select class="form-control select_choice" data-field="type" onchange="toggleOptionSection(this)">
                             <option value="essay" ${type === 'essay' ? 'selected' : ''}>Essay</option>
                             <option value="choice" ${type === 'choice' ? 'selected' : ''}>Pilihan Ganda</option>
                         </select>
@@ -72,6 +81,10 @@
             let defaultOptions = ['Sangat Baik', 'Baik', 'Cukup', 'Kurang'];
             renderOptions(card, options && options.length ? options : defaultOptions);
         }
+
+        $('.select_choice').select2({
+            dropdownParent: $('#question_container')
+        });
     }
 
     function toggleOptionSection(select) {

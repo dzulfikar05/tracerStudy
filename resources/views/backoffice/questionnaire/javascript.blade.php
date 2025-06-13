@@ -222,6 +222,7 @@
     function applyFilter() {
         $('#filterModal').modal('hide');
         initTable();
+        checkFilterStatus();
     }
 
     function resetFilter() {
@@ -229,6 +230,21 @@
         $('#filter_type').val(null).trigger('change');
         $('#filter_period_year').val(null).trigger('change');
         initTable();
+        checkFilterStatus();
+    }
+
+    checkFilterStatus = () => {
+        const title = $('#filter_title').val();
+        const type = $('#filter_type').val();
+        const period_year = $('#filter_period_year').val();
+
+        const isFiltered = title || type || period_year;
+
+        if (isFiltered) {
+            $('#filter-indicator').removeClass('d-none');
+        } else {
+            $('#filter-indicator').addClass('d-none');
+        }
     }
 
     $(document).on('change', '.toggle-status', function() {

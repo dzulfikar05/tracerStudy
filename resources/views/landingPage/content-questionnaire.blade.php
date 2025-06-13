@@ -233,20 +233,22 @@
                                 <div class="modal-body">
                                     <input type="text" name="name" class="form-control mb-2"
                                         placeholder="Nama Perusahaan / Tempat Bekerja" required />
-                                    <select name="company_type" class="form-control mb-2" required>
+                                    <select name="company_type" class="form-control mb-2 company_type_new" required style="width: 100%; margin-bottom: 10px !important">
                                         <option value="">Pilih Tipe</option>
                                         <option value="higher_education">Perguruan Tinggi</option>
                                         <option value="government_agency">Instansi Pemerintah</option>
                                         <option value="state-owned_enterprise">BUMN</option>
                                         <option value="private_company">Swasta</option>
                                     </select>
-
-                                    <select name="scope" class="form-control mb-2" required>
+                                    <div class="my-2"></div>
+                                    <select name="scope" class="form-control mb-2 scope_new" required style="width: 100%; margin-bottom: 10px !important">
                                         <option value="">Pilih Skala</option>
                                         <option value="businessman">Wirausaha</option>
                                         <option value="national">Nasional</option>
                                         <option value="international">Internasional</option>
                                     </select>
+                                    <div class="my-2"></div>
+
                                     <input type="text" name="phone" class="form-control mb-2"
                                         placeholder="Nomor Telepon, ex: 0341..." required maxlength="14" />
                                     <textarea name="address" class="form-control mb-2" placeholder="Alamat" required></textarea>

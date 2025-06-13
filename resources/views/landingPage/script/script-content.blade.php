@@ -84,7 +84,22 @@
         $('.profession_category_id').val('{{ $data['alumni']['profession']['profession_category_id'] ?? '' }}')
             .change();
 
+        $('.profession_category_id_new').select2({
+            dropdownParent: $('#modalAddProfession')
+        });
     }
+
+    $(()=>{
+        $('.profession_category_id_new').select2({
+            dropdownParent: $('#modalAddProfession')
+        });
+        $('.company_type_new').select2({
+            dropdownParent: $('#modalAddCompany')
+        });
+        $('.scope_new').select2({
+            dropdownParent: $('#modalAddCompany')
+        });
+    })
 
     $('.profession_category_id').on('change', function() {
         var id = $(this).val();
