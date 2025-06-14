@@ -2,6 +2,7 @@
 <div class="container my-5">
     <h1 class="h3 mb-5 " style="font-weight: 900;">
         Kuesioner Tracer Study Politeknik Negeri Malang.
+        <button style="float: right" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#infoModal" onclick="onWalkthrough()">?</button>
     </h1>
 
     <div class="survey-cards">
@@ -9,23 +10,23 @@
             @if ($data['type'] == 'alumni')
                 <form action="javascript:onSaveAlumni(this)" method="post" id="form_alumni" name="form_alumni" novalidate
                     autocomplete="off">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist" data-intro="Pengisian data dibagi menjadi tiga bagian.">
+                        <li class="nav-item" data-intro="Pertama, data diri lulusan">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#data-diri"
                                 role="tab">Data Diri</a>
                         </li>
-                        <li class="nav-item" id="tab-atasan">
+                        <li class="nav-item" id="tab-atasan" data-intro="Kedua, data atasan lulusan">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#data-atasan"
                                 role="tab">Data Atasan Alumni</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" data-intro="Ketiga, data kuisioner">
                             <a class="nav-link" id="messages-tab" data-toggle="tab" href="#data-kuisioner"
                                 role="tab">Kuisioner</a>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="data-diri" role="tabpanel">
+                        <div class="tab-pane fade show active" id="data-diri" role="tabpanel" data-intro="Langkah pertama, isi data diri anda dengan benar & lengkap">
                             <h5 class="mb-4">Data Diri Lulusan</h5>
                             <input name="alumni_id" type="hidden" value="{{ $data['alumni']['id'] }}">
                             <input name="questionnaire_id" type="hidden" value="{{ $data['questionnaire']['id'] }}">
@@ -138,7 +139,7 @@
                         </div>
 
 
-                        <div class="tab-pane fade" id="data-atasan" role="tabpanel">
+                        <div class="tab-pane fade" id="data-atasan" role="tabpanel" data-intro="Langkah kedua, isi data atasan langsung anda dengan benar">
                             <h5 class="mb-4">Data Atasan Alumni Tempat Bekerja </h5>
                             <div class="row">
                                 <div class="form-label col-md-6">
@@ -168,9 +169,9 @@
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="button" class="btn btn-primary btn-next">Selanjutnya</button>
                             </div>
-                            <div style="height: 100px"></div>
+                            {{-- <div style="height: 100px"></div> --}}
                         </div>
-                        <div class="tab-pane fade" id="data-kuisioner" role="tabpanel">
+                        <div class="tab-pane fade" id="data-kuisioner" role="tabpanel" data-intro="Langkah ketiga, Isi data kuisioner dengan benar">
                             <h5 class="mb-4">Kuisioner</h5>
                             @if ($data['questions']->count() > 0)
                                 @foreach ($data['questions'] as $question)
@@ -214,9 +215,9 @@
                                 @endforeach
                             @endif
                             <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-primary">Simpan Data</button>
+                                <button type="submit" class="btn btn-primary" data-intro="Langkah terakhir, Pastikan semua data sudah terisi dengan benar. Kemudian klik untuk menyimpan data kuisioner">Simpan Data</button>
                             </div>
-                            <div style="height: 100px"></div>
+                            {{-- <div style="height: 100px"></div> --}}
                         </div>
 
                     </div>
@@ -288,13 +289,14 @@
                 <form action="javascript:onSaveSuperior(this)" method="post" id="form_superior"
                     name="form_superior" autocomplete="off" novalidate>
                     <input name="questionnaire_id" type="hidden" value="{{ $data['questionnaire']['id'] }}">
-                    <div class="form-label col-md-12 mb-3">
+                    <div class="form-label col-md-12 mb-3" data-intro="Pilih alumni di tempat kerja anda yang ingin anda nilai.">
                         <label class="mb-2 required col-12" for="alumni">Alumni</label>
                         <select name="alumni_id" class="form-control mb-3 alumni_id" required>
                             <option value="">- Pilih Alumni -</option>
                         </select>
                     </div>
                     @if ($data['questions']->count() > 0)
+                        <div data-intro="Isi data kuisioner dengan benar">
                         @foreach ($data['questions'] as $question)
                             <div class="card mb-3 question-card" id="question_{{ $question->id }}"
                                 data-id="{{ $question->id }}">
@@ -333,8 +335,10 @@
                                 </div>
                             </div>
                         @endforeach
+                        </div>
+
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-primary">Simpan Data</button>
+                            <button type="submit" class="btn btn-primary" data-intro="pastikan semua data sudah terisi dengan benar. Kemudian klik untuk menyimpan data kuisioner">Simpan Data</button>
                         </div>
                         <div style="height: 100px"></div>
                     @endif
@@ -368,4 +372,67 @@
         padding: 20px;
     }
 </style>
+<script>
+    onWalkthrough = () => {
+        // Buat instance Intro.js dulu
+        const intro = introJs();
+
+        intro.setOptions({
+            // Tambahkan opsi Intro.js di sini
+        });
+
+        // Tangani event sebelum perubahan langkah Intro.js
+        intro.onbeforechange(function(element) {
+            const elementId = $(element).attr('id'); // ID elemen data-intro yang akan disorot
+
+            // Peta antara ID tab-pane dan ID tab-link yang mengaktifkannya
+            const tabMap = {
+                'data-diri': '#home-tab',
+                'data-atasan': '#profile-tab',
+                'data-kuisioner': '#messages-tab'
+            };
+
+            const targetTabLinkSelector = tabMap[elementId];
+
+            if (targetTabLinkSelector) { // Jika elemen yang akan disorot ada di dalam salah satu tab
+                // Periksa apakah tab target sudah aktif
+                if (!$(targetTabLinkSelector).hasClass('active')) {
+                    // Jika belum aktif, aktifkan tab dan tunggu sampai selesai ditampilkan
+                    return new Promise((resolve) => {
+                        $(targetTabLinkSelector).on('shown.bs.tab', function handler() {
+                            // Hapus event listener setelah tab ditampilkan sekali untuk menghindari duplikasi
+                            $(targetTabLinkSelector).off('shown.bs.tab', handler);
+                            // Resolusi promise agar Intro.js melanjutkan ke langkah berikutnya
+                            resolve();
+                        });
+                        $(targetTabLinkSelector).tab('show'); // Aktifkan tab
+                    });
+                }
+            }
+            // Jika elemen tidak terkait dengan tab, atau tab sudah aktif, lanjutkan normal
+            return true; // Kembali true agar Intro.js melanjutkan
+        }).start(); // Memulai tur Intro.js
+    }
+
+    // Pastikan jQuery sudah dimuat sebelum menjalankan script ini
+    $(document).ready(function() {
+        // ... (Kode JavaScript untuk navigasi tombol Selanjutnya/Sebelumnya yang sudah Anda tambahkan) ...
+
+        $('#btn-next-data-diri').on('click', function() {
+            $('#profile-tab').tab('show');
+        });
+
+        $('#btn-next-data-atasan').on('click', function() {
+            $('#messages-tab').tab('show');
+        });
+
+        $('#btn-prev-data-atasan').on('click', function() {
+            $('#home-tab').tab('show');
+        });
+
+        $('#btn-prev-data-kuisioner').on('click', function() {
+            $('#profile-tab').tab('show');
+        });
+    });
+</script>
 @include('landingPage.script.script-content')

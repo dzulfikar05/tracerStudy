@@ -19,10 +19,13 @@
     <!-- Select2 -->
     <link href="{{ asset('plugins/select2/select2.min.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    rel="stylesheet">
 
     <!--AOS-->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+    <script src="https://unpkg.com/intro.js/intro.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css" />
 
     <style>
         :root {
@@ -73,6 +76,13 @@
         .select2-results__option {
             padding: 5px 12px;
         }
+
+        .introjs-tooltiptext {
+            font-family: 'Poppins', sans-serif !important;
+        }
+        .introjs-helperLayer {
+            border-radius: 12px !important;
+        }
     </style>
 
     <style>
@@ -91,7 +101,7 @@
 <body>
     <!-- Header -->
     @include('landingPage.layouts.header')
-    
+
 
     {!! $content !!}
 
@@ -162,7 +172,7 @@
         });
     </script>
 
-    
+
 </body>
 
 </html>
