@@ -102,10 +102,10 @@ class AuthController extends Controller
                     'email' => $request['email']
                 ]);
             } else {
-                return redirect()->route('dashboard');
+                return redirect()->route('backoffice.dashboard.index');
             }
         } else {
-            return redirect()->route('dashboard');
+            return redirect()->route('backoffice.dashboard.index');
         }
     }
 
