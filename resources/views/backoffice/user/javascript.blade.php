@@ -14,6 +14,8 @@
     });
 
     showForm = () => {
+        $('#id').val('');
+
         onReset();
         $('#password').attr('placeholder', "Password");
 
@@ -211,7 +213,7 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            if(v == 'id') return;
+
             $('#' + v).val('').change();
         });
     };

@@ -26,7 +26,7 @@ class QuestionnaireRequest extends FormRequest
             'description' => ['required', 'string'],
             'is_active' => ['nullable', 'boolean'],
             'type' => ['required', 'string', 'in:alumni,superior'],
-            'period_year' => ['required', 'string'],
+            // 'period_year' => ['required', 'string'],
         ];
     }
 }

@@ -106,11 +106,11 @@
                         <option value="superior">Atasan Alumni</option>
                     </select>
                 </div>
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="filter_period_year col-12" class="form-label">Tahun Periode</label>
                     <input type="text" id="filter_period_year" class="form-control" style="width: 100"
                         maxlength="4" />
-                </div>
+                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="applyFilter()" class="btn btn-primary">Terapkan</button>

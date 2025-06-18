@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('questionnaires', function (Blueprint $table) {
             $table->id();
-            $table->string('period_year', 4);
+            $table->string('period_year', 4)->nullable();
             $table->enum('type', ['alumni', 'superior']);
             $table->string('title');
             $table->text('description')->nullable();

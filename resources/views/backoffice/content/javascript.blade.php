@@ -30,6 +30,8 @@
     })
 
     showForm = () => {
+        $('#id').val('');
+
         onReset();
         $('.viewForm').modal('show')
     }

@@ -17,7 +17,7 @@ class QuestionnaireSeeder extends Seeder
 
         $data = [
             [
-                'period_year' => 2025,
+                // 'period_year' => 2025,
                 'type' => 'alumni',
                 'title' => 'Kuisioner Lulusan JTI',
                 'description' => 'ini adalah kuisioner lulusan JTI Polinema',
@@ -25,7 +25,7 @@ class QuestionnaireSeeder extends Seeder
                 'is_dashboard' => false,
             ],
             [
-                'period_year' => 2023,
+                // 'period_year' => 2023,
                 'type' => 'superior',
                 'title' => 'Kuisioner Pengguna Lulusan JTI Polinema',
                 'description' => 'ini adalah kuisioner untuk pengguna lulusan jti polinema',

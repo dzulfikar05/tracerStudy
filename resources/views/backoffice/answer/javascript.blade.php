@@ -20,6 +20,7 @@
     });
 
     showForm = () => {
+        $('#id').val('');
         onReset();
         $('.viewForm').modal('show');
     }
@@ -247,7 +248,7 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            if(v == 'id') return;
+
             $('#' + v).val('').change();
         });
     };

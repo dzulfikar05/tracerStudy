@@ -26,6 +26,8 @@
     })
 
     showForm = () => {
+        $('#id').val('');
+
         onReset();
         // $('#modal_company').modal('show')
         $('.viewForm').modal('show')
@@ -258,7 +260,7 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            if(v == 'id') return;
+
             $('#' + v).val('').change();
         });
     };

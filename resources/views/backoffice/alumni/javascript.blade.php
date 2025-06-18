@@ -57,6 +57,8 @@
     })
 
     showForm = () => {
+        $('#id').val('');
+
         onReset();
         // $('#modal_alumni').modal('show')
         $('.viewForm').modal('show')

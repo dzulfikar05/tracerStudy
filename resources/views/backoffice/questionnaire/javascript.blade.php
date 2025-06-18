@@ -26,6 +26,7 @@
     });
 
     showForm = () => {
+        $('#id').val('');
         onReset();
         $('.viewForm').modal('show');
     }
@@ -157,11 +158,21 @@
                         <div class="card questionnaire-card border-0 rounded-3 h-100">
                             <div class="card-body d-flex flex-column justify-content-between">
                                 <div>
-                                    <h5 class="card-title text-primary fw-semibold">${item.title}</h5>
-                                    <p class="card-text text-muted small mb-3">${item.description ?? '-'}</p>
+                                    <h5 class="card-title text-primary fw-semibold" style="font-size: 1.2rem;">${item.title}</h5>
+                                    <p class="card-text text-muted small mb-3" style="font-size: 0.8rem;">${item.description ?? '-'}</p>
                                     <div class="mb-3 d-flex flex-wrap gap-2">
-                                        <span class="badge bg-primary">Tahun: ${item.period_year}</span>
-                                        <span class="badge bg-warning text-dark">Berlaku: ${type}</span>
+                                        `;
+                                    if(item.type == 'superior'){
+                                        card +=`
+                                        <span class="badge bg-warning text-dark " style="font-size: 0.9em">Berlaku: Atasan Alumni</span>
+                                        `;
+                                    }else{
+                                        card +=`
+                                        <span class="badge bg-success " style="font-size: 0.9em">Berlaku: Alumni</span>
+                                        `;
+                                    }
+
+                                card +=`
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-start">
@@ -420,7 +431,7 @@
 
     onReset = () => {
         $.each(fields, function(i, v) {
-            if(v == 'id') return;
+
             $('#' + v).val('').change();
         });
     };

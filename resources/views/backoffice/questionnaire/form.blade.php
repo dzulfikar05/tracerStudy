@@ -18,10 +18,10 @@
                             <option value="superior">Atasan Alumni</option>
                         </select>
                     </div>
-                    <div class="form-label">
+                    {{-- <div class="form-label">
                         <label class="mb-2 required" for="period_year">Tahun Periode</label>
                         <input id="period_year" required name="period_year" class="form-control mb-3" type="period_year" maxlength="4" placeholder="Tahun">
-                    </div>
+                    </div> --}}
                     <div class="form-label">
                         <label class="mb-2 required" for="title">Judul</label>
                         <input id="title" required name="title" class="form-control mb-3" type="text"
