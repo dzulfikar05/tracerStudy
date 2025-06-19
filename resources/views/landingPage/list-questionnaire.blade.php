@@ -30,8 +30,8 @@
                     <div class="card-body py-4 px-4">
                         <h2 class="card-title h5 fw-bold mb-1">{{ $item->title ?? '' }}</h2>
                         <div class="text-muted small mb-3">
-                            <span>{{ $item->period_year ?? '' }}</span>
-                            <span> / </span>
+                            {{-- <span>{{ $item->period_year ?? '' }}</span> --}}
+                            {{-- <span> / </span> --}}
                             <span>{{ $item->type == 'alumni' ? 'Kuesioner Lulusan' : 'Kuisioner Pengguna Lulusan' }}</span>
                         </div>
                         <p class="card-text mb-3">
