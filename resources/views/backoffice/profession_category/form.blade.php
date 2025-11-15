@@ -10,7 +10,7 @@
                     autocomplete="off">
                     <div class="form-label">
                         <input id="id" name="id" type="hidden">
-                        <label class="mb-2 required" for="name">Name</label>
+                        <label class="mb-2 required" for="name">Nama</label>
                         <input id="name" required name="name" class="form-control mb-3" type="text"
                             placeholder="Nama">
                     </div>

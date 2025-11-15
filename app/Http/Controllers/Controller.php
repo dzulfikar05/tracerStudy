@@ -20,7 +20,7 @@ class Controller extends BaseController
         ];
     }
 
-    protected function getWaitingTime($graduationDate, $startWorkDate)
+    public function getWaitingTime($graduationDate, $startWorkDate)
     {
         $graduation_date = Carbon::parse($graduationDate);
         $start_work_date = Carbon::parse($startWorkDate);
